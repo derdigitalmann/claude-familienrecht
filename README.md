@@ -57,4 +57,4 @@ Ein GitHub-Workflow gleicht täglich mit dem Original ab und öffnet bei Änderu
 
 Die Inhalte beider Teile sind keine Rechtsberatung und ersetzen keine Prüfung im Einzelfall. Normen, Rechtsprechung, Tabellenwerte und Fristen vor jeder Verwendung am Original prüfen. Bereitstellung unentgeltlich und ohne Gewähr.
 
-Anbieter dieses Repositorys: Mehmet Aydoğdu, digitalmann. [Impressum](https://digitalmann.de/impressum)
+Anbieter dieses Repositorys: digitalmann. [Impressum](https://digitalmann.de/impressum)
