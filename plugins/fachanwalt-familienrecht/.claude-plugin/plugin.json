@@ -1,0 +1,24 @@
+{
+  "name": "fachanwalt-familienrecht",
+  "version": "445.33.1",
+  "description": "Plugin Fachanwalt für Familienrecht. Orientierung Normen Mandate Fristen Literatur. Familiengericht FamFG Scheidung Sorge Umgang Unterhalt Zugewinn Ehevertrag eingetragene Lebenspartnerschaft. Ergaenzend zum Plugin kanzlei-allgemein.",
+  "license": "Apache-2.0 OR MIT",
+  "author": {
+    "name": "Klotzkette",
+    "email": "39582916+Klotzkette@users.noreply.github.com"
+  },
+  "homepage": "https://github.com/Klotzkette/claude-fuer-deutsches-recht",
+  "keywords": [
+    "familienrecht",
+    "fachanwalt",
+    "familiengericht",
+    "famfg",
+    "scheidung",
+    "sorgerecht",
+    "umgangsrecht",
+    "unterhalt",
+    "zugewinn",
+    "ehevertrag",
+    "versorgungsausgleich"
+  ]
+}

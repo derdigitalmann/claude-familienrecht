@@ -1,0 +1,52 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "mehmet-familienrecht",
+  "description": "Familienrecht aus Klotzkette/claude-fuer-deutsches-recht, automatisch gespiegelt.",
+  "owner": {
+    "name": "Klotzkette",
+    "email": "39582916+Klotzkette@users.noreply.github.com"
+  },
+  "plugins": [
+    {
+      "name": "betreuungsrecht",
+      "source": "./plugins/betreuungsrecht",
+      "description": "Betreuungsrechtliche Skills für ehrenamtliche Familienbetreuer, Berufs- und Vereinsbetreuer: Kaltstart, Scan-Akte, Kalender, Gerichtskommunikation, Jahresbericht, Vermögensverzeichnis, Genehmigungspflichten, Wunschermittlung, Kontoanalyse und Schutzplan nach BtOG und BGB.",
+      "version": "445.33.1",
+      "author": {
+        "name": "Klotzkette",
+        "email": "39582916+Klotzkette@users.noreply.github.com"
+      }
+    },
+    {
+      "name": "fachanwalt-familienrecht",
+      "source": "./plugins/fachanwalt-familienrecht",
+      "description": "Plugin Fachanwalt für Familienrecht. Orientierung Normen Mandate Fristen Literatur. Familiengericht FamFG Scheidung Sorge Umgang Unterhalt Zugewinn Ehevertrag eingetragene Lebenspartnerschaft. Ergaenzend zum Plugin kanzlei-allgemein.",
+      "version": "445.33.1",
+      "author": {
+        "name": "Klotzkette",
+        "email": "39582916+Klotzkette@users.noreply.github.com"
+      }
+    },
+    {
+      "name": "richter-familiengericht",
+      "source": "./plugins/gerichtsplugins/richter-familiengericht",
+      "version": "445.33.1",
+      "description": "Familiengericht: Ehesachen Scheidung Versorgungsausgleich Kindschaftssachen elterliche Sorge Umgang Kindesunterhalt Trennungs- und Ehegattenunterhalt Gewaltschutz Adoption Vormundschaft Betreuungsteile mit Verfahrenskostenhilfe und Tenorvorschlag",
+      "author": {
+        "name": "Klotzkette",
+        "email": "39582916+Klotzkette@users.noreply.github.com"
+      }
+    },
+    {
+      "name": "zugewinnausgleich",
+      "source": "./plugins/zugewinnausgleich",
+      "description": "Zugewinnausgleich bei Trennung und Scheidung: zehn Skills fuer die belegte Berechnung des Zugewinns, Erbschaft, Immobilien, Unternehmen, Auskunft und Vergleich bis zum beauftragten Ergebnis.",
+      "version": "445.33.1",
+      "author": {
+        "name": "Klotzkette",
+        "email": "39582916+Klotzkette@users.noreply.github.com"
+      }
+    }
+  ],
+  "version": "445.33.1"
+}
