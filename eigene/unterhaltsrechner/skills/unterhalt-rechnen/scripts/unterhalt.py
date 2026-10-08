@@ -17,7 +17,7 @@ from pathlib import Path
 DATA = Path(__file__).resolve().parent.parent / "data"
 D = Decimal
 C = D("0.01")
-VERSION = "0.1.2"
+VERSION = "0.2.0"
 
 
 def dec(x):
@@ -182,6 +182,8 @@ def bereinige(abschnitt, ll, rolle, hinweise):
     else:
         netto = dec(abschnitt.get("netto"))
         schritte.append(f"Nettoerwerbseinkommen {cent(netto)} €")
+        if netto > 0 and abschnitt.get("netto_basis") != "jahresschnitt":
+            hinweise.add(f"{rolle}: Netto als Jahresschnitt ansetzen (Lohnsteuerbescheinigung bzw. letzte 12 Monate : 12) einschließlich Urlaubs- und Weihnachtsgeld, Boni, Überstunden, Sachbezügen und Steuererstattung im Zahlungsjahr (In-Prinzip, z. B. Leitlinien NRW 1.7). Danach 'netto_basis': 'jahresschnitt' setzen.")
     bb = abschnitt.get("berufsbedingt") or {"modus": "keine"}
     modus = bb.get("modus", "keine")
     abzug_bb = D(0)
@@ -208,6 +210,8 @@ def bereinige(abschnitt, ll, rolle, hinweise):
             fkb, formel = fahrtkosten(bb["fahrt"], ll, hinweise)
             abzug_bb += fkb
             teile.append(f"Fahrtkosten {fkb} € ({formel}, Nr. {ll['fahrtkosten']['nr']})")
+            if netto > 0 and fkb > netto * D("0.15"):
+                hinweise.add(f"{rolle}: Fahrtkosten über 15 % des Nettoeinkommens. Unzumutbarkeit öffentlicher Verkehrsmittel und ggf. Obliegenheit zum Umzug darlegen (Leitlinien Schleswig-Holstein 10.2.2; BGH FamRZ 2002, 535).")
         if bb.get("weitere"):
             abzug_bb += dec(bb["weitere"])
             teile.append(f"weitere {cent(bb['weitere'])} €")
@@ -216,10 +220,22 @@ def bereinige(abschnitt, ll, rolle, hinweise):
     erwerb_bb = max(netto - abzug_bb, D(0))
     abzuege = abschnitt.get("abzuege") or []
     summe_abz = sum((dec(a.get("betrag")) for a in abzuege), D(0))
+    brutto = dec(abschnitt.get("brutto"))
     for a in abzuege:
         schritte.append(f"- {a.get('bezeichnung', 'Abzug')} {cent(a.get('betrag'))} €")
+        art = a.get("art")
+        if art == "altersvorsorge_sekundaer" and brutto and dec(a.get("betrag")) > brutto * D("0.04"):
+            hinweise.add(f"{rolle}: Sekundäre Altersvorsorge über 4 % des Bruttoeinkommens ({cent(brutto * D('0.04'))} €). Nur bis 4 % abziehbar (5 % beim Elternunterhalt), nur tatsächlich gezahlte Beträge.")
+        if art == "altersvorsorge_sekundaer" and not brutto:
+            hinweise.add(f"{rolle}: Für die 4-%-Grenze der sekundären Altersvorsorge das Bruttoeinkommen ('brutto') angeben.")
+        if art == "schulden":
+            hinweise.add(f"{rolle}: Schulden nur mit Tilgungsplan und angemessenen Raten; beim Ehegattenunterhalt nur ehebedingte oder in der Ehe angelegte; beim Kindesunterhalt regelmäßig nur, wenn der Mindestunterhalt gesichert ist (Leitlinien Nr. 10.4). Kredite in Kenntnis der Unterhaltspflicht regelmäßig nicht.")
+        if art == "umgangskosten":
+            hinweise.add(f"{rolle}: Umgangskosten nur, soweit sie deutlich über den verbleibenden Kindergeldanteil hinausgehen (Leitlinien NRW 10.7); alternativ Erhöhung des Selbstbehalts.")
     if sonst:
         schritte.append(f"+ sonstige Einkünfte/Wohnvorteil {cent(sonst)} €")
+    if abschnitt.get("wohnvorteil"):
+        hinweise.add(f"{rolle}: Wohnvorteil: im Trennungsjahr in der Regel angemessener (subjektiver) Wohnwert, nach endgültigem Scheitern bzw. Scheidungsantrag objektiver Marktmietwert; Zinsen und Tilgung bis zur Höhe des Wohnwerts abziehen, darüber nur als Altersvorsorge oder Schuld (Leitlinien Nr. 5; BGH XII ZR 21/05).")
     # Abzüge anteilig auf Erwerb und sonstige Einkünfte (Mischeinkünfte, vgl. Leitlinien NRW 15.2)
     basis = erwerb_bb + sonst
     anteil_e = (erwerb_bb / basis) if basis else D(1)
@@ -228,7 +244,7 @@ def bereinige(abschnitt, ll, rolle, hinweise):
     gesamt = cent(erwerb + sonstige)
     schritte.append(f"= bereinigt {gesamt} €")
     return {"netto": cent(netto), "berufsbedingt": abzug_bb, "erwerb_vor_abzuege": cent(erwerb_bb),
-            "abzuege": cent(summe_abz), "erwerb": cent(erwerb), "sonstige": cent(sonstige),
+            "abzuege": cent(summe_abz), "abzug_arten": [a.get("art") for a in abzuege], "erwerb": cent(erwerb), "sonstige": cent(sonstige),
             "gesamt": gesamt, "schritte": schritte}
 
 
@@ -311,8 +327,9 @@ def kinder_monat(e, jm, dtj, ll, ein, pfl_bereinigt, hinweise):
             bedarf += dec(d["mehrbedarf"])
             schritt.append(f"+ Mehrbedarf {cent(d['mehrbedarf'])} €")
         kgv = kg if d.get("kindergeld", True) else D(0)
-        offen = max(bedarf - kgv - dec(d.get("eigenes_einkommen")), D(0))
-        schritt.append(f"- Kindergeld voll {kgv} € - eigenes Einkommen {cent(d.get('eigenes_einkommen'))} € = offener Bedarf {cent(offen)} €")
+        ke, ktxt = kind_einkommen(d, False)
+        offen = max(bedarf - kgv - ke, D(0))
+        schritt.append(f"- Kindergeld voll {kgv} € - Einkommen des Kindes {ke} €{' (' + ktxt + ')' if ktxt else ''} = offener Bedarf {cent(offen)} €")
         if anderer:
             vorweg_a = dec(ab.get("vorrangiger_kindesunterhalt"))
             sbe_a = dec(dtj["selbstbehalt"]["angemessen"])
@@ -343,22 +360,28 @@ def kinder_monat(e, jm, dtj, ll, ein, pfl_bereinigt, hinweise):
                 p = dec(d["umgang_abzug_prozent"])
                 if p > 15:
                     hinweise.add(f"{k['name']}: Abzug wegen erweitertem Umgang über 15 %. BGH XII ZB 415/25: 10 bis höchstens 15 %.")
+                hinweise.add(f"{k['name']}: Erweiterter Umgang (BGH XII ZB 415/25 vom 15.04.2026): nur bei deutlich über das Übliche hinausgehendem Umgang; regelmäßig 10 %, ausnahmsweise bis 15 % vom Tabellenbedarf als teilweise Erfüllung. Herabstufung wegen Mehraufwendungen ist ein getrennter Schritt ('gruppe.korrektur'). Keine Quotenberechnung wie im paritätischen Wechselmodell.")
                 abz = cent(bedarf * p / 100)
                 bedarf -= abz
                 schritt.append(f"- Abzug erweiterter Umgang {p} % = {abz} €")
-            if d.get("mehrbedarf"):
+            if d.get("mehrbedarf") and not anderer:
                 bedarf += dec(d["mehrbedarf"])
-                schritt.append(f"+ Mehrbedarf {cent(d['mehrbedarf'])} € (Haftungsanteil prüfen)")
+                schritt.append(f"+ Mehrbedarf {cent(d['mehrbedarf'])} € voll (Einkommen des anderen Elternteils fehlt)")
+                hinweise.add(f"{k['name']}: Mehrbedarf tragen beide Eltern anteilig nach Einkommen (§ 1606 Abs. 3 S. 1 BGB, Leitlinien Nr. 12.4). Ohne Einkommen des anderen Elternteils setzt der Rechner ihn voll an. Kita-Verpflegung ist kein Mehrbedarf; Betreuung allein wegen Berufstätigkeit des Betreuenden auch nicht (Nr. 12.4 Abs. 2 bis 4). Mehrbedarf erst ab Verzug, Sonderbedarf auch rückwirkend.")
             kga = kg / 2 if k["status"] == "minderjaehrig" else kg
             if not d.get("kindergeld", True):
                 kga = D(0)
             zahl = bedarf - kga
             schritt.append(f"- Kindergeld {'hälftig' if k['status'] == 'minderjaehrig' else 'voll'} {cent(kga)} €")
-            if d.get("eigenes_einkommen"):
-                zahl -= dec(d["eigenes_einkommen"])
-                schritt.append(f"- anrechenbares eigenes Einkommen {cent(d['eigenes_einkommen'])} €")
+            ke, ktxt = kind_einkommen(d, k["status"] == "minderjaehrig")
+            if ke:
+                zahl -= ke
+                schritt.append(f"- Einkommen des Kindes {ke} € ({ktxt})")
             zahl = max(cent(zahl), D(0))
             schritt.append(f"= Zahlbetrag {zahl} €")
+            einfach = not (d.get("umgang_abzug_prozent") or d.get("mehrbedarf") or ke or not d.get("kindergeld", True))
+            if einfach and k["status"] == "minderjaehrig":
+                schritt.append(f"Dynamischer Titel: {g['prozent']} % des Mindestunterhalts der jeweiligen Altersstufe (§ 1612a BGB) abzüglich hälftiges Kindergeld")
             out.append({"name": k["name"], "rang": 1, "bedarf": cent(bedarf), "zahlbetrag": zahl, "schritte": schritt,
                         "status": k["status"]})
         return out
@@ -382,6 +405,23 @@ def kinder_monat(e, jm, dtj, ll, ein, pfl_bereinigt, hinweise):
         break
     info["herabstufung"] = protokoll
     info["gruppe"] = gruppe
+    mb_kinder = [k for k in minderj if k["def"].get("mehrbedarf")] if anderer else []
+    if mb_kinder:
+        ab = gueltig(anderer["einkommen"], jm, "anderer Elternteil")
+        ea = bereinige(ab, ll, "Anderer Elternteil", hinweise)["gesamt"]
+        summe_r = sum((r["zahlbetrag"] for r in res), D(0))
+        sock = dec(dtj["selbstbehalt"]["angemessen"])
+        a1 = max(E - summe_r - sock, D(0))
+        a2 = max(ea - sock, D(0))
+        q = a1 / (a1 + a2) if (a1 + a2) else D(0)
+        for k in mb_kinder:
+            r = next(x for x in res if x["name"] == k["name"])
+            mb = dec(k["def"]["mehrbedarf"])
+            anteil = cent(mb * q)
+            r["zahlbetrag"] += anteil
+            r["schritte"].append(f"+ Mehrbedarf {cent(mb)} € anteilig: Pflichtiger ({cent(E)} - Kindesunterhalt {cent(summe_r)} - Sockel {sock} €) = {cent(a1)} €, anderer Elternteil ({cent(ea)} - Sockel {sock} €) = {cent(a2)} €, Quote {(q * 100).quantize(D('0.01'))} % -> {anteil} € (Leitlinien Nr. 12.4, 13.3)")
+            r["schritte"].append(f"= Zahlbetrag mit Mehrbedarf {r['zahlbetrag']} €")
+        hinweise.add("Mehrbedarf: Kita-Verpflegung ist kein Mehrbedarf; Sockel angemessener Selbstbehalt, bei Mangellage ggf. notwendiger (Nr. 13.3). Mehrbedarf erst ab Verzug, Sonderbedarf auch rückwirkend.")
     if priv_quote:
         vorab = sum((r["zahlbetrag"] for r in res), D(0)) if (ein.get("gruppe") or {}).get("vorabzug_minderjaehrige", True) else D(0)
         for k in priv_quote:
@@ -398,13 +438,32 @@ def kinder_monat(e, jm, dtj, ll, ein, pfl_bereinigt, hinweise):
             neu = min(cent(anteil), r["zahlbetrag"])
             r["schritte"].append(f"Mangelfall (DT Anm. C): {r['zahlbetrag']} x {cent(masse)} : {cent(einsatz)} = {neu} € (centgenau wie Beispiel DT Anm. C, ohne Aufrundung)")
             r["zahlbetrag"] = neu
-        hinweise.add(f"{mstr(jm)}: Mangelfall. Erwerbsobliegenheit und fiktives Einkommen prüfen (gesteigerte Erwerbsobliegenheit § 1603 Abs. 2 BGB).")
+        hinweise.add(f"{mstr(jm)}: Mangelfall. Gesteigerte Erwerbsobliegenheit (§ 1603 Abs. 2 BGB): fiktives Einkommen, Überstunden oder Nebentätigkeit im Rahmen des ArbZG prüfen (Leitlinien NRW 1.3); ggf. Obliegenheit zur Verbraucherinsolvenz (Nr. 10.4 Abs. 3).")
+        if int(ein.get("weitere_berechtigte", 0)):
+            hinweise.add(f"{mstr(jm)}: Mangelfall mit 'weitere_berechtigte': deren Unterhalt ist in der Mangelverteilung nicht enthalten. Gleichrangige Kinder aus anderen Beziehungen als eigene Einträge unter 'kinder' aufnehmen, sonst ist die Verteilung falsch.")
 
     # Volljährige, nicht privilegierte Kinder (Rang 4, § 1609 Nr. 4 BGB)
     vorrang = sum((r["zahlbetrag"] for r in res), D(0))
     for k in volljaehrig:
         res.append(volljaehrig_anteil(k, 4, vorrang, sb_angem))
     return res, info
+
+
+def kind_einkommen(d, haelftig):
+    """Anrechenbares Einkommen des Kindes: Ausbildungsvergütung minus Ausbildungsaufwand, bei Minderjährigen hälftig
+    (Leitlinien Nr. 10.2.3, 12.2, 13.2). 'eigenes_einkommen' gilt als bereits anrechenbar."""
+    betrag, txt = D(0), []
+    if d.get("ausbildungsverguetung"):
+        av = dec(d["ausbildungsverguetung"])
+        aufw = dec(d.get("ausbildungsaufwand", 100))
+        rest = max(av - aufw, D(0))
+        anr = rest / 2 if haelftig else rest
+        betrag += anr
+        txt.append(f"Ausbildungsvergütung {cent(av)} - Ausbildungsaufwand {cent(aufw)} = {cent(rest)} €" + (f", hälftig {cent(anr)} € (Nr. 12.2)" if haelftig else " (voll, Nr. 13.2)"))
+    if d.get("eigenes_einkommen"):
+        betrag += dec(d["eigenes_einkommen"])
+        txt.append(f"weiteres anrechenbares Einkommen {cent(d['eigenes_einkommen'])} €")
+    return cent(betrag), "; ".join(txt)
 
 
 def zuschlag_wohnen(person, enthalten):
@@ -487,6 +546,93 @@ def ehegatte_monat(jm, dtj, ll, ein, pfl, ku_zahl_rang1, ku_zahl_r4, hinweise):
 
 # --------------------------------------------------------------- Hauptlauf
 
+def verzugsmonat(wert):
+    """Monat, ab dem Unterhalt für die Vergangenheit geschuldet ist (§ 1613 Abs. 1 S. 2 BGB: ab dem Ersten des Monats)."""
+    return monat(wert) if wert else None
+
+
+def pruefungen_eingabe(ein, hinweise):
+    """Fallstricke, die sich aus der Eingabe allein erkennen lassen."""
+    pfl = ein["pflichtiger"]
+    eh = ein.get("ehegatte")
+    abschnitte_p = pfl["einkommen"] if isinstance(pfl["einkommen"], list) else [pfl["einkommen"]]
+    z = ein["zeitraum"]
+    for a in abschnitte_p:
+        sk = str(a.get("steuerklasse", "")).upper()
+        if eh and eh.get("trennung") and sk in ("III", "IV", "V", "4", "3", "5"):
+            tj = monat(eh["trennung"])[0]
+            if monat(z["bis"])[0] > tj:
+                hinweise.add(f"Pflichtiger: Steuerklasse {sk} ab Januar {tj + 1} nicht mehr maßgeblich (Zusammenveranlagung nur im Trennungsjahr). Für Zeiträume ab {tj + 1} Netto fiktiv nach Steuerklasse I bzw. II neu berechnen.")
+        if pfl.get("neue_ehe") and sk in ("III", "3"):
+            hinweise.add("Pflichtiger: Splittingvorteil aus neuer Ehe ist beim Kindesunterhalt (gesteigerte Unterhaltspflicht) einzusetzen, beim Unterhalt des geschiedenen Ehegatten nicht (BVerfG; BGH). Netto ggf. getrennt berechnen (vgl. OLG München 12 UF 824/24 e).")
+    if eh:
+        hinweise.add("Ehegattenunterhalt: Obliegenheit, Steuervorteile zu nutzen; Realsplitting (§ 10 Abs. 1a Nr. 1 EStG) bei unstreitigem oder tituliertem Unterhalt im Netto des Pflichtigen berücksichtigen (Leitlinien Nr. 10.1.1).")
+        hinweise.add("Ehegattenunterhalt: Wird Altersvorsorgeunterhalt verlangt, ist zweistufig zu rechnen (Bremer Tabelle); der Elementarunterhalt sinkt dann. Der Rechner berechnet nur Elementarunterhalt.")
+        if eh.get("art") == "nachehelich":
+            if not eh.get("rechtskraft_scheidung"):
+                hinweise.add("Nachehelicher Unterhalt erst ab Rechtskraft der Scheidung; davor Trennungsunterhalt (nicht identisch, eigener Titel). 'ehegatte.rechtskraft_scheidung' angeben.")
+            elif monat(z["von"]) < monat(eh["rechtskraft_scheidung"]):
+                hinweise.add("Zeitraum beginnt vor Rechtskraft der Scheidung: für diese Monate besteht kein nachehelicher, sondern Trennungsunterhalt.")
+    for k in ein.get("kinder", []):
+        g = date.fromisoformat(k["geburtsdatum"])
+        v, b = monat(z["von"]), monat(z["bis"])
+        if v <= (g.year + 18, g.month) <= b:
+            hinweise.add(f"{k['name']}: wird im Zeitraum volljährig. Ab dann haften beide Eltern anteilig, Kindergeld voll, Altersstufe 4; Einkommen des anderen Elternteils angeben. Ein Titel aus der Minderjährigkeit gilt fort (§ 244 FamFG), Abänderung prüfen.")
+
+
+def rueckstand_rechnen(ein, monate_out, hinweise):
+    """Rückstand je Berechtigtem mit Verzugsbeginn, Unterhaltsvorschuss und Verjährungs-/Verwirkungshinweisen."""
+    stichtag = monat(ein.get("stichtag") or date.today().isoformat()[:7])
+    verzug = {k["name"]: verzugsmonat(k.get("verzug_ab")) for k in ein.get("kinder", [])}
+    uvg = {k["name"]: k.get("unterhaltsvorschuss") or [] for k in ein.get("kinder", [])}
+    eh = ein.get("ehegatte") or {}
+    if eh:
+        verzug["Ehegatte"] = verzugsmonat(eh.get("verzug_ab"))
+    rh = monat(eh["rechtshaengig_ab"]) if eh.get("rechtshaengig_ab") else None
+    hat_zahlungen = bool(ein.get("zahlungen"))
+    rueck = {}
+    for m in monate_out:
+        jm = monat(m["monat"])
+        for name, soll in m["soll"].items():
+            r = rueck.setdefault(name, {"soll": D(0), "ist": D(0), "soll_ab_verzug": D(0), "ist_ab_verzug": D(0),
+                                        "land_uvg": D(0), "alt_verwirkung": D(0), "alt_verjaehrung": D(0), "ausgeschlossen_1585b": D(0)})
+            ist = m["ist"].get(name, D(0))
+            r["soll"] += soll
+            r["ist"] += ist
+            vz = verzug.get(name)
+            if vz and jm < vz:
+                continue
+            if name == "Ehegatte" and eh.get("art") == "nachehelich" and rh and (jm[0] * 12 + jm[1]) < (rh[0] * 12 + rh[1]) - 12:
+                r["ausgeschlossen_1585b"] += max(soll - ist, D(0))
+                continue
+            r["soll_ab_verzug"] += soll
+            r["ist_ab_verzug"] += ist
+            offen = max(soll - ist, D(0))
+            for u in uvg.get(name, []):
+                if monat(u["von"]) <= jm <= monat(u.get("bis", "2999-12")):
+                    land = min(dec(u.get("betrag")), offen)
+                    r["land_uvg"] += land
+            alter = (stichtag[0] * 12 + stichtag[1]) - (jm[0] * 12 + jm[1])
+            if offen and alter > 12:
+                r["alt_verwirkung"] += offen
+            if offen and stichtag[0] > jm[0] + 3:
+                r["alt_verjaehrung"] += offen
+    for name, r in rueck.items():
+        r["differenz"] = r["soll_ab_verzug"] - r["ist_ab_verzug"]
+        r["davon_kind"] = r["differenz"] - r["land_uvg"]
+        if name in verzug and verzug[name] is None and (hat_zahlungen or monat(ein["zeitraum"]["von"]) < stichtag):
+            hinweise.add(f"{name}: Kein Verzugsbeginn angegeben ('verzug_ab'). Unterhalt für die Vergangenheit nur ab Auskunftsverlangen, Mahnung oder Rechtshängigkeit, jeweils ab dem Monatsersten (§ 1613 Abs. 1 BGB; nachehelich § 1585b Abs. 2 BGB). Rückstand ist ohne diese Angabe ab Zeitraumbeginn gerechnet.")
+        if r["land_uvg"]:
+            hinweise.add(f"{name}: In Höhe des Unterhaltsvorschusses ({cent(r['land_uvg'])} €) ist der Anspruch auf das Land übergegangen (§ 7 Abs. 1 UVG). Nur der Rest steht dem Kind zu.")
+        if r["alt_verwirkung"]:
+            hinweise.add(f"{name}: {cent(r['alt_verwirkung'])} € Rückstand sind älter als ein Jahr. Verwirkung prüfen: Zeitmoment kann nach gut einem Jahr erfüllt sein; bloßes Nichtgeltendmachen begründet aber noch kein Umstandsmoment (BGH, Beschluss vom 30.01.2018, XII ZB 133/17).")
+        if r["alt_verjaehrung"]:
+            hinweise.add(f"{name}: {cent(r['alt_verjaehrung'])} € Rückstand könnten verjährt sein (drei Jahre ab Jahresende, §§ 195, 199 BGB; titulierte künftige Ansprüche § 197 Abs. 2 BGB). Hemmung prüfen: Kinder bis 21 gegenüber Eltern, Ehegatten während der Ehe (§ 207 BGB).")
+        if r["ausgeschlossen_1585b"]:
+            hinweise.add(f"Ehegatte: {cent(r['ausgeschlossen_1585b'])} € nachehelicher Unterhalt liegen mehr als ein Jahr vor Rechtshängigkeit und sind nach § 1585b Abs. 3 BGB ausgeschlossen, außer bei absichtlichem Entziehen.")
+    return rueck
+
+
 def hinweise_buendeln(hinweise):
     """Fasst gleichlautende Monatshinweise ("JJJJ-MM: Text") zu Zeiträumen zusammen."""
     import re
@@ -520,6 +666,7 @@ def berechne(ein):
     if not z.get("von") or not z.get("bis"):
         raise Fehler("zeitraum.von und zeitraum.bis (JJJJ-MM) fehlen")
     zahlungen = ein.get("zahlungen", [])
+    pruefungen_eingabe(ein, hinweise)
     monate_out = []
     for jm in monate(z["von"], z["bis"]):
         dtj = dt.get(str(jm[0]))
@@ -527,8 +674,16 @@ def berechne(ein):
             raise Fehler(f"Keine Düsseldorfer Tabelle für {jm[0]} hinterlegt (vorhanden: {', '.join(sorted(dt))})")
         if jm[0] < 2026:
             hinweise.add("Monate vor 2026: Tabellenwerte des jeweiligen Jahres, Leitlinienparameter Stand 2026. Damalige Leitlinienfassung prüfen.")
-        pfl = bereinige(gueltig(ein["pflichtiger"]["einkommen"], jm, "Pflichtiger"), ll, "Pflichtiger", hinweise)
+        abschnitt = gueltig(ein["pflichtiger"]["einkommen"], jm, "Pflichtiger")
+        pfl = bereinige(abschnitt, ll, "Pflichtiger", hinweise)
         kinder, kinfo = kinder_monat(None, jm, dtj, ll, ein, pfl, hinweise)
+        if kinfo.get("mangelfall") and "altersvorsorge_sekundaer" in pfl["abzug_arten"]:
+            ohne = dict(abschnitt)
+            ohne["abzuege"] = [a for a in abschnitt.get("abzuege", []) if a.get("art") != "altersvorsorge_sekundaer"]
+            pfl = bereinige(ohne, ll, "Pflichtiger", hinweise)
+            pfl["schritte"].append("Sekundäre Altersvorsorge nicht abgezogen: Mindestunterhalt nicht gedeckt (z. B. Leitlinien Rostock 10.1, NRW 10.1.2).")
+            kinder, kinfo = kinder_monat(None, jm, dtj, ll, ein, pfl, hinweise)
+            hinweise.add(f"{mstr(jm)}: Sekundäre Altersvorsorge wegen Mangelfall nicht abgezogen und neu gerechnet.")
         r1 = sum((k["zahlbetrag"] for k in kinder if k["rang"] == 1), D(0))
         r4 = sum((k["zahlbetrag"] for k in kinder if k["rang"] == 4), D(0))
         eh = ehegatte_monat(jm, dtj, ll, ein, pfl, r1, r4, hinweise) if ein.get("ehegatte") else None
@@ -552,15 +707,7 @@ def berechne(ein):
                 ist[zg["an"]] = ist.get(zg["an"], D(0)) + dec(zg.get("betrag"))
         monate_out.append({"monat": mstr(jm), "dt": jm[0], "pflichtiger": pfl, "kinder": kinder, "kinder_info": kinfo,
                            "ehegatte": eh, "soll": soll, "ist": ist})
-    # Rückstand
-    rueck = {}
-    for m in monate_out:
-        for name, s in m["soll"].items():
-            r = rueck.setdefault(name, {"soll": D(0), "ist": D(0)})
-            r["soll"] += s
-            r["ist"] += m["ist"].get(name, D(0))
-    for r in rueck.values():
-        r["differenz"] = r["soll"] - r["ist"]
+    rueck = rueckstand_rechnen(ein, monate_out, hinweise)
     return {"version": VERSION, "leitlinie": {k: ll.get(k) for k in ("id", "name", "olg", "quelle", "quelle_art", "verweis")},
             "vorlaeufig": any(h.startswith("VORLÄUFIG") for h in hinweise),
             "monate": monate_out, "rueckstand": rueck, "hinweise": hinweise_buendeln(hinweise),
@@ -597,7 +744,8 @@ def de(text):
             break
 
     def zahl(m):
-        if m.string[max(0, m.start() - 4):m.start()] in ("Nr. ", "Nr.."):
+        vor = m.string[max(0, m.start() - 20):m.start()]
+        if vor.endswith(("Nr. ", "NRW ", "Leitlinien ", "Holstein ", "SüdL ", "Ziffer ")):
             return m.group(0)
         ganz, nach = m.group(1), m.group(2)
         if nach is None:
@@ -656,10 +804,10 @@ def markdown(r):
         L.append("")
     if any(m["ist"] for m in r["monate"]):
         L.append("## Rückstand\n")
-        L.append("| Berechtigter | Soll | gezahlt | Differenz |")
-        L.append("|---|---|---|---|")
+        L.append("| Berechtigter | Soll gesamt | Soll ab Verzug | gezahlt ab Verzug | Rückstand | davon Land (UVG) | davon Berechtigter |")
+        L.append("|---|---|---|---|---|---|---|")
         for n, x in r["rueckstand"].items():
-            L.append(f"| {n} | {eur(x['soll'])} | {eur(x['ist'])} | {eur(x['differenz'])} |")
+            L.append(f"| {n} | {eur(x['soll'])} | {eur(x['soll_ab_verzug'])} | {eur(x['ist_ab_verzug'])} | {eur(x['differenz'])} | {eur(x['land_uvg'])} | {eur(x['davon_kind'])} |")
         L.append("")
     else:
         L.append("## Summe Zeitraum\n")

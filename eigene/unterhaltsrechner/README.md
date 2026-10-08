@@ -9,6 +9,7 @@ Eigene Ergänzung von digitalmann, **nicht von Klotzkette** und nicht mit Klotzk
 - `scripts/unterhalt.py`: Rechenkern (Python 3, ohne Zusatzpakete)
 - `data/dt.json`: Düsseldorfer Tabelle 2024, 2025, 2026
 - `data/leitlinien.json`: 15 Leitlinien bzw. OLG-Bezirke, Stand 01.01.2026
+- `references/fallstricke.md`: 27 typische Fehler mit Quellen und Umsetzung im Rechner
 - `tests/test_unterhalt.py`: Regressionstests, u. a. Beispiel DT 2026 Anm. C und Fahrtkostenbeispiel der Leitlinien Schleswig-Holstein
 
 ## Grenzen

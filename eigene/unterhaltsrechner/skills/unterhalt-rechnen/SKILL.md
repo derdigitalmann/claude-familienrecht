@@ -35,6 +35,8 @@ Zuerst aus den Unterlagen (Gehaltsabrechnungen, Jahresmeldung, Steuerbescheid, K
 | Ehegatte | Trennung oder nachehelich, erwerbstätig ja/nein, Einkommen wie oben |
 | anderer Elternteil | nur bei volljährigen Kindern: Einkommen für die Haftungsquote |
 | Änderungen | jede Einkommensänderung als eigener Abschnitt mit `ab` |
+| Rückstand | Datum von Auskunftsverlangen oder Mahnung je Berechtigtem, Unterhaltsvorschuss je Kind, bei nachehelichem Unterhalt Rechtskraft der Scheidung und Rechtshängigkeit |
+| Steuern | Steuerklasse, Trennungsmonat, Wiederheirat, Realsplitting |
 
 **Selbstständige:** Eingabe über `selbstaendig` (siehe Schema). Maßstab ist der Durchschnitt der letzten drei abgeschlossenen Jahre aus Steuerbescheiden und Gewinnermittlungen bzw. Jahresabschlüssen. Liegt nur eine BWA vor:
 1. Nicht als endgültiges Ergebnis rechnen. Das Skript kennzeichnet die Berechnung als VORLÄUFIG; diese Kennzeichnung bleibt in jeder Ausgabe.
@@ -56,6 +58,8 @@ python3 <Skill-Ordner>/scripts/unterhalt.py eingabe.json --format json
 `<Skill-Ordner>` ist der Ordner dieser SKILL.md. Beispiel: `beispiele/beispiel-trennung.json`. Bei `FEHLER:` die Eingabe korrigieren, nicht selbst rechnen.
 
 ### 4. Ergebnis prüfen und erläutern
+
+Vor der Ausgabe `references/fallstricke.md` durchgehen. Punkte mit "S" (nur Skill) selbst prüfen, Punkte mit "H" aus den Hinweisen des Skripts aufgreifen und beim Nutzer nachfragen, wenn eine Angabe fehlt (z. B. Verzugsbeginn, Steuerklasse, Jahresnetto).
 
 1. Hinweise und Annahmen des Skripts vollständig an den Nutzer weitergeben, insbesondere Abweichungen von der Leitlinie (Pauschale, wo die Leitlinie keine kennt), Mangelfall, Begrenzung durch Selbstbehalt.
 2. Plausibilität: Eingruppierung, Altersstufenwechsel, Kindergeldanteil, Selbstbehalt.

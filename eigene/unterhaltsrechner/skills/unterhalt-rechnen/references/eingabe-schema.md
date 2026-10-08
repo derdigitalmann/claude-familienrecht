@@ -59,14 +59,24 @@ Alle Beträge in Euro je Monat. Monate als `JJJJ-MM`. Felder ohne Angabe gelten 
 | `berufsbedingt.modus` | `pauschal` (Prozentsatz, Mindest- und Höchstbetrag der Leitlinie), `konkret` (Fahrtkosten nach Leitliniensatz und/oder `weitere`), `keine`. |
 | `fahrt.staffel` | `false` schaltet den geringeren Satz für Mehrkilometer ab (Leitlinien: "kann"). |
 | `fiktiv`, `teilzeit` | Steuern die Pauschale (NRW nur bei fiktivem Einkommen; Mindestbetrag nicht bei Teilzeit). |
-| `abzuege[]` | Kredite, Altersvorsorge, Betreuungskosten usw. Werden anteilig auf Erwerb und sonstige Einkünfte verteilt. |
+| `netto_basis` | `jahresschnitt`, wenn das Netto als Jahresschnitt inkl. Sonderzahlungen ermittelt ist (sonst Hinweis). |
+| `brutto` | Bruttoeinkommen für die 4-%-Grenze der sekundären Altersvorsorge. |
+| `steuerklasse` | z. B. `III`; mit `ehegatte.trennung` Hinweis auf fiktive Steuerklasse ab dem Folgejahr. |
+| `abzuege[]` | Kredite, Altersvorsorge, Betreuungskosten usw. Werden anteilig auf Erwerb und sonstige Einkünfte verteilt. Optional `art`: `altersvorsorge_sekundaer` (entfällt automatisch im Mangelfall, 4-%-Prüfung), `schulden`, `umgangskosten` (jeweils Prüfhinweis). |
 | `warmmiete` | erhöht den Selbstbehalt um den Betrag über dem enthaltenen Wohnanteil. Angemessenheit prüfen. |
 | `selbstbehalt_kuerzung_prozent` | z. B. 10 bei Zusammenleben mit leistungsfähigem Partner. |
 | `status_ab_18` | `privilegiert` (§ 1603 Abs. 2 S. 2 BGB, Rang 1), `volljaehrig` (Rang 4), `student_eigener_haushalt` (Rang 4, fester Bedarf). |
 | `eigenes_einkommen` | anrechenbares Einkommen des Kindes, bei Ausbildungsvergütung nach Abzug des ausbildungsbedingten Mehrbedarfs (Leitlinien Nr. 10.2.3, i. d. R. 100 €). |
+| `ausbildungsverguetung`, `ausbildungsaufwand` | Vergütung des Kindes; minus Aufwand (Standard 100 €), bei Minderjährigen hälftig, bei Volljährigen voll angerechnet. |
+| `verzug_ab` | Datum des Auskunftsverlangens, der Mahnung oder Rechtshängigkeit; Rückstand ab dem Monatsersten (§ 1613 Abs. 1 BGB). Auch bei `ehegatte`. |
+| `unterhaltsvorschuss[]` | `{"von", "bis", "betrag"}`; Rückstand wird in Anteil Land (§ 7 UVG) und Kind geteilt. |
 | `umgang_abzug_prozent` | Abzug vom Tabellenbedarf bei erweitertem Umgang, 10 bis 15 (BGH XII ZB 415/25). |
 | `mehrbedarf` | wird dem Bedarf zugeschlagen; anteilige Haftung beider Eltern gesondert prüfen. |
 | `ende` | letzter Unterhaltsmonat eines Kindes. |
+| `ehegatte.trennung` | Trennungsmonat (Steuerklassenhinweis). |
+| `ehegatte.rechtskraft_scheidung`, `ehegatte.rechtshaengig_ab` | nachehelicher Unterhalt erst ab Rechtskraft; Monate mehr als ein Jahr vor Rechtshängigkeit ausgeschlossen (§ 1585b Abs. 3 BGB). |
+| `pflichtiger.neue_ehe` | `true` bei Wiederheirat (Hinweis zum Splittingvorteil). |
+| `stichtag` | JJJJ-MM für Verwirkungs- und Verjährungshinweise (Standard: heute). |
 | `ehegatte.mindestbedarf` | Bedarf mindestens Existenzminimum 1.200 € (Standard `true`). |
 | `anderer_elternteil` | nur für volljährige Kinder (Haftungsquote). `vorrangiger_kindesunterhalt`: dessen vorrangige Unterhaltslasten. |
 | `gruppe.fest` | erzwingt eine Einkommensgruppe. Herabstufung wegen Selbstbehalt bleibt aktiv. |

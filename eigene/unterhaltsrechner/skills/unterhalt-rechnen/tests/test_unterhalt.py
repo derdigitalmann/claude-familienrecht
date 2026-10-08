@@ -157,6 +157,37 @@ r = u.berechne(e)
 pruefe("BWA vorläufig", int(r["vorlaeufig"]), 1)
 pruefe("BWA Steuerhinweis", int(any("Steuern auf den Gewinn fehlen" in h for h in r["hinweise"])), 1)
 
+# 16. Verzug: Rückstand erst ab Monatserstem des Verzugsmonats (§ 1613 Abs. 1 S. 2 BGB)
+e = basis(zeitraum={"von": "2026-01", "bis": "2026-04"}, stichtag="2026-10",
+          pflichtiger={"einkommen": [{"ab": "2026-01", "netto": 2000, "netto_basis": "jahresschnitt"}]},
+          kinder=[{"name": "R", "geburtsdatum": "2022-01-01", "verzug_ab": "2026-03-17"}])
+r = u.berechne(e)["rueckstand"]["R"]
+pruefe("Verzug Soll gesamt (4 x 356,50)", r["soll"], "1426.00")
+pruefe("Verzug Soll ab 03/2026 (2 x 356,50)", r["soll_ab_verzug"], "713.00")
+# 17. Unterhaltsvorschuss: Übergang auf das Land in Höhe der Leistung (§ 7 UVG); hier 230 € je Monat, nichts gezahlt
+e["kinder"][0]["unterhaltsvorschuss"] = [{"von": "2026-01", "bis": "2026-12", "betrag": 230}]
+r = u.berechne(e)["rueckstand"]["R"]
+pruefe("UVG Land", r["land_uvg"], "460.00")
+pruefe("UVG Kind", r["davon_kind"], "253.00")
+# 18. Ausbildungsvergütung Minderjähriger: (800 - 100) / 2 = 350 angerechnet; 16 Jahre, 3.000 € -> Gruppe 5: 784 - 129,50 - 350 = 304,50
+e = basis(pflichtiger={"einkommen": [{"ab": "2026-01", "netto": 3000, "netto_basis": "jahresschnitt"}]},
+          kinder=[{"name": "A", "geburtsdatum": "2009-09-01", "ausbildungsverguetung": 800}])
+pruefe("Azubi minderjährig hälftig", m0(e)["soll"]["A"], "304.50")
+# 19. Mehrbedarf Kita 200 € anteilig: Kind 4 J., P 3.000 -> Gruppe 5: 584 - 129,50 = 454,50;
+#     Quote (3.000 - 454,50 - 1.750) / ((795,50) + (2.000 - 1.750)) = 795,5/1.045,5 -> 152,18
+e = basis(pflichtiger={"einkommen": [{"ab": "2026-01", "netto": 3000, "netto_basis": "jahresschnitt"}]},
+          anderer_elternteil={"einkommen": [{"ab": "2026-01", "netto": 2000, "netto_basis": "jahresschnitt"}]},
+          kinder=[{"name": "K", "geburtsdatum": "2021-06-01", "mehrbedarf": 200}])
+pruefe("Mehrbedarf anteilig", m0(e)["soll"]["K"], "606.68")
+# 20. § 1585b Abs. 3: nachehelich, Rechtshängigkeit 2026-03 -> Monate vor 2025-03 ausgeschlossen (hier 2025-01, 2025-02)
+e = basis(zeitraum={"von": "2025-01", "bis": "2025-04"}, stichtag="2026-10",
+          pflichtiger={"erwerbstaetig": False, "einkommen": [{"ab": "2025-01", "netto": 0, "sonstige_einkuenfte": 3000}]},
+          ehegatte={"art": "nachehelich", "rechtskraft_scheidung": "2024-06", "verzug_ab": "2024-07", "rechtshaengig_ab": "2026-03",
+                    "einkommen": [{"ab": "2025-01", "netto": 0}]})
+r = u.berechne(e)["rueckstand"]["Ehegatte"]
+pruefe("1585b ausgeschlossen (2 x 1.500)", r["ausgeschlossen_1585b"], "3000.00")
+pruefe("1585b verbleibend (2 x 1.500)", r["differenz"], "3000.00")
+
 if FEHLER:
     print("\nFEHLER:\n" + "\n".join(FEHLER))
     sys.exit(1)
