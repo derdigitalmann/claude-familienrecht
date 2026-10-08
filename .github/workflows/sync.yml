@@ -1,0 +1,42 @@
+name: Sync Klotzkette Familienrecht
+
+on:
+  schedule:
+    - cron: '17 3 * * *'   # taeglich 03:17 UTC
+  workflow_dispatch:        # manuell ueber den Actions-Tab
+  push:
+    branches: [main]
+    paths: [plugins.txt, scripts/sync.sh]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Gewaehlte Plugins spiegeln
+        run: bash scripts/sync.sh
+
+      - name: Version auslesen
+        id: v
+        run: echo "version=$(jq -r .version .claude-plugin/marketplace.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Pull Request oeffnen oder aktualisieren
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: sync/klotzkette-familienrecht
+          delete-branch: true
+          commit-message: "Sync Klotzkette Familienrecht ${{ steps.v.outputs.version }}"
+          title: "Sync Klotzkette Familienrecht ${{ steps.v.outputs.version }}"
+          body: |
+            Automatischer Abgleich mit Klotzkette/claude-fuer-deutsches-recht, Stand ${{ steps.v.outputs.version }}.
+            Diff pruefen und mergen. Nach dem Merge uebernimmt claude.ai die Aenderung ueber "Automatisch synchronisieren".
+          labels: sync
