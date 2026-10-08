@@ -1,0 +1,21 @@
+{
+ "leitlinie": "suedl",
+ "zeitraum": {"von": "2025-11", "bis": "2026-06"},
+ "pflichtiger": {
+  "erwerbstaetig": true,
+  "einkommen": [
+   {"ab": "2025-01", "netto": 3600, "berufsbedingt": {"modus": "konkret", "fahrt": {"entfernung_km": 40}}, "abzuege": [{"bezeichnung": "Kredit ehebedingt", "betrag": 150}]}
+  ]
+ },
+ "kinder": [
+  {"name": "Lena", "geburtsdatum": "2014-03-15"},
+  {"name": "Tim", "geburtsdatum": "2020-02-01"}
+ ],
+ "ehegatte": {"art": "trennung", "erwerbstaetig": true,
+  "einkommen": [{"ab": "2025-01", "netto": 1300, "berufsbedingt": {"modus": "pauschal"}}]},
+ "zahlungen": [
+  {"monat": "2025-11", "an": "Lena", "betrag": 400},
+  {"monat": "2025-11", "an": "Tim", "betrag": 350},
+  {"monat": "2025-11", "an": "Ehegatte", "betrag": 300}
+ ]
+}

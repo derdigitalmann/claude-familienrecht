@@ -1,0 +1,680 @@
+{
+ "hinweis": "Werte aus den amtlichen PDFs der Düsseldorfer Tabelle (OLG Düsseldorf). Bedarf je Altersstufe: 0-5, 6-11, 12-17, ab 18. Prüfung beim Einlesen: Stufen 1 bis 3 = Mindestbedarf x Prozentsatz, aufgerundet (Anm. A II).",
+ "jahre": {
+  "2024": {
+   "gueltig_ab": "2024-01-01",
+   "quelle": "https://www.olg-duesseldorf.nrw.de/infos/Duesseldorfer_Tabelle/Tabelle-2024/2023_12_11_Duesseldorfer_Tabelle_-2024.pdf",
+   "kindergeld": 250,
+   "gruppen": [
+    {
+     "nr": 1,
+     "von": 0,
+     "bis": 2100,
+     "prozent": 100,
+     "bedarf": [
+      480,
+      551,
+      645,
+      689
+     ],
+     "bedarfskontrollbetrag": null
+    },
+    {
+     "nr": 2,
+     "von": 2101,
+     "bis": 2500,
+     "prozent": 105,
+     "bedarf": [
+      504,
+      579,
+      678,
+      724
+     ],
+     "bedarfskontrollbetrag": 1750
+    },
+    {
+     "nr": 3,
+     "von": 2501,
+     "bis": 2900,
+     "prozent": 110,
+     "bedarf": [
+      528,
+      607,
+      710,
+      758
+     ],
+     "bedarfskontrollbetrag": 1850
+    },
+    {
+     "nr": 4,
+     "von": 2901,
+     "bis": 3300,
+     "prozent": 115,
+     "bedarf": [
+      552,
+      634,
+      742,
+      793
+     ],
+     "bedarfskontrollbetrag": 1950
+    },
+    {
+     "nr": 5,
+     "von": 3301,
+     "bis": 3700,
+     "prozent": 120,
+     "bedarf": [
+      576,
+      662,
+      774,
+      827
+     ],
+     "bedarfskontrollbetrag": 2050
+    },
+    {
+     "nr": 6,
+     "von": 3701,
+     "bis": 4100,
+     "prozent": 128,
+     "bedarf": [
+      615,
+      706,
+      826,
+      882
+     ],
+     "bedarfskontrollbetrag": 2150
+    },
+    {
+     "nr": 7,
+     "von": 4101,
+     "bis": 4500,
+     "prozent": 136,
+     "bedarf": [
+      653,
+      750,
+      878,
+      938
+     ],
+     "bedarfskontrollbetrag": 2250
+    },
+    {
+     "nr": 8,
+     "von": 4501,
+     "bis": 4900,
+     "prozent": 144,
+     "bedarf": [
+      692,
+      794,
+      929,
+      993
+     ],
+     "bedarfskontrollbetrag": 2350
+    },
+    {
+     "nr": 9,
+     "von": 4901,
+     "bis": 5300,
+     "prozent": 152,
+     "bedarf": [
+      730,
+      838,
+      981,
+      1048
+     ],
+     "bedarfskontrollbetrag": 2450
+    },
+    {
+     "nr": 10,
+     "von": 5301,
+     "bis": 5700,
+     "prozent": 160,
+     "bedarf": [
+      768,
+      882,
+      1032,
+      1103
+     ],
+     "bedarfskontrollbetrag": 2550
+    },
+    {
+     "nr": 11,
+     "von": 5701,
+     "bis": 6400,
+     "prozent": 168,
+     "bedarf": [
+      807,
+      926,
+      1084,
+      1158
+     ],
+     "bedarfskontrollbetrag": 2850
+    },
+    {
+     "nr": 12,
+     "von": 6401,
+     "bis": 7200,
+     "prozent": 176,
+     "bedarf": [
+      845,
+      970,
+      1136,
+      1213
+     ],
+     "bedarfskontrollbetrag": 3250
+    },
+    {
+     "nr": 13,
+     "von": 7201,
+     "bis": 8200,
+     "prozent": 184,
+     "bedarf": [
+      884,
+      1014,
+      1187,
+      1268
+     ],
+     "bedarfskontrollbetrag": 3750
+    },
+    {
+     "nr": 14,
+     "von": 8201,
+     "bis": 9700,
+     "prozent": 192,
+     "bedarf": [
+      922,
+      1058,
+      1239,
+      1323
+     ],
+     "bedarfskontrollbetrag": 4350
+    },
+    {
+     "nr": 15,
+     "von": 9701,
+     "bis": 11200,
+     "prozent": 200,
+     "bedarf": [
+      960,
+      1102,
+      1290,
+      1378
+     ],
+     "bedarfskontrollbetrag": 5050
+    }
+   ],
+   "bedarfskontrollbetrag_gruppe1": {
+    "erwerbstaetig": 1450,
+    "nicht_erwerbstaetig": 1200
+   },
+   "selbstbehalt": {
+    "notwendig_erwerbstaetig": 1450,
+    "notwendig_nicht_erwerbstaetig": 1200,
+    "notwendig_wohnkosten": 520,
+    "angemessen": 1750,
+    "angemessen_wohnkosten": 650,
+    "ehegatte_erwerbstaetig": 1600,
+    "ehegatte_nicht_erwerbstaetig": 1475,
+    "ehegatte_wohnkosten": 580
+   },
+   "ehegatte_mindestbedarf": {
+    "erwerbstaetig": 1450,
+    "nicht_erwerbstaetig": 1200
+   },
+   "student_eigener_haushalt": {
+    "bedarf": 930,
+    "wohnkosten": 410
+   },
+   "hoechstes_einkommen": 11200
+  },
+  "2025": {
+   "gueltig_ab": "2025-01-01",
+   "quelle": "https://www.olg-duesseldorf.nrw.de/infos/Duesseldorfer_Tabelle/Tabelle-2025/DT_2025_Neufassung-m-geaenderter-Fussnote.pdf",
+   "kindergeld": 255,
+   "gruppen": [
+    {
+     "nr": 1,
+     "von": 0,
+     "bis": 2100,
+     "prozent": 100,
+     "bedarf": [
+      482,
+      554,
+      649,
+      693
+     ],
+     "bedarfskontrollbetrag": null
+    },
+    {
+     "nr": 2,
+     "von": 2101,
+     "bis": 2500,
+     "prozent": 105,
+     "bedarf": [
+      507,
+      582,
+      682,
+      728
+     ],
+     "bedarfskontrollbetrag": 1750
+    },
+    {
+     "nr": 3,
+     "von": 2501,
+     "bis": 2900,
+     "prozent": 110,
+     "bedarf": [
+      531,
+      610,
+      714,
+      763
+     ],
+     "bedarfskontrollbetrag": 1850
+    },
+    {
+     "nr": 4,
+     "von": 2901,
+     "bis": 3300,
+     "prozent": 115,
+     "bedarf": [
+      555,
+      638,
+      747,
+      797
+     ],
+     "bedarfskontrollbetrag": 1950
+    },
+    {
+     "nr": 5,
+     "von": 3301,
+     "bis": 3700,
+     "prozent": 120,
+     "bedarf": [
+      579,
+      665,
+      779,
+      832
+     ],
+     "bedarfskontrollbetrag": 2050
+    },
+    {
+     "nr": 6,
+     "von": 3701,
+     "bis": 4100,
+     "prozent": 128,
+     "bedarf": [
+      617,
+      710,
+      831,
+      888
+     ],
+     "bedarfskontrollbetrag": 2150
+    },
+    {
+     "nr": 7,
+     "von": 4101,
+     "bis": 4500,
+     "prozent": 136,
+     "bedarf": [
+      656,
+      754,
+      883,
+      943
+     ],
+     "bedarfskontrollbetrag": 2250
+    },
+    {
+     "nr": 8,
+     "von": 4501,
+     "bis": 4900,
+     "prozent": 144,
+     "bedarf": [
+      695,
+      798,
+      935,
+      998
+     ],
+     "bedarfskontrollbetrag": 2350
+    },
+    {
+     "nr": 9,
+     "von": 4901,
+     "bis": 5300,
+     "prozent": 152,
+     "bedarf": [
+      733,
+      843,
+      987,
+      1054
+     ],
+     "bedarfskontrollbetrag": 2450
+    },
+    {
+     "nr": 10,
+     "von": 5301,
+     "bis": 5700,
+     "prozent": 160,
+     "bedarf": [
+      772,
+      887,
+      1039,
+      1109
+     ],
+     "bedarfskontrollbetrag": 2550
+    },
+    {
+     "nr": 11,
+     "von": 5701,
+     "bis": 6400,
+     "prozent": 168,
+     "bedarf": [
+      810,
+      931,
+      1091,
+      1165
+     ],
+     "bedarfskontrollbetrag": 2850
+    },
+    {
+     "nr": 12,
+     "von": 6401,
+     "bis": 7200,
+     "prozent": 176,
+     "bedarf": [
+      849,
+      976,
+      1143,
+      1220
+     ],
+     "bedarfskontrollbetrag": 3250
+    },
+    {
+     "nr": 13,
+     "von": 7201,
+     "bis": 8200,
+     "prozent": 184,
+     "bedarf": [
+      887,
+      1020,
+      1195,
+      1276
+     ],
+     "bedarfskontrollbetrag": 3750
+    },
+    {
+     "nr": 14,
+     "von": 8201,
+     "bis": 9700,
+     "prozent": 192,
+     "bedarf": [
+      926,
+      1064,
+      1247,
+      1331
+     ],
+     "bedarfskontrollbetrag": 4350
+    },
+    {
+     "nr": 15,
+     "von": 9701,
+     "bis": 11200,
+     "prozent": 200,
+     "bedarf": [
+      964,
+      1108,
+      1298,
+      1386
+     ],
+     "bedarfskontrollbetrag": 5050
+    }
+   ],
+   "bedarfskontrollbetrag_gruppe1": {
+    "erwerbstaetig": 1450,
+    "nicht_erwerbstaetig": 1200
+   },
+   "selbstbehalt": {
+    "notwendig_erwerbstaetig": 1450,
+    "notwendig_nicht_erwerbstaetig": 1200,
+    "notwendig_wohnkosten": 520,
+    "angemessen": 1750,
+    "angemessen_wohnkosten": 650,
+    "ehegatte_erwerbstaetig": 1600,
+    "ehegatte_nicht_erwerbstaetig": 1475,
+    "ehegatte_wohnkosten": 580
+   },
+   "ehegatte_mindestbedarf": {
+    "erwerbstaetig": 1450,
+    "nicht_erwerbstaetig": 1200
+   },
+   "student_eigener_haushalt": {
+    "bedarf": 990,
+    "wohnkosten": 440
+   },
+   "hoechstes_einkommen": 11200
+  },
+  "2026": {
+   "gueltig_ab": "2026-01-01",
+   "quelle": "https://www.olg-duesseldorf.nrw.de/infos/Duesseldorfer_Tabelle/Tabelle-2026/DT_2026.pdf",
+   "kindergeld": 259,
+   "gruppen": [
+    {
+     "nr": 1,
+     "von": 0,
+     "bis": 2100,
+     "prozent": 100,
+     "bedarf": [
+      486,
+      558,
+      653,
+      698
+     ],
+     "bedarfskontrollbetrag": null
+    },
+    {
+     "nr": 2,
+     "von": 2101,
+     "bis": 2500,
+     "prozent": 105,
+     "bedarf": [
+      511,
+      586,
+      686,
+      733
+     ],
+     "bedarfskontrollbetrag": 1750
+    },
+    {
+     "nr": 3,
+     "von": 2501,
+     "bis": 2900,
+     "prozent": 110,
+     "bedarf": [
+      535,
+      614,
+      719,
+      768
+     ],
+     "bedarfskontrollbetrag": 1850
+    },
+    {
+     "nr": 4,
+     "von": 2901,
+     "bis": 3300,
+     "prozent": 115,
+     "bedarf": [
+      559,
+      642,
+      751,
+      803
+     ],
+     "bedarfskontrollbetrag": 1950
+    },
+    {
+     "nr": 5,
+     "von": 3301,
+     "bis": 3700,
+     "prozent": 120,
+     "bedarf": [
+      584,
+      670,
+      784,
+      838
+     ],
+     "bedarfskontrollbetrag": 2050
+    },
+    {
+     "nr": 6,
+     "von": 3701,
+     "bis": 4100,
+     "prozent": 128,
+     "bedarf": [
+      623,
+      715,
+      836,
+      894
+     ],
+     "bedarfskontrollbetrag": 2150
+    },
+    {
+     "nr": 7,
+     "von": 4101,
+     "bis": 4500,
+     "prozent": 136,
+     "bedarf": [
+      661,
+      759,
+      889,
+      950
+     ],
+     "bedarfskontrollbetrag": 2250
+    },
+    {
+     "nr": 8,
+     "von": 4501,
+     "bis": 4900,
+     "prozent": 144,
+     "bedarf": [
+      700,
+      804,
+      941,
+      1006
+     ],
+     "bedarfskontrollbetrag": 2350
+    },
+    {
+     "nr": 9,
+     "von": 4901,
+     "bis": 5300,
+     "prozent": 152,
+     "bedarf": [
+      739,
+      849,
+      993,
+      1061
+     ],
+     "bedarfskontrollbetrag": 2450
+    },
+    {
+     "nr": 10,
+     "von": 5301,
+     "bis": 5700,
+     "prozent": 160,
+     "bedarf": [
+      778,
+      893,
+      1045,
+      1117
+     ],
+     "bedarfskontrollbetrag": 2550
+    },
+    {
+     "nr": 11,
+     "von": 5701,
+     "bis": 6400,
+     "prozent": 168,
+     "bedarf": [
+      817,
+      938,
+      1098,
+      1173
+     ],
+     "bedarfskontrollbetrag": 2850
+    },
+    {
+     "nr": 12,
+     "von": 6401,
+     "bis": 7200,
+     "prozent": 176,
+     "bedarf": [
+      856,
+      983,
+      1150,
+      1229
+     ],
+     "bedarfskontrollbetrag": 3250
+    },
+    {
+     "nr": 13,
+     "von": 7201,
+     "bis": 8200,
+     "prozent": 184,
+     "bedarf": [
+      895,
+      1027,
+      1202,
+      1285
+     ],
+     "bedarfskontrollbetrag": 3750
+    },
+    {
+     "nr": 14,
+     "von": 8201,
+     "bis": 9700,
+     "prozent": 192,
+     "bedarf": [
+      934,
+      1072,
+      1254,
+      1341
+     ],
+     "bedarfskontrollbetrag": 4350
+    },
+    {
+     "nr": 15,
+     "von": 9701,
+     "bis": 11200,
+     "prozent": 200,
+     "bedarf": [
+      972,
+      1116,
+      1306,
+      1396
+     ],
+     "bedarfskontrollbetrag": 5050
+    }
+   ],
+   "bedarfskontrollbetrag_gruppe1": {
+    "erwerbstaetig": 1450,
+    "nicht_erwerbstaetig": 1200
+   },
+   "selbstbehalt": {
+    "notwendig_erwerbstaetig": 1450,
+    "notwendig_nicht_erwerbstaetig": 1200,
+    "notwendig_wohnkosten": 520,
+    "angemessen": 1750,
+    "angemessen_wohnkosten": 650,
+    "ehegatte_erwerbstaetig": 1600,
+    "ehegatte_nicht_erwerbstaetig": 1475,
+    "ehegatte_wohnkosten": 580
+   },
+   "ehegatte_mindestbedarf": {
+    "erwerbstaetig": 1450,
+    "nicht_erwerbstaetig": 1200
+   },
+   "student_eigener_haushalt": {
+    "bedarf": 990,
+    "wohnkosten": 440
+   },
+   "hoechstes_einkommen": 11200
+  }
+ }
+}
