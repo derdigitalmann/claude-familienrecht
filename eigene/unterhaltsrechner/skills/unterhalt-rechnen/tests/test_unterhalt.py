@@ -123,6 +123,16 @@ e = basis(zeitraum={"von": "2025-06", "bis": "2025-06"}, pflichtiger={"einkommen
           zahlungen=[{"monat": "2025-06", "an": "R", "betrag": 300}])
 pruefe("Rückstand 2025", u.berechne(e)["rueckstand"]["R"]["differenz"], "54.50")
 
+# 14. Privilegiert volljährig, Pflichtiger allein: keine Höherstufung. 3.000 -> Gruppe 4: 803 - 259 = 544
+e = basis(pflichtiger={"einkommen": [{"ab": "2026-01", "netto": 3000}]},
+          kinder=[{"name": "P", "geburtsdatum": "2007-01-10", "status_ab_18": "privilegiert"}])
+pruefe("Privilegiert ohne Höherstufung", m0(e)["soll"]["P"], "544.00")
+# Mit minderjährigem Geschwister: Gruppe 4 -> Rest 3.000 - 512,50 - 544 = 1.943,50 < BKB 1.950 -> Gruppe 3
+e["kinder"].append({"name": "M", "geburtsdatum": "2015-06-01"})
+r = m0(e)
+pruefe("Geschwister minderjährig", r["soll"]["M"], "484.50")   # 614 - 129,50
+pruefe("Geschwister privilegiert", r["soll"]["P"], "509.00")   # 768 - 259
+
 if FEHLER:
     print("\nFEHLER:\n" + "\n".join(FEHLER))
     sys.exit(1)

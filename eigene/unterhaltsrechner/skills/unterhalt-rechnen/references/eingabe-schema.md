@@ -63,6 +63,7 @@ Alle Beträge in Euro je Monat. Monate als `JJJJ-MM`. Felder ohne Angabe gelten 
 | `warmmiete` | erhöht den Selbstbehalt um den Betrag über dem enthaltenen Wohnanteil. Angemessenheit prüfen. |
 | `selbstbehalt_kuerzung_prozent` | z. B. 10 bei Zusammenleben mit leistungsfähigem Partner. |
 | `status_ab_18` | `privilegiert` (§ 1603 Abs. 2 S. 2 BGB, Rang 1), `volljaehrig` (Rang 4), `student_eigener_haushalt` (Rang 4, fester Bedarf). |
+| `eigenes_einkommen` | anrechenbares Einkommen des Kindes, bei Ausbildungsvergütung nach Abzug des ausbildungsbedingten Mehrbedarfs (Leitlinien Nr. 10.2.3, i. d. R. 100 €). |
 | `umgang_abzug_prozent` | Abzug vom Tabellenbedarf bei erweitertem Umgang, 10 bis 15 (BGH XII ZB 415/25). |
 | `mehrbedarf` | wird dem Bedarf zugeschlagen; anteilige Haftung beider Eltern gesondert prüfen. |
 | `ende` | letzter Unterhaltsmonat eines Kindes. |

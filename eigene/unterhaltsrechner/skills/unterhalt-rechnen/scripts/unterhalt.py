@@ -17,7 +17,7 @@ from pathlib import Path
 DATA = Path(__file__).resolve().parent.parent / "data"
 D = Decimal
 C = D("0.01")
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 
 def dec(x):
@@ -277,7 +277,7 @@ def kinder_monat(e, jm, dtj, ll, ein, pfl_bereinigt, hinweise):
             a2 = max(ea - vorweg_a - sbe_a, D(0))
             quote = a1 / (a1 + a2) if (a1 + a2) else D(0)
             anteil = cent(offen * quote)
-            schritt.append(f"Haftungsanteil (§ 1606 Abs. 3 S. 1 BGB): Pflichtiger {cent(E)} - Vorrang {cent(vorrang)} - Sockel {sockel_p} = {cent(a1)} €; anderer Elternteil {cent(ea)} - Vorrang {cent(vorweg_a)} - Sockel {sbe_a} = {cent(a2)} €; Quote {(quote * 100).quantize(D('0.01'))} % -> {anteil} €")
+            schritt.append(f"Haftungsanteil (§ 1606 Abs. 3 S. 1 BGB): Pflichtiger {cent(E)} - Vorrang {cent(vorrang)} - Sockel {sockel_p} € = {cent(a1)} €; anderer Elternteil {cent(ea)} - Vorrang {cent(vorweg_a)} - Sockel {sbe_a} € = {cent(a2)} €; Quote {(quote * 100).quantize(D('0.01'))} % -> {anteil} €")
         else:
             anteil = cent(offen)
             hinweise.add(f"{k['name']}: volljährig, Einkommen des anderen Elternteils fehlt. Rechner setzt den vollen offenen Bedarf an; Haftungsquote nach § 1606 Abs. 3 S. 1 BGB ergänzen.")
@@ -288,8 +288,14 @@ def kinder_monat(e, jm, dtj, ll, ein, pfl_bereinigt, hinweise):
         out = []
         for k in minderj:
             d = k["def"]
-            bedarf = dec(g["bedarf"][k["stufe"]])
-            schritt = [f"Gruppe {gr}, Altersstufe {k['stufe'] + 1} (Alter {k['alter']}): {bedarf} €"]
+            if k["status"] == "privilegiert" and gr > basis and not gm.get("fest"):
+                # keine Höherstufung bei Volljährigen (z. B. Leitlinien NRW Nr. 11.2)
+                gk = basis
+                bedarf = dec(dtj["gruppen"][gk - 1]["bedarf"][k["stufe"]])
+                schritt = [f"Gruppe {gk} (keine Höherstufung bei Volljährigen), Altersstufe 4 (Alter {k['alter']}): {bedarf} €"]
+            else:
+                bedarf = dec(g["bedarf"][k["stufe"]])
+                schritt = [f"Gruppe {gr}, Altersstufe {k['stufe'] + 1} (Alter {k['alter']}): {bedarf} €"]
             if d.get("umgang_abzug_prozent"):
                 p = dec(d["umgang_abzug_prozent"])
                 if p > 15:
@@ -432,7 +438,7 @@ def ehegatte_monat(jm, dtj, ll, ein, pfl, ku_zahl_rang1, ku_zahl_r4, hinweise):
         schritte.append(f"Zahlbetrag auf volle Euro abgerundet, damit der Selbstbehalt gewahrt bleibt: {betrag} €")
     else:
         betrag = runde(anspruch, ll)
-        schritte.append(f"Zahlbetrag gerundet ({ll['rundung']['text']}, Nr. {ll['rundung']['nr']}): {betrag} €")
+        schritte.append(f"Zahlbetrag gerundet ({ll['rundung']['text'].rstrip('.')}, Nr. {ll['rundung']['nr']}): {betrag} €")
     return {"anspruch": cent(anspruch), "zahlbetrag": betrag, "schritte": schritte, "art": eh.get("art", "trennung")}
 
 
@@ -513,6 +519,26 @@ def abschnitte(monate_out):
     return out
 
 
+def de(text):
+    """Rechenschritt für die Ausgabe: deutsche Zahlen, Rechenzeichen als Wort am Zeilenanfang."""
+    import re
+    for pre, wort in (("- ", "abzüglich "), ("+ ", "zuzüglich "), ("= ", "ergibt ")):
+        if text.startswith(pre):
+            text = wort + text[len(pre):]
+            break
+
+    def zahl(m):
+        if m.string[max(0, m.start() - 4):m.start()] in ("Nr. ", "Nr.."):
+            return m.group(0)
+        ganz, nach = m.group(1), m.group(2)
+        if nach is None:
+            if not m.string[m.end():m.end() + 2] == " €":
+                return m.group(0)
+            return f"{int(ganz):,}".replace(",", ".")
+        return f"{int(ganz):,}".replace(",", ".") + "," + nach
+    return re.sub(r"(?<![\d.,/-])(\d+)(?:\.(\d{1,2}))?(?![\d,/-]|\.\d)", zahl, text)
+
+
 def markdown(r):
     L = []
     ll = r["leitlinie"]
@@ -537,23 +563,23 @@ def markdown(r):
         L.append(f"### {zr} (Düsseldorfer Tabelle {m['dt']})\n")
         L.append("**Einkommen Pflichtiger**\n")
         for s in m["pflichtiger"]["schritte"]:
-            L.append(f"- {s}")
+            L.append(f"- {de(s)}")
         ki = m["kinder_info"]
         if ki:
-            L.append(f"\n**Eingruppierung:** {ki.get('eingruppierung')}")
+            L.append(f"\n**Eingruppierung:** {de(ki.get('eingruppierung'))}")
             for p in ki.get("herabstufung", []):
-                L.append(f"- {p}")
+                L.append(f"- {de(p)}")
             L.append(f"- maßgebende Gruppe {ki.get('gruppe')}, notwendiger Selbstbehalt {eur(ki.get('selbstbehalt_notwendig'))}")
             if ki.get("mangelfall"):
-                L.append(f"- Mangelfall: {ki['mangelfall']}")
+                L.append(f"- Mangelfall: {de(ki['mangelfall'])}")
         for k in m["kinder"]:
             L.append(f"\n**{k['name']}** (Rang {k['rang']}, {k['status']})\n")
             for s in k["schritte"]:
-                L.append(f"- {s}")
+                L.append(f"- {de(s)}")
         if m["ehegatte"]:
             L.append(f"\n**Ehegattenunterhalt** ({m['ehegatte']['art']})\n")
             for s in m["ehegatte"]["schritte"]:
-                L.append(f"- {s}")
+                L.append(f"- {de(s)}")
         L.append("")
     if any(m["ist"] for m in r["monate"]):
         L.append("## Rückstand\n")
@@ -569,7 +595,7 @@ def markdown(r):
         L.append("")
     L.append("## Hinweise und Annahmen\n")
     for h in r["hinweise"]:
-        L.append(f"- {h}")
+        L.append(f"- {de(h)}")
     p = r["parameter"]
     L.append(f"- Leitlinie berufsbedingte Aufwendungen (Nr. {p['berufsbedingt']['nr']}): {p['berufsbedingt']['text']}")
     L.append(f"- Leitlinie Fahrtkosten (Nr. {p['fahrtkosten']['nr']}): {p['fahrtkosten']['text']}")

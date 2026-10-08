@@ -1,6 +1,6 @@
 {
   "name": "unterhaltsrechner",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Testphase. Unterhaltsrechner mit festem Rechenkern: Kindes- und Ehegattenunterhalt nach Düsseldorfer Tabelle 2024 bis 2026 und der Leitlinie des zuständigen OLG (wird vorab abgefragt), Mangelfall, Haftungsquote, Rückstand. Eigene Ergänzung von digitalmann, nicht von Klotzkette.",
   "author": {"name": "digitalmann", "url": "https://digitalmann.de"},
   "homepage": "https://github.com/derdigitalmann/claude-familienrecht",
