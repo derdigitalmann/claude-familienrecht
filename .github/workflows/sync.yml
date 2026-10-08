@@ -25,11 +25,24 @@ jobs:
       - name: Gewaehlte Plugins spiegeln
         run: bash scripts/sync.sh
 
+      - name: Ergebnis pruefen
+        run: |
+          jq -e '.plugins | length > 0' .claude-plugin/marketplace.json > /dev/null
+          for src in $(jq -r '.plugins[].source' .claude-plugin/marketplace.json); do
+            test -f "$src/.claude-plugin/plugin.json" || { echo "fehlt: $src/.claude-plugin/plugin.json"; exit 1; }
+            jq -e . "$src/.claude-plugin/plugin.json" > /dev/null
+          done
+          for t in eigene/*/skills/*/tests/test_*.py; do
+            [ -f "$t" ] && python3 "$t"
+          done
+          echo "Pruefung bestanden"
+
       - name: Version auslesen
         id: v
         run: echo "version=$(jq -r .version .claude-plugin/marketplace.json)" >> "$GITHUB_OUTPUT"
 
       - name: Pull Request oeffnen oder aktualisieren
+        id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
           branch: sync/klotzkette-familienrecht
@@ -38,5 +51,11 @@ jobs:
           title: "Sync Klotzkette Familienrecht ${{ steps.v.outputs.version }}"
           body: |
             Automatischer Abgleich mit Klotzkette/claude-fuer-deutsches-recht, Stand ${{ steps.v.outputs.version }}.
-            Diff pruefen und mergen. Nach dem Merge uebernimmt claude.ai die Aenderung ueber "Automatisch synchronisieren".
+            Wird nach bestandener Pruefung automatisch gemergt. Danach uebernimmt claude.ai die Aenderung ueber "Automatisch synchronisieren".
           labels: sync
+
+      - name: Pull Request automatisch mergen
+        if: steps.cpr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr merge "${{ steps.cpr.outputs.pull-request-number }}" --merge --delete-branch -R "$GITHUB_REPOSITORY"
