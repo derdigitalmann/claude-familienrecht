@@ -6,7 +6,7 @@ WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 
 git clone -q --depth 1 --filter=blob:none --sparse "$UPSTREAM" "$WORK/upstream"
-git -C "$WORK/upstream" sparse-checkout set --no-cone /.claude-plugin/marketplace.json '/LICENSE*'
+git -C "$WORK/upstream" sparse-checkout set --no-cone /.claude-plugin/marketplace.json '/LICENSE*' /NOTICE
 
 python3 -I - "$WORK" <<'PY'
 import json, sys
@@ -41,7 +41,7 @@ while read -r p; do
   cp -a "$WORK/upstream/$p" "plugins/$p"
 done < "$WORK/paths.txt"
 cp "$WORK/marketplace.json" .claude-plugin/marketplace.json
-cp "$WORK"/upstream/LICENSE* .
+cp "$WORK"/upstream/LICENSE* "$WORK"/upstream/NOTICE .
 
 size=$(du -sm --exclude=.git . | cut -f1)
 echo "Groesse: ${size} MB, Plugins: $(wc -l < "$WORK/paths.txt")"
