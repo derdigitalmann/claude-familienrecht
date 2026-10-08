@@ -1,0 +1,702 @@
+{
+ "stand": "Leitlinien Stand 01.01.2026, ausgewertet am 08.10.2026",
+ "hinweis": "Parameter, die der Rechner automatisch anwendet. Alles andere steht im Feld text und wird als Hinweis ausgegeben. Für Monate vor 2026 gelten die Parameter von 2026 weiter; die damalige Fassung ist gesondert zu prüfen.",
+ "leitlinien": [
+  {
+   "id": "suedl",
+   "name": "Süddeutsche Leitlinien (SüdL)",
+   "olg": [
+    "Bamberg",
+    "Karlsruhe",
+    "München",
+    "Nürnberg",
+    "Stuttgart",
+    "Zweibrücken"
+   ],
+   "bundeslaender": [
+    "Bayern",
+    "Baden-Württemberg",
+    "Rheinland-Pfalz (OLG-Bezirk Zweibrücken)"
+   ],
+   "quelle": "https://www.justiz.bayern.de/media/images/behoerden-und-gerichte/oberlandesgerichte/nuernberg/su%CC%88ddeutsche_leitlinien_2026.pdf",
+   "quelle_art": "amtlich",
+   "berufsbedingt": {
+    "pauschale": "ja",
+    "prozent": 5,
+    "min": null,
+    "max": null,
+    "nr": "10.2.1",
+    "text": "Bei Anhaltspunkten Pauschale 5 % des Nettoeinkommens, kein Mindest- oder Höchstbetrag; darüber konkret; bei beschränkter Leistungsfähigkeit ggf. nur konkrete Kosten."
+   },
+   "fahrtkosten": {
+    "modell": "km",
+    "satz": 0.42,
+    "staffel_ab_entfernung_km": 30,
+    "satz_mehrkilometer": 0.28,
+    "arbeitstage_default": 220,
+    "arbeitstage_in_leitlinie": null,
+    "nr": "10.2.2",
+    "text": "0,42 € je gefahrenen km; ab ca. 30 km einfach für Mehrkilometer i. d. R. 0,28 € (kann)."
+   },
+   "bonus": {
+    "anteil": 0.1,
+    "basis": "nach_kindesunterhalt",
+    "nr": "15.2",
+    "text": "Erwerbseinkünfte zu 90 %; Bonus bei der Bedarfsermittlung, nicht bei der Leistungsfähigkeit; vorher Abzug Kindesunterhalt (Zahlbetrag)."
+   },
+   "selbstbehalt": {
+    "ehegatte_erwerbstaetig": null,
+    "ehegatte_nicht_erwerbstaetig": null,
+    "nr": "21.4",
+    "text": "wie Düsseldorfer Tabelle"
+   },
+   "rundung": {
+    "modus": "aufrunden",
+    "nr": "25",
+    "text": "Auf volle Euro aufzurunden."
+   },
+   "eingruppierung": "Tabelle für zwei Berechtigte; Ab- oder Zuschläge i. d. R. durch Gruppenwechsel; Bedarfskontrollbeträge können herangezogen werden (Nr. 11.2)."
+  },
+  {
+   "id": "nrw",
+   "name": "Leitlinien NRW",
+   "olg": [
+    "Düsseldorf",
+    "Hamm",
+    "Köln"
+   ],
+   "bundeslaender": [
+    "Nordrhein-Westfalen"
+   ],
+   "quelle": "https://www.olg-duesseldorf.nrw.de/infos/Duesseldorfer_Tabelle/Tabelle-2026/Leitlinien-NRW-2026.pdf",
+   "quelle_art": "amtlich",
+   "berufsbedingt": {
+    "pauschale": "nur_fiktiv",
+    "prozent": 5,
+    "min": null,
+    "max": null,
+    "nr": "10.2.1",
+    "text": "Pauschale 5 % i. d. R. nur bei fiktiven Erwerbseinkünften; sonst konkret darzulegen. Kein Mindest- oder Höchstbetrag."
+   },
+   "fahrtkosten": {
+    "modell": "km",
+    "satz": 0.42,
+    "staffel_ab_entfernung_km": 30,
+    "satz_mehrkilometer": 0.28,
+    "arbeitstage_default": 220,
+    "arbeitstage_in_leitlinie": null,
+    "nr": "10.2.2",
+    "text": "0,42 € je gefahrenen km; ab dem 31. Entfernungskilometer i. d. R. 0,28 € für Mehrkilometer. Vorrang ÖPNV."
+   },
+   "bonus": {
+    "anteil": 0.1,
+    "basis": "nach_kindesunterhalt",
+    "nr": "15.2",
+    "text": "1/10 des bereinigten Erwerbseinkommens nach vollständigem (bei Mischeinkünften anteiligem) Abzug des Kindesunterhalts (Zahlbetrag)."
+   },
+   "selbstbehalt": {
+    "ehegatte_erwerbstaetig": null,
+    "ehegatte_nicht_erwerbstaetig": null,
+    "nr": "21.4",
+    "text": "wie Düsseldorfer Tabelle"
+   },
+   "rundung": {
+    "modus": "kaufmaennisch",
+    "nr": "25",
+    "text": "Auf volle Euro zu runden."
+   },
+   "eingruppierung": "Zwei Berechtigte ohne Rücksicht auf Rang; Zu- und Abschläge durch Gruppenwechsel; Bedarfskontrollbeträge können herangezogen werden; nicht bei Volljährigen und beiderseitiger Barunterhaltspflicht (Nr. 11.2)."
+  },
+  {
+   "id": "saarbruecken",
+   "name": "Saarländisches OLG (Orientierung an den Leitlinien NRW)",
+   "olg": [
+    "Saarbrücken"
+   ],
+   "bundeslaender": [
+    "Saarland"
+   ],
+   "verweis": "nrw",
+   "quelle": "https://www.saarland.de/solg/DE/presse/pressemitteilungen/pressemitteilungen/medieninfos/2025/pm_2025_12_19_Unterhaltsrechtliche_Leitlinien_01.01.2026",
+   "quelle_art": "Pressemitteilung, Seite beim Abruf nicht erreichbar; Inhalt laut FamRB-Blog (otto-schmidt.de) [UNSICHER]"
+  },
+  {
+   "id": "niedersachsen",
+   "name": "Unterhaltsrechtliche Leitlinien der OLG Braunschweig, Celle und Oldenburg",
+   "olg": [
+    "Braunschweig",
+    "Celle",
+    "Oldenburg"
+   ],
+   "bundeslaender": [
+    "Niedersachsen"
+   ],
+   "quelle": "https://oberlandesgericht-celle.niedersachsen.de/download/224452/Unterhaltsrechtliche_Leitlinien_2026.pdf.pdf",
+   "quelle_art": "amtlich",
+   "berufsbedingt": {
+    "pauschale": "ja",
+    "prozent": 5,
+    "min": 50,
+    "max": 150,
+    "nr": "10.2.1",
+    "text": "Pauschale 5 %, bei Vollzeit mindestens 50 €, höchstens 150 €; darüber konkret."
+   },
+   "fahrtkosten": {
+    "modell": "km",
+    "satz": 0.42,
+    "staffel_ab_entfernung_km": 30,
+    "satz_mehrkilometer": 0.28,
+    "arbeitstage_default": 220,
+    "arbeitstage_in_leitlinie": null,
+    "nr": "10.2.2",
+    "text": "0,42 € je gefahrenen km; bei mehr als 60 km täglich (hin und zurück) ab dem 61. km 0,28 € (kann). Vorrang ÖPNV."
+   },
+   "bonus": {
+    "anteil": 0.1,
+    "basis": "nach_kindesunterhalt",
+    "nr": "15.2",
+    "text": "1/10 vom bereinigten Erwerbseinkommen; vorher Abzug Kindesunterhalt (Zahlbetrag)."
+   },
+   "selbstbehalt": {
+    "ehegatte_erwerbstaetig": null,
+    "ehegatte_nicht_erwerbstaetig": null,
+    "nr": "21.4",
+    "text": "wie Düsseldorfer Tabelle"
+   },
+   "rundung": {
+    "modus": "aufrunden",
+    "nr": "25",
+    "text": "Auf volle Euro aufzurunden; Ehegattenunterhalt kann auf 5 € gerundet werden."
+   },
+   "eingruppierung": "Zwei Berechtigte ohne Rücksicht auf Rang; Höher- oder Herabstufung kann gerechtfertigt sein (Nr. 11.2)."
+  },
+  {
+   "id": "kg",
+   "name": "Kammergericht Berlin",
+   "olg": [
+    "Kammergericht"
+   ],
+   "bundeslaender": [
+    "Berlin"
+   ],
+   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Berlin-2026.pdf",
+   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "berufsbedingt": {
+    "pauschale": "ja",
+    "prozent": 5,
+    "min": 50,
+    "max": 150,
+    "nr": "10.2.1",
+    "text": "Ohne Nachweis 5 %, mindestens 50 € (bei geringfügiger Teilzeit weniger), höchstens 150 €; darüber konkret."
+   },
+   "fahrtkosten": {
+    "modell": "km",
+    "satz": 0.42,
+    "staffel_ab_entfernung_km": null,
+    "satz_mehrkilometer": null,
+    "arbeitstage_default": 220,
+    "arbeitstage_in_leitlinie": null,
+    "nr": "10.2.2",
+    "text": "0,42 € je gefahrenen km bei Unzumutbarkeit ÖPNV; ab ca. 30 km einfach Abweichung nach unten ohne festen Satz; angemessenes Verhältnis zum Unterhalt."
+   },
+   "bonus": {
+    "anteil": 0.1,
+    "basis": "nach_kindesunterhalt",
+    "nr": "15.2",
+    "text": "1/10 des bereinigten Erwerbseinkommens; vorher Abzug Kindesunterhalt (Zahlbetrag)."
+   },
+   "selbstbehalt": {
+    "ehegatte_erwerbstaetig": null,
+    "ehegatte_nicht_erwerbstaetig": null,
+    "nr": "21.4",
+    "text": "wie Düsseldorfer Tabelle"
+   },
+   "rundung": {
+    "modus": "aufrunden",
+    "nr": "25",
+    "text": "Auf volle Euro aufzurunden."
+   },
+   "eingruppierung": "Zwei Berechtigte; Zu- oder Abschläge können angemessen sein; in obersten Gruppen ggf. Bedarfsbegrenzung (Nr. 11.2)."
+  },
+  {
+   "id": "brandenburg",
+   "name": "Brandenburgisches OLG",
+   "olg": [
+    "Brandenburg"
+   ],
+   "bundeslaender": [
+    "Brandenburg"
+   ],
+   "quelle": "https://ordentliche-gerichtsbarkeit.brandenburg.de/sixcms/media.php/9/Unterhaltsleitlinien_Brandenburgisches_OLG_2026_final.pdf",
+   "quelle_art": "amtlich",
+   "berufsbedingt": {
+    "pauschale": "ja",
+    "prozent": 5,
+    "min": null,
+    "max": null,
+    "nr": "10.2.1",
+    "text": "I. d. R. 5 % bei hinreichenden Anhaltspunkten, kein Mindest- oder Höchstbetrag; bei höheren Aufwendungen oder Mangelfall alles konkret."
+   },
+   "fahrtkosten": {
+    "modell": "km",
+    "satz": 0.42,
+    "staffel_ab_entfernung_km": null,
+    "satz_mehrkilometer": null,
+    "arbeitstage_default": 220,
+    "arbeitstage_in_leitlinie": null,
+    "nr": "10.2.2",
+    "text": "Bei konkreter Darlegung 0,42 € je km (Hin- und Rückfahrt); keine Staffel genannt."
+   },
+   "bonus": {
+    "anteil": 0.1,
+    "basis": "vor_kindesunterhalt",
+    "nr": "15.2",
+    "text": "Erwerbseinkünfte um 1/10 kürzen vor Verminderung um Kindesunterhalt und berücksichtigungsfähige Verbindlichkeiten."
+   },
+   "selbstbehalt": {
+    "ehegatte_erwerbstaetig": 1600,
+    "ehegatte_nicht_erwerbstaetig": 1600,
+    "nr": "21.4",
+    "text": "Ehegattenselbstbehalt i. d. R. 1.600 € (billiger Selbstbehalt), ohne Unterscheidung nach Erwerbstätigkeit; Warmmiete 580 €."
+   },
+   "rundung": {
+    "modus": "kaufmaennisch",
+    "nr": "25",
+    "text": "Kann auf volle Euro gerundet werden."
+   },
+   "eingruppierung": "Zwei Berechtigte; bei weniger Berechtigten Höhergruppierung auch um mehr als eine Gruppe möglich; bei mehr Korrektur über Bedarfskontrollbetrag (Nr. 11.2)."
+  },
+  {
+   "id": "bremen",
+   "name": "Hanseatisches OLG Bremen",
+   "olg": [
+    "Bremen"
+   ],
+   "bundeslaender": [
+    "Bremen"
+   ],
+   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Bremen-2026.pdf",
+   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "berufsbedingt": {
+    "pauschale": "nein",
+    "prozent": null,
+    "min": null,
+    "max": null,
+    "nr": "10.2.1",
+    "text": "Berücksichtigung setzt konkrete Darlegung voraus; keine Pauschale."
+   },
+   "fahrtkosten": {
+    "modell": "km",
+    "satz": 0.42,
+    "staffel_ab_entfernung_km": 30,
+    "satz_mehrkilometer": 0.28,
+    "arbeitstage_default": 220,
+    "arbeitstage_in_leitlinie": null,
+    "nr": "10.2.2",
+    "text": "0,42 € je gefahrenen km; ab ca. 60 km hin und zurück für Mehrkilometer i. d. R. 0,28 €."
+   },
+   "bonus": {
+    "anteil": 0.1,
+    "basis": "nach_kindesunterhalt",
+    "nr": "15.2",
+    "text": "Erwerbseinkünfte zu 9/10; vorher Abzug Kindesunterhalt (Zahlbetrag)."
+   },
+   "selbstbehalt": {
+    "ehegatte_erwerbstaetig": 1600,
+    "ehegatte_nicht_erwerbstaetig": 1600,
+    "nr": "21.4",
+    "text": "Ehegattenselbstbehalt i. d. R. 1.600 €, keine Unterscheidung nach Erwerbstätigkeit; Wohnbedarf 580 €."
+   },
+   "rundung": {
+    "modus": "aufrunden",
+    "nr": "25",
+    "text": "Auf volle € aufzurunden."
+   },
+   "eingruppierung": "Zwei Berechtigte, auch Nachrangige zählen; Bedarfskontrollbeträge sind zu beachten: bei Unterschreitung nächst niedrigere Gruppe (Nr. 11.2)."
+  },
+  {
+   "id": "dresden",
+   "name": "OLG Dresden",
+   "olg": [
+    "Dresden"
+   ],
+   "bundeslaender": [
+    "Sachsen"
+   ],
+   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Dresden-2026.pdf",
+   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "berufsbedingt": {
+    "pauschale": "ja",
+    "prozent": 5,
+    "min": null,
+    "max": 150,
+    "nr": "10.2.1",
+    "text": "Bei Anhaltspunkten 5 %, höchstens 150 €; bei beschränkter Leistungsfähigkeit stets konkret."
+   },
+   "fahrtkosten": {
+    "modell": "km",
+    "satz": 0.42,
+    "staffel_ab_entfernung_km": 30,
+    "satz_mehrkilometer": 0.28,
+    "arbeitstage_default": 220,
+    "arbeitstage_in_leitlinie": null,
+    "nr": "10.2.2",
+    "text": "0,42 € je gefahrenen km; ab ca. 30 km einfach für Mehrkilometer i. d. R. 0,28 €."
+   },
+   "bonus": {
+    "anteil": 0.1,
+    "basis": "nach_kindesunterhalt",
+    "nr": "15.2",
+    "text": "1/10 des bereinigten Nettoeinkommens, nicht bei der Leistungsfähigkeit; vorher Abzug Kindesunterhalt (Zahlbetrag)."
+   },
+   "selbstbehalt": {
+    "ehegatte_erwerbstaetig": 1600,
+    "ehegatte_nicht_erwerbstaetig": 1600,
+    "nr": "21.4",
+    "text": "Ehegattenselbstbehalt regelmäßig 1.600 €; Wohnkosten 580 €."
+   },
+   "rundung": {
+    "modus": "aufrunden",
+    "nr": "25",
+    "text": "Auf volle Euro aufzurunden."
+   },
+   "eingruppierung": "Zwei Berechtigte; Zu- oder Abschläge können angemessen sein (Nr. 11.2)."
+  },
+  {
+   "id": "frankfurt",
+   "name": "OLG Frankfurt am Main",
+   "olg": [
+    "Frankfurt am Main"
+   ],
+   "bundeslaender": [
+    "Hessen"
+   ],
+   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Frankfurt-aM-2026.pdf",
+   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "berufsbedingt": {
+    "pauschale": "ja",
+    "prozent": 5,
+    "min": null,
+    "max": 150,
+    "nr": "10.2.1",
+    "text": "Bei Anhaltspunkten 5 %, höchstens 150 €; die Pauschale erfasst auch Fahrtkosten; darüber konkret."
+   },
+   "fahrtkosten": {
+    "modell": "km",
+    "satz": 0.42,
+    "staffel_ab_entfernung_km": 30,
+    "satz_mehrkilometer": 0.21,
+    "arbeitstage_default": 220,
+    "arbeitstage_in_leitlinie": 220,
+    "nr": "10.2.2",
+    "text": "0,42 € je gefahrenen km, wenn PKW angemessen; über 30 km einfach bei ca. 220 Tagen Mehrkilometer zur Hälfte."
+   },
+   "bonus": {
+    "anteil": 0.1,
+    "basis": "nach_kindesunterhalt",
+    "nr": "15.2",
+    "text": "1/10 nach Abzug Werbungskosten, ehelicher Lasten und Kindesunterhalt."
+   },
+   "selbstbehalt": {
+    "ehegatte_erwerbstaetig": null,
+    "ehegatte_nicht_erwerbstaetig": null,
+    "nr": "21.4",
+    "text": "wie Düsseldorfer Tabelle"
+   },
+   "rundung": {
+    "modus": "aufrunden",
+    "nr": "25",
+    "text": "Auf volle Euro aufzurunden."
+   },
+   "eingruppierung": "Zwei Berechtigte (ohne Rücksicht auf Rang, soweit Mittel für Nachrangige vorhanden); i. d. R. Gruppenwechsel (Nr. 11.2)."
+  },
+  {
+   "id": "hamburg",
+   "name": "Hanseatisches OLG Hamburg",
+   "olg": [
+    "Hamburg"
+   ],
+   "bundeslaender": [
+    "Hamburg"
+   ],
+   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Hamburg-2026.pdf",
+   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "berufsbedingt": {
+    "pauschale": "ja",
+    "prozent": 5,
+    "min": 50,
+    "max": 150,
+    "nr": "10.2.1",
+    "text": "Ohne Nachweis 5 %, mindestens 50 €, höchstens 150 €; nicht neben konkret geltend gemachten Fahrtkosten."
+   },
+   "fahrtkosten": {
+    "modell": "km",
+    "satz": 0.42,
+    "staffel_ab_entfernung_km": 30,
+    "satz_mehrkilometer": 0.28,
+    "arbeitstage_default": 220,
+    "arbeitstage_in_leitlinie": null,
+    "nr": "10.2.2",
+    "text": "0,42 € je gefahrenen km; bei langen Strecken regelmäßig 0,28 € (Schwelle nicht beziffert, Rechner nimmt 30 km einfach an). Vorrang ÖPNV."
+   },
+   "bonus": {
+    "anteil": 0.1,
+    "basis": "nach_kindesunterhalt",
+    "nr": "15.2",
+    "text": "Erwerbseinkünfte zu 9/10; vorher Abzug Kindesunterhalt (Zahlbetrag)."
+   },
+   "selbstbehalt": {
+    "ehegatte_erwerbstaetig": null,
+    "ehegatte_nicht_erwerbstaetig": null,
+    "nr": "21.4",
+    "text": "wie Düsseldorfer Tabelle"
+   },
+   "rundung": {
+    "modus": "aufrunden",
+    "nr": "25",
+    "text": "Auf volle Euro aufzurunden."
+   },
+   "eingruppierung": "Zwei Berechtigte; Zu- oder Abschläge können angemessen sein; Bedarfskontrollbeträge zur Angemessenheitskontrolle (Nr. 11.2)."
+  },
+  {
+   "id": "koblenz",
+   "name": "OLG Koblenz",
+   "olg": [
+    "Koblenz"
+   ],
+   "bundeslaender": [
+    "Rheinland-Pfalz (OLG-Bezirk Koblenz)"
+   ],
+   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Koblenz-2026.pdf",
+   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "berufsbedingt": {
+    "pauschale": "ja",
+    "prozent": 5,
+    "min": 50,
+    "max": 150,
+    "nr": "10.2.1",
+    "text": "Bei Anhaltspunkten 5 %, bei Vollerwerbstätigkeit mindestens 50 €, höchstens 150 €; darüber insgesamt nachzuweisen."
+   },
+   "fahrtkosten": {
+    "modell": "monat_je_entfernungskm",
+    "satz": 14,
+    "staffel_ab_entfernung_km": 30,
+    "satz_mehrkilometer": 7,
+    "arbeitstage_default": null,
+    "arbeitstage_in_leitlinie": null,
+    "nr": "10.2.2",
+    "text": "I. d. R. 14 € je Entfernungskilometer im Monat (alle Kfz-Kosten inkl. Finanzierung); über 30 km Kürzung ab dem 31. km auf die Hälfte möglich."
+   },
+   "bonus": {
+    "anteil": 0.1,
+    "basis": "nach_kindesunterhalt",
+    "nr": "15.2",
+    "text": "1/10 vom Erwerbseinkommen nach Abzug berufsbedingter Aufwendungen, Kindesunterhalt, Betreuungskosten und Schulden."
+   },
+   "selbstbehalt": {
+    "ehegatte_erwerbstaetig": null,
+    "ehegatte_nicht_erwerbstaetig": null,
+    "nr": "21.4",
+    "text": "wie Düsseldorfer Tabelle"
+   },
+   "rundung": {
+    "modus": "kaufmaennisch",
+    "nr": "25",
+    "text": "Auf volle Euro zu runden."
+   },
+   "eingruppierung": "Eingruppierung nach anrechenbarem Einkommen; Ab- oder Zuschläge nach Anm. A I DT (Nr. 11.2)."
+  },
+  {
+   "id": "naumburg",
+   "name": "OLG Naumburg",
+   "olg": [
+    "Naumburg"
+   ],
+   "bundeslaender": [
+    "Sachsen-Anhalt"
+   ],
+   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Naumburg-2026.pdf",
+   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "berufsbedingt": {
+    "pauschale": "ja",
+    "prozent": 5,
+    "min": null,
+    "max": null,
+    "nr": "10.2.1",
+    "text": "Bei Anhaltspunkten 5 %, kein Mindest- oder Höchstbetrag; bei höheren Kosten oder Mangelfall konkret."
+   },
+   "fahrtkosten": {
+    "modell": "km",
+    "satz": 0.42,
+    "staffel_ab_entfernung_km": 30,
+    "satz_mehrkilometer": 0.28,
+    "arbeitstage_default": 220,
+    "arbeitstage_in_leitlinie": null,
+    "nr": "10.2.2",
+    "text": "0,42 € je gefahrenen km; ab ca. 30 km einfach Abweichung i. d. R. auf 2/3 (0,28 €). Ob nur Mehrkilometer, lässt der Text offen; Rechner wendet 0,28 € auf Mehrkilometer an [UNSICHER]."
+   },
+   "bonus": {
+    "anteil": 0.1,
+    "basis": "nach_kindesunterhalt",
+    "nr": "15.2",
+    "text": "Erwerbseinkünfte zu 90 %; vorher Abzug Kindesunterhalt, soweit eheprägend."
+   },
+   "selbstbehalt": {
+    "ehegatte_erwerbstaetig": null,
+    "ehegatte_nicht_erwerbstaetig": null,
+    "nr": "21.4",
+    "text": "wie Düsseldorfer Tabelle"
+   },
+   "rundung": {
+    "modus": "aufrunden",
+    "nr": "25",
+    "text": "Stets auf volle Euro aufzurunden."
+   },
+   "eingruppierung": "Zwei Berechtigte; i. d. R. Gruppenwechsel (Nr. 11.2)."
+  },
+  {
+   "id": "rostock",
+   "name": "OLG Rostock",
+   "olg": [
+    "Rostock"
+   ],
+   "bundeslaender": [
+    "Mecklenburg-Vorpommern"
+   ],
+   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Rostock-2026.pdf",
+   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "berufsbedingt": {
+    "pauschale": "nein",
+    "prozent": null,
+    "min": null,
+    "max": null,
+    "nr": "10.2.1",
+    "text": "Berufsbedingte Aufwendungen nur, wenn geltend gemacht und dargelegt; Schätzung nach § 287 ZPO möglich; keine Pauschale genannt."
+   },
+   "fahrtkosten": {
+    "modell": "km",
+    "satz": 0.42,
+    "staffel_ab_entfernung_km": null,
+    "satz_mehrkilometer": null,
+    "arbeitstage_default": 220,
+    "arbeitstage_in_leitlinie": null,
+    "nr": "10.2.2",
+    "text": "0,42 € je gefahrenen km; ab ca. 30 km einfach Abweichung für die Gesamtstrecke ohne festen Satz; Steuervorteile gegenrechnen."
+   },
+   "bonus": {
+    "anteil": 0.1,
+    "basis": "nach_kindesunterhalt",
+    "nr": "15.2",
+    "text": "1/10 vom bereinigten Nettoerwerbseinkommen; vorher Abzug Kindesunterhalt (Zahlbetrag)."
+   },
+   "selbstbehalt": {
+    "ehegatte_erwerbstaetig": null,
+    "ehegatte_nicht_erwerbstaetig": null,
+    "nr": "21.4",
+    "text": "wie Düsseldorfer Tabelle"
+   },
+   "rundung": {
+    "modus": "aufrunden",
+    "nr": "25",
+    "text": "Auf volle EUR aufzurunden."
+   },
+   "eingruppierung": "Zwei Berechtigte; i. d. R. Gruppenwechsel; Korrektur über Bedarfskontrollbetrag (Nr. 11.2)."
+  },
+  {
+   "id": "schleswig",
+   "name": "Schleswig-Holsteinisches OLG",
+   "olg": [
+    "Schleswig"
+   ],
+   "bundeslaender": [
+    "Schleswig-Holstein"
+   ],
+   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Schleswig-Holstein-2026.pdf",
+   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "berufsbedingt": {
+    "pauschale": "nein",
+    "prozent": null,
+    "min": null,
+    "max": null,
+    "nr": "10.2.1",
+    "text": "Nur konkret nachgewiesene Aufwendungen; keine Pauschale."
+   },
+   "fahrtkosten": {
+    "modell": "km",
+    "satz": 0.42,
+    "staffel_ab_entfernung_km": 30,
+    "satz_mehrkilometer": 0.28,
+    "arbeitstage_default": 220,
+    "arbeitstage_in_leitlinie": 220,
+    "nr": "10.2.2",
+    "text": "0,42 € für die ersten 30 Entfernungskilometer, weitere 0,28 €; Beispielrechnung mit 220 Arbeitstagen; über 15 % des Nettos Darlegung zur Unzumutbarkeit ÖPNV."
+   },
+   "bonus": {
+    "anteil": 0.1,
+    "basis": "nach_kindesunterhalt",
+    "nr": "15.2",
+    "text": "Bereinigtes Erwerbseinkommen zu 90 %; vorher Abzug Kindesunterhalt (Zahlbetrag)."
+   },
+   "selbstbehalt": {
+    "ehegatte_erwerbstaetig": null,
+    "ehegatte_nicht_erwerbstaetig": null,
+    "nr": "21.4",
+    "text": "wie Düsseldorfer Tabelle"
+   },
+   "rundung": {
+    "modus": "aufrunden",
+    "nr": "25",
+    "text": "Auf volle Euro aufzurunden, außer Zahlbeträge nach Kindergeldanrechnung."
+   },
+   "eingruppierung": "Zwei Berechtigte; i. d. R. eine Stufe herauf oder herab; Bedarfskontrollbetrag kann zur Herabstufung führen; erweiterter Umgang kann Herabstufung rechtfertigen (Nr. 11.2)."
+  },
+  {
+   "id": "thueringen",
+   "name": "Thüringer OLG (Jena)",
+   "olg": [
+    "Jena"
+   ],
+   "bundeslaender": [
+    "Thüringen"
+   ],
+   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Thueringen-2026.pdf",
+   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "berufsbedingt": {
+    "pauschale": "ja",
+    "prozent": 5,
+    "min": 50,
+    "max": 150,
+    "nr": "10.2.1",
+    "text": "Bei Anhaltspunkten, auch bei fiktiven Einkünften, 5 %, mindestens 50 €, höchstens 150 €; darüber voll konkret."
+   },
+   "fahrtkosten": {
+    "modell": "km",
+    "satz": 0.42,
+    "staffel_ab_entfernung_km": 30,
+    "satz_mehrkilometer": 0.28,
+    "arbeitstage_default": 220,
+    "arbeitstage_in_leitlinie": 220,
+    "nr": "10.2.2",
+    "text": "In engen Verhältnissen i. d. R. nur ÖPNV; sonst Entfernungs-km x 2 x 0,42 € x 220 : 12; über 30 km einfach Mehrkilometer mit 0,28 € empfohlen."
+   },
+   "bonus": {
+    "anteil": 0.1,
+    "basis": "nach_kindesunterhalt",
+    "nr": "15.2",
+    "text": "Bedarf 45 % des bereinigten Nettoeinkommens (entspricht 1/10 Bonus) zzgl. 1/2 sonstiger Einkünfte."
+   },
+   "selbstbehalt": {
+    "ehegatte_erwerbstaetig": 1600,
+    "ehegatte_nicht_erwerbstaetig": 1600,
+    "nr": "21.4",
+    "text": "Ehegattenselbstbehalt i. d. R. 1.600 €, unabhängig von Erwerbstätigkeit; Wohnkosten 580 €."
+   },
+   "rundung": {
+    "modus": "aufrunden",
+    "nr": "25",
+    "text": "Auf volle Euro aufzurunden."
+   },
+   "eingruppierung": "Zwei Berechtigte; Zu- oder Abschläge können angemessen sein (Nr. 11.2)."
+  }
+ ]
+}

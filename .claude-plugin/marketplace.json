@@ -1,10 +1,9 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "mehmet-familienrecht",
-  "description": "Familienrecht aus Klotzkette/claude-fuer-deutsches-recht, automatisch gespiegelt.",
+  "description": "Familienrecht aus Klotzkette/claude-fuer-deutsches-recht (gespiegelt) plus eigene Ergaenzungen von digitalmann in Testphase.",
   "owner": {
-    "name": "Klotzkette",
-    "email": "39582916+Klotzkette@users.noreply.github.com"
+    "name": "digitalmann"
   },
   "plugins": [
     {
@@ -45,6 +44,16 @@
       "author": {
         "name": "Klotzkette",
         "email": "39582916+Klotzkette@users.noreply.github.com"
+      }
+    },
+    {
+      "name": "unterhaltsrechner",
+      "source": "./eigene/unterhaltsrechner",
+      "description": "TESTPHASE, nicht von Klotzkette. Unterhaltsrechner mit festem Rechenkern: Düsseldorfer Tabelle 2024 bis 2026, Leitlinie des zuständigen OLG (wird vorab abgefragt), Mangelfall, Haftungsquote, Rückstand.",
+      "version": "0.1.0",
+      "author": {
+        "name": "digitalmann",
+        "url": "https://digitalmann.de"
       }
     }
   ],
