@@ -17,7 +17,7 @@ from pathlib import Path
 DATA = Path(__file__).resolve().parent.parent / "data"
 D = Decimal
 C = D("0.01")
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 
 
 def dec(x):
@@ -133,12 +133,55 @@ def fahrtkosten(fk_eing, ll, hinweise):
     return cent(betrag), formel
 
 
+UNSICHERE_QUELLEN = {"bwa": "BWA", "schaetzung": "Schätzung", "angabe": "eigene Angabe"}
+
+
+def selbstaendig_netto(sd, rolle, schritte, hinweise):
+    """Netto bei Selbstständigen: Durchschnittsgewinn je Monat abzüglich Steuern und Vorsorge."""
+    zr = sd.get("zeitraeume") or []
+    if not zr:
+        raise Fehler(f"{rolle}: selbstaendig.zeitraeume fehlt")
+    summe = sum((dec(z.get("gewinn")) for z in zr), D(0))
+    monate = sum((int(z.get("monate", 12)) for z in zr))
+    for z in zr:
+        schritte.append(f"Gewinn {z.get('bezeichnung', '?')} ({z.get('quelle', 'ohne Quellenangabe')}, {z.get('monate', 12)} Monate): {cent(z.get('gewinn'))} €")
+    schnitt = summe / monate
+    schritte.append(f"Durchschnitt {cent(summe)} € : {monate} Monate = {cent(schnitt)} € monatlich")
+    unsicher = sorted({UNSICHERE_QUELLEN[z.get("quelle")] for z in zr if z.get("quelle") in UNSICHERE_QUELLEN})
+    ohne = [z.get("bezeichnung", "?") for z in zr if not z.get("quelle")]
+    if unsicher or ohne:
+        hinweise.add(f"VORLÄUFIG: {rolle}: Einkommen beruht auf {', '.join(unsicher + (['Zeiträumen ohne Quellenangabe'] if ohne else []))}. Eine BWA ist eine ungeprüfte, vorläufige Auswertung ohne Abschlussbuchungen (Abschreibungen, Rückstellungen, Privatanteile). Ergebnis nur Platzhalter bis zur Vorlage von Steuerbescheiden und Gewinnermittlungen bzw. Jahresabschlüssen; Auskunft und Belege nach § 1605 BGB bzw. § 1580 BGB, § 235 FamFG.")
+    if monate < 36:
+        hinweise.add(f"{rolle}: Selbstständigeneinkommen über {monate} Monate statt des üblichen Durchschnitts der letzten drei Jahre. Schwankungen und Saisonalität können nicht ausgeglichen werden.")
+    st = sd.get("steuern_jahr")
+    if st is None:
+        hinweise.add(f"{rolle}: Steuern auf den Gewinn fehlen (Einkommensteuer, Solidaritätszuschlag, Kirchensteuer). Netto ist zu hoch. Steuerlast aus Bescheiden (In-Prinzip) oder Berechnung des Steuerberaters ergänzen.")
+        st = 0
+    kv = dec(sd.get("kranken_pflege_monat"))
+    av = dec(sd.get("altersvorsorge_monat"))
+    netto = schnitt - dec(st) / 12 - kv - av
+    schritte.append(f"- Steuern {cent(dec(st) / 12)} € (Jahr {cent(st)} € : 12)")
+    schritte.append(f"- Kranken- und Pflegeversicherung {cent(kv)} €")
+    schritte.append(f"- Altersvorsorge {cent(av)} €")
+    if schnitt > 0 and av > schnitt * D("0.24"):
+        hinweise.add(f"{rolle}: Altersvorsorge über 24 % des Gewinns (rund 20 % primär plus 4 % sekundär). Angemessenheit prüfen.")
+    if not sd.get("entnahmen_geprueft"):
+        hinweise.add(f"{rolle}: Privatentnahmen und Liquidität zur Plausibilisierung des Gewinns prüfen (Entnahmen deutlich über dem Gewinn sprechen für höheres verfügbares Einkommen).")
+    schritte.append(f"= Nettoeinkommen aus selbstständiger Tätigkeit {cent(netto)} €")
+    return cent(netto)
+
+
 def bereinige(abschnitt, ll, rolle, hinweise):
     """Liefert bereinigtes Erwerbs- und sonstiges Einkommen mit Rechenschritten."""
     schritte = []
-    netto = dec(abschnitt.get("netto"))
     sonst = dec(abschnitt.get("sonstige_einkuenfte")) + dec(abschnitt.get("wohnvorteil"))
-    schritte.append(f"Nettoerwerbseinkommen {cent(netto)} €")
+    if abschnitt.get("selbstaendig"):
+        netto = selbstaendig_netto(abschnitt["selbstaendig"], rolle, schritte, hinweise)
+        if (abschnitt.get("berufsbedingt") or {}).get("modus") == "pauschal":
+            hinweise.add(f"{rolle}: Pauschale für berufsbedingte Aufwendungen bei Selbstständigen nicht ansetzen; Betriebsausgaben sind im Gewinn bereits abgezogen.")
+    else:
+        netto = dec(abschnitt.get("netto"))
+        schritte.append(f"Nettoerwerbseinkommen {cent(netto)} €")
     bb = abschnitt.get("berufsbedingt") or {"modus": "keine"}
     modus = bb.get("modus", "keine")
     abzug_bb = D(0)
@@ -444,6 +487,31 @@ def ehegatte_monat(jm, dtj, ll, ein, pfl, ku_zahl_rang1, ku_zahl_r4, hinweise):
 
 # --------------------------------------------------------------- Hauptlauf
 
+def hinweise_buendeln(hinweise):
+    """Fasst gleichlautende Monatshinweise ("JJJJ-MM: Text") zu Zeiträumen zusammen."""
+    import re
+    monatlich, rest = {}, []
+    for h in hinweise:
+        m = re.match(r"^(\d{4}-\d{2}): (.*)$", h)
+        if m:
+            monatlich.setdefault(m.group(2), []).append(monat(m.group(1)))
+        else:
+            rest.append(h)
+    for text, ms in monatlich.items():
+        ms.sort()
+        teile, start, prev = [], ms[0], ms[0]
+        for jm in ms[1:] + [None]:
+            folge = jm is not None and (jm[0] * 12 + jm[1]) == (prev[0] * 12 + prev[1]) + 1
+            if folge:
+                prev = jm
+                continue
+            teile.append(mstr(start) if start == prev else f"{mstr(start)} bis {mstr(prev)}")
+            if jm is not None:
+                start = prev = jm
+        rest.append(f"{', '.join(teile)}: {text}")
+    return sorted(rest, key=lambda h: (not h.startswith("VORLÄUFIG"), h))
+
+
 def berechne(ein):
     dt, lls = lade_daten()
     ll = leitlinie_aufloesen(lls, ein.get("leitlinie"))
@@ -494,7 +562,8 @@ def berechne(ein):
     for r in rueck.values():
         r["differenz"] = r["soll"] - r["ist"]
     return {"version": VERSION, "leitlinie": {k: ll.get(k) for k in ("id", "name", "olg", "quelle", "quelle_art", "verweis")},
-            "monate": monate_out, "rueckstand": rueck, "hinweise": sorted(hinweise),
+            "vorlaeufig": any(h.startswith("VORLÄUFIG") for h in hinweise),
+            "monate": monate_out, "rueckstand": rueck, "hinweise": hinweise_buendeln(hinweise),
             "parameter": {"berufsbedingt": ll["berufsbedingt"], "fahrtkosten": ll["fahrtkosten"], "bonus": ll["bonus"],
                           "selbstbehalt_ehegatte": ll["selbstbehalt"], "rundung": ll["rundung"], "eingruppierung": ll.get("eingruppierung")}}
 
@@ -542,7 +611,11 @@ def de(text):
 def markdown(r):
     L = []
     ll = r["leitlinie"]
-    L.append("# Unterhaltsberechnung (Testphase)\n")
+    if any(h.startswith("VORLÄUFIG") for h in r["hinweise"]):
+        L.append("# VORLÄUFIGE Unterhaltsberechnung (Testphase)\n")
+        L.append("**Vorläufig:** Das Einkommen beruht ganz oder teilweise auf BWA, Schätzung oder ungeprüfter Angabe. Die Zahlen sind Platzhalter bis zur Belegprüfung.\n")
+    else:
+        L.append("# Unterhaltsberechnung (Testphase)\n")
     L.append(f"Leitlinie: **{ll['name']}** (OLG {', '.join(ll['olg'])}), Quelle: {ll['quelle']} ({ll['quelle_art']}). Rechner v{r['version']}, eigene Ergänzung von digitalmann, nicht von Klotzkette. Ergebnis vor Verwendung nachprüfen.\n")
     namen = []
     for m in r["monate"]:

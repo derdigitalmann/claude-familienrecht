@@ -133,6 +133,30 @@ r = m0(e)
 pruefe("Geschwister minderjährig", r["soll"]["M"], "484.50")   # 614 - 129,50
 pruefe("Geschwister privilegiert", r["soll"]["P"], "509.00")   # 768 - 259
 
+# 15. Selbstständiger mit drei Steuerbescheiden: 193.000 : 36 = 5.361,11 - 1.233,33 - 780 - 600 = 2.747,78
+#     Gruppe 3 -> 3 Berechtigte -> 2 -> Bedarfskontrolle -> 1; Kinder 12 und 8 Jahre; Ehegatte durch Selbstbehalt auf 195 € begrenzt
+sd = {"zeitraeume": [{"bezeichnung": "2023", "quelle": "steuerbescheid", "gewinn": 58000},
+                     {"bezeichnung": "2024", "quelle": "steuerbescheid", "gewinn": 64000},
+                     {"bezeichnung": "2025", "quelle": "steuerbescheid", "gewinn": 71000}],
+      "steuern_jahr": 14800, "kranken_pflege_monat": 780, "altersvorsorge_monat": 600, "entnahmen_geprueft": True}
+e = basis(zeitraum={"von": "2026-03", "bis": "2026-03"},
+          pflichtiger={"einkommen": [{"ab": "2026-01", "selbstaendig": sd}]},
+          kinder=[{"name": "E", "geburtsdatum": "2013-05-20"}, {"name": "P", "geburtsdatum": "2018-02-11"}],
+          ehegatte={"erwerbstaetig": True, "einkommen": [{"ab": "2026-01", "netto": 1150, "berufsbedingt": {"modus": "pauschal"}}]})
+r = u.berechne(e)
+m = r["monate"][0]
+pruefe("Selbstständig Netto", m["pflichtiger"]["gesamt"], "2747.78")
+pruefe("Selbstständig Kind 12", m["soll"]["E"], "523.50")
+pruefe("Selbstständig Kind 8", m["soll"]["P"], "428.50")
+pruefe("Selbstständig Ehegatte", m["soll"]["Ehegatte"], 195)
+pruefe("Selbstständig nicht vorläufig", int(r["vorlaeufig"]), 0)
+# Nur BWA ohne Steuern: vorläufig
+sd2 = {"zeitraeume": [{"bezeichnung": "BWA 01-08/2026", "quelle": "bwa", "gewinn": 46400, "monate": 8}], "kranken_pflege_monat": 780}
+e["pflichtiger"]["einkommen"][0]["selbstaendig"] = sd2
+r = u.berechne(e)
+pruefe("BWA vorläufig", int(r["vorlaeufig"]), 1)
+pruefe("BWA Steuerhinweis", int(any("Steuern auf den Gewinn fehlen" in h for h in r["hinweise"])), 1)
+
 if FEHLER:
     print("\nFEHLER:\n" + "\n".join(FEHLER))
     sys.exit(1)

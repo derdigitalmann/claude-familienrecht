@@ -75,6 +75,34 @@ Alle Beträge in Euro je Monat. Monate als `JJJJ-MM`. Felder ohne Angabe gelten 
 | `weitere_berechtigte` | zusätzliche Unterhaltsberechtigte für die Eingruppierung (z. B. Kind aus anderer Beziehung). |
 | `zahlungen[]` | für den Rückstand; `an` ist der Kindesname oder `Ehegatte`. |
 
+## Selbstständige
+
+Statt `netto` ein Objekt `selbstaendig` im Einkommensabschnitt:
+
+```json
+{"ab": "2026-01", "berufsbedingt": {"modus": "keine"},
+ "selbstaendig": {
+   "zeitraeume": [
+     {"bezeichnung": "2023", "quelle": "steuerbescheid", "gewinn": 58000},
+     {"bezeichnung": "2024", "quelle": "jahresabschluss", "gewinn": 64000},
+     {"bezeichnung": "BWA 01-08/2026", "quelle": "bwa", "gewinn": 46400, "monate": 8}
+   ],
+   "steuern_jahr": 14800,
+   "kranken_pflege_monat": 780,
+   "altersvorsorge_monat": 600,
+   "entnahmen_geprueft": true}}
+```
+
+| Feld | Bedeutung |
+|---|---|
+| `zeitraeume[].quelle` | `steuerbescheid`, `jahresabschluss`, `gewinnermittlung` gelten als belastbar; `bwa`, `schaetzung`, `angabe` oder fehlende Quelle machen das Ergebnis **vorläufig** (Kopfzeile und `vorlaeufig: true`). |
+| `monate` | Standard 12; für unterjährige BWA die Zahl der Monate. Unter 36 Monaten gibt das Skript einen Hinweis aus. |
+| `steuern_jahr` | Einkommensteuer, Soli, Kirchensteuer auf den Gewinn (In-Prinzip). Fehlt der Wert, warnt das Skript, weil das Netto dann zu hoch ist. |
+| `altersvorsorge_monat` | Hinweis, wenn über 24 % des Gewinns. |
+| `entnahmen_geprueft` | ohne `true` Hinweis auf Plausibilisierung über Privatentnahmen. |
+
+Netto = Durchschnittsgewinn je Monat - Steuern/12 - Kranken- und Pflegeversicherung - Altersvorsorge. Keine Pauschale für berufsbedingte Aufwendungen (Hinweis, falls doch eingegeben). Der Erwerbstätigenbonus gilt auch für Selbstständigeneinkommen.
+
 ## Rechenregeln des Skripts
 
 - Altersstufe wechselt ab dem Monat, in dem das Kind 6, 12 oder 18 wird (§ 1612a Abs. 3 BGB). Für die 4. Altersstufe gilt dieselbe Regel.

@@ -36,7 +36,13 @@ Zuerst aus den Unterlagen (Gehaltsabrechnungen, Jahresmeldung, Steuerbescheid, K
 | anderer Elternteil | nur bei volljährigen Kindern: Einkommen für die Haftungsquote |
 | Änderungen | jede Einkommensänderung als eigener Abschnitt mit `ab` |
 
-Einkommensermittlung bei Selbstständigen, fiktives Einkommen, Wohnvorteil und Erwerbsobliegenheit sind Wertungsfragen. Hierfür die Klotzkette-Skills nutzen, wenn installiert (`fachanwalt-familienrecht:unterhalt-berechnen-und-gegenrechnen`, `fachanwalt-familienrecht:unterhalt-selbstaendige-einkommensaufklaerung`). Das Ergebnis der Wertung geht als Zahl in die Eingabe.
+**Selbstständige:** Eingabe über `selbstaendig` (siehe Schema). Maßstab ist der Durchschnitt der letzten drei abgeschlossenen Jahre aus Steuerbescheiden und Gewinnermittlungen bzw. Jahresabschlüssen. Liegt nur eine BWA vor:
+1. Nicht als endgültiges Ergebnis rechnen. Das Skript kennzeichnet die Berechnung als VORLÄUFIG; diese Kennzeichnung bleibt in jeder Ausgabe.
+2. Fehlende Steuern nicht schätzen, sondern beim Steuerberater erfragen oder als Spanne mit zwei Varianten rechnen und beide ausweisen.
+3. Auskunfts- und Belegplan mitliefern: Steuerbescheide und Erklärungen der letzten drei Jahre, Gewinnermittlungen bzw. Jahresabschlüsse mit Anlagenverzeichnis, Summen- und Saldenliste, Entnahmen und Einlagen, Darlehensverträge, Nachweise Kranken- und Altersvorsorge (§ 1605 BGB, § 1580 BGB, § 235 FamFG; ggf. Stufenantrag).
+4. BWA-Werte kritisch lesen: keine Abschreibungen, Rückstellungen, Privatanteile (Kfz, Telefon), Saisonverlauf; vorläufiges Ergebnis nicht einfach hochrechnen.
+
+Einkommensermittlung bei Selbstständigen im Einzelnen, fiktives Einkommen, Wohnvorteil und Erwerbsobliegenheit sind Wertungsfragen. Hierfür die Klotzkette-Skills nutzen, wenn installiert (`fachanwalt-familienrecht:unterhalt-berechnen-und-gegenrechnen`, `fachanwalt-familienrecht:unterhalt-selbstaendige-einkommensaufklaerung`). Das Ergebnis der Wertung geht als Zahl in die Eingabe.
 
 ### 3. Eingabe schreiben und rechnen
 

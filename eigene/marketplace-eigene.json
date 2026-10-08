@@ -3,7 +3,7 @@
     "name": "unterhaltsrechner",
     "source": "./eigene/unterhaltsrechner",
     "description": "TESTPHASE, nicht von Klotzkette. Unterhaltsrechner mit festem Rechenkern: Düsseldorfer Tabelle 2024 bis 2026, Leitlinie des zuständigen OLG (wird vorab abgefragt), Mangelfall, Haftungsquote, Rückstand.",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "author": {"name": "digitalmann", "url": "https://digitalmann.de"}
   }
 ]
