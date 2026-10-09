@@ -11,7 +11,7 @@
       "name": "betreuungsrecht",
       "source": "./plugins/betreuungsrecht",
       "description": "Betreuungsrechtliche Skills für ehrenamtliche Familienbetreuer, Berufs- und Vereinsbetreuer: Kaltstart, Scan-Akte, Kalender, Gerichtskommunikation, Jahresbericht, Vermögensverzeichnis, Genehmigungspflichten, Wunschermittlung, Kontoanalyse und Schutzplan nach BtOG und BGB.",
-      "version": "445.33.1",
+      "version": "445.33.3",
       "author": {
         "name": "Klotzkette",
         "email": "39582916+Klotzkette@users.noreply.github.com"
@@ -30,7 +30,7 @@
     {
       "name": "richter-familiengericht",
       "source": "./plugins/gerichtsplugins/richter-familiengericht",
-      "version": "445.33.1",
+      "version": "445.35.2",
       "description": "Familiengericht: Ehesachen Scheidung Versorgungsausgleich Kindschaftssachen elterliche Sorge Umgang Kindesunterhalt Trennungs- und Ehegattenunterhalt Gewaltschutz Adoption Vormundschaft Betreuungsteile mit Verfahrenskostenhilfe und Tenorvorschlag",
       "author": {
         "name": "Klotzkette",
