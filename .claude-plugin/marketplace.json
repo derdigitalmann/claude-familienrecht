@@ -21,7 +21,7 @@
       "name": "fachanwalt-familienrecht",
       "source": "./plugins/fachanwalt-familienrecht",
       "description": "Plugin Fachanwalt für Familienrecht. Orientierung Normen Mandate Fristen Literatur. Familiengericht FamFG Scheidung Sorge Umgang Unterhalt Zugewinn Ehevertrag eingetragene Lebenspartnerschaft. Ergaenzend zum Plugin kanzlei-allgemein.",
-      "version": "445.33.1",
+      "version": "445.35.3",
       "author": {
         "name": "Klotzkette",
         "email": "39582916+Klotzkette@users.noreply.github.com"
@@ -41,12 +41,12 @@
       "name": "zugewinnausgleich",
       "source": "./plugins/zugewinnausgleich",
       "description": "Zugewinnausgleich bei Trennung und Scheidung: zehn Skills fuer die belegte Berechnung des Zugewinns, Erbschaft, Immobilien, Unternehmen, Auskunft und Vergleich bis zum beauftragten Ergebnis.",
-      "version": "445.33.1",
+      "version": "445.35.3",
       "author": {
         "name": "Klotzkette",
         "email": "39582916+Klotzkette@users.noreply.github.com"
       }
     }
   ],
-  "version": "445.33.1"
+  "version": "445.35.3"
 }
