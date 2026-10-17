@@ -1,6 +1,8 @@
-# 1. Unterhalt, Vermögen, Versorgung und Kindschaftssachen bearbeiten
+# Unterhalt, Vermögen, Versorgung und Kindschaftssachen bearbeiten
 
-Prüfe den verlangten Unterhalt für die streitigen Monate, den Zugewinn zu den maßgeblichen Vermögensstichtagen oder die Sorge- und Umgangsregelung für das betroffene Kind. Lies zuerst die vorhandenen Auskünfte, Titel, Zustellungsnachweise und tragenden Belege. Formuliere daraus die beauftragte Beratung, Rechnung, Vereinbarung oder den Antrag; ein Scheidungsauftrag umfasst nicht automatisch sämtliche Folgesachen.
+Erarbeite aus Auskünften, Titeln, Bekanntgabenachweisen und tragenden Belegen die bestellte Beratung, Rechnung, Vereinbarung oder den Antrag. Unterhalt richtet sich nach den streitigen Monaten, Zugewinn nach Vermögensstichtagen und eine Sorge- oder Umgangsregelung nach dem konkreten Kind. Akuter Schutzbedarf geht vor wirtschaftlicher Aufarbeitung; Scheidung umfasst nicht automatisch sämtliche Folgesachen.
+
+Bei niedrigerem Endvermögen nach Trennung sind Paragrafen 1375 Absatz 2 und 1379 BGB mit BGH, Beschluss vom 13.11.2024, XII ZB 558/23, Rn. 17 bis 23, zu prüfen. Titel, verlangtes Datum und Annahme der Auskunft als Erfüllung bestimmen die Beweislastfolge. Ein Kontoauszug allein reicht nicht; ein später bestrittener Trennungstag beseitigt die Folge nicht automatisch. Die Zurückverweisung stellt nicht jede Vermögensminderung als illoyal fest.
 
 ## 1. Auftrag und Arbeitsstand
 
@@ -76,6 +78,10 @@ Heirat und Zustellung belegen. Ehezeit nach Paragraf 3 VersAusglG bis zum letzte
 Je Anrecht Träger, Kennung, Einheit, Ehezeitanteil, Ausgleichswert, korrespondierenden Kapitalwert, Kosten und Teilungsordnung dokumentieren. Fragebogen und Erwerbsbiografie abgleichen. Bei Fehlern bestimmte Erläuterung nach Paragraf 220 FamFG verlangen; keinen eigenen Pauschalfaktor einsetzen. Nach der Trägerantwort prüfen, ob sie gerade die beanstandete Einheit, Ehezeit oder Kostenposition erklärt. Den Anrechtsvergleich und anschließend die bestellte gerichtliche Stellungnahme berichtigen; ein neu auftauchendes, bislang unbeauskunftetes Anrecht gezielt aufklären, statt die Aufstellung vorschnell als vollständig zu behandeln.
 
 ### 5.2. Teilung und Wahl
+
+Bei einer abgetretenen Versicherungsleistung zuerst Vertrag und Vereinbarung auslegen: Rentenanrecht, Kapitalanspruch, Zugewinnausgleich oder Gegenleistung für einen Versorgungsausgleichsverzicht? [BGH, Beschluss vom 11.06.2026, IX ZB 1/25](https://www.bundesgerichtshof.de/SharedDocs/Entscheidungen/DE/Zivilsenate/IX_ZS/2025/IX_ZB___1-25.pdf?__blob=publicationFile&v=1), Rn. 17 bis 23, trennt diese Wege auch innerhalb derselben Scheidungsfolgenvereinbarung. Paragraf 2 Absatz 2 Nummer 3 VersAusglG verlangt grundsätzlich eine Rente; betriebliche und zertifizierte Anrechte sind unabhängig von der Leistungsform gesondert zu prüfen. Absatz 4 verhindert doppelten Ausgleich. Die Überschrift „Versorgungsausgleich“ ordnet einen privaten Kapitalanspruch nicht von selbst diesem System zu.
+
+Bei Insolvenz oder Pfändung keine Freigabe als angeblich selbst erwirtschaftetes Einkommen allein wegen der Ehe versprechen: Eine Zugewinnausgleichsforderung fällt nicht unter Paragraf 850i ZPO. Paragraf 852 Absatz 2 ZPO sowie Paragrafen 35 und 36 InsO gesondert prüfen. Fordere die konkrete Abtretungs- und Gegenleistungsklausel an; danach Anrechtszuordnung, Vermögensrechnung und Schutzempfehlung gemeinsam ändern. Grenze: Zurückverweisung wegen ungeklärten Abtretungsgrundes. Ob echte Versorgungsanrechte oder Gegenleistungen für deren Ausschluss unter Paragraf 850i ZPO fallen können, ließ der BGH offen; keine automatische Pfändbarkeit jeder Versicherungsleistung ableiten.
 
 Interne Teilung und gleichwertige Teilhabe prüfen. Externe Teilung nur mit tragfähiger Grundlage nach Paragraf 14 beziehungsweise einschlägiger Sonderregel. Trägerverlangen, Wertgrenze und Vereinbarung auseinanderhalten. Kostenangemessenheit und bereits berücksichtigte Kosten kontrollieren.
 
