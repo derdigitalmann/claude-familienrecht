@@ -1,6 +1,10 @@
 # 1. Betreuungsbedarf, Vertretung und Vermögensführung prüfen
 
-Prüfe, welche rechtliche Unterstützung die betreute Person tatsächlich benötigt, welche Handlung der Betreuer vornehmen darf und was er dem Gericht nachweisen muss. Erarbeite daraus das angeforderte Gerichtsschreiben, Vermögensverzeichnis, den Bericht oder die begründete Beratung. Lies vorhandene Beschlüsse, Vollmachten, Schreiben, Kontoauszüge und Belege zuerst; bekannte Tatsachen und bereits geprüfte Unterlagen nur bei einem konkreten Widerspruch erneut aufgreifen.
+Welche Unterstützung braucht die betreute Person, was darf der Betreuer tun und was muss er dem Gericht nachweisen? Erarbeite das angeforderte Gerichtsschreiben, Vermögensverzeichnis, den Bericht oder die Beratung aus Beschlüssen, Vollmachten und Belegen. Wünsche und unterstützte Selbstbesorgung nach Paragraf 1821 BGB gehen einer unnötigen Stellvertretung vor.
+
+Bei Auswahl eines gewünschten Angehörigen ist BVerfG, Beschluss vom 31.03.2021, 1 BvR 413/20, einschlägig: Konkrete Eignungszweifel und mögliche Hilfen prüfen, nicht nur einen Fremden für besser geeignet erklären. Das schützt keinen ungeeigneten Angehörigen vor einem notwendigen Wechsel. Die Entscheidung zum früheren Recht anhand der heutigen Paragrafen 1816, 1817 und 1868 BGB anwenden; Quellenumfang und Nachweise bleiben unten ausgewiesen.
+
+Lies vorhandenes Material zuerst. Bereits geklärte Tatsachen nur bei einem konkreten Widerspruch erneut aufgreifen.
 
 Bestimme betreute Person, handelnde Person, konkrete Angelegenheit, Aufgabenbereich und Verfahrensstand; Angehörigeneigenschaft allein belegt keine Vertretungsmacht.
 
@@ -113,3 +117,8 @@ Unterscheide für jede auffällige Position gesicherten Sachverhalt, gegenläufi
 Entwirf anhand dieser Ergebnisse vollständige, sachliche Schreiben mit adressiertem Empfänger, Vertrags- oder Kontobezug, konkreten Beträgen, Belegen, Anfrage oder Erklärung und einem nachvollziehbaren nächsten Schritt. Wähle zwischen bloßer Nachfrage, Bestreiten eines behaupteten Vertragsschlusses, ordentlicher Kündigung und erst nach gesonderter Prüfung möglichen Gestaltungsrechten. Fasse Anfechtung, Widerruf und Rücktritt nicht zu einer wahllosen Sammelerklärung zusammen. Rechtliche Fristen, Form und Voraussetzungen sind am geltenden amtlichen Text für das konkrete Geschäft zu prüfen. Keine Aufgabe eines ausdrücklich gewünschten Angebots ohne Befugnis und dokumentierte Entscheidung. Vor einem Versand Empfänger, Anlagen und endgültige Fassung freigeben lassen.
 
 Bei vorhandenem Plugin führt der Skill `unterlagen-auswerten-abrechnung-anschreiben` diesen Ablauf vertieft aus. Für den selbständigen Einsatz bietet die gesonderte Unterlagen-Werkstatt denselben Arbeitsweg einschließlich Excel-Schema, Brieflogik und Quellenprüfung. Dieser Abschnitt bleibt auch ohne diese Ergänzungen ausführbar; ohne Dateiwerkzeuge liefere vollständige Tabellen und Briefe und benenne den noch ausstehenden Export.
+
+
+### 2.6. Bankerstattung im übernommenen Altbestand
+
+Bei nicht autorisierten Zahlungen Bankanzeige nicht bis zum Abschluss der Abrechnung verschieben. [EuGH, 15.10.2026, C-70/25](https://curia.europa.eu/juris/document.jsf?docid=328145&doclang=DE), Rn. 31–42, 45–47, 52: unverzügliche Erstattung trotz Vorwurfs grober Fahrlässigkeit; Regress gesondert prüfen. Ausnahme: begründeter Betrugsverdacht gegen den Zahler mit schriftlicher Behördenmitteilung. Betreuung beweist keine fehlende Zustimmung; Erstattung nicht doppelt buchen. Paragrafen 675j, 675u, 675v und 675w BGB getrennt anwenden. Bei Bankablehnung die bloße Behauptung grober Fahrlässigkeit nicht als endgültige Verlustzuweisung übernehmen. Eine bereits erfolgte Gutschrift erfordert einen Buchungsnachweis; bei bloß unklarer Ausgabe zunächst zielgerichtet aufklären. Trägt nicht: automatische Unautorisiertheit wegen Betreuung, endgültige Haftungsfreiheit oder ein allgemeines Aufrechnungsverbot. [Amtlicher Quellenabgleich](references/eugh-c-70-25-erstattung-und-regress.md).
