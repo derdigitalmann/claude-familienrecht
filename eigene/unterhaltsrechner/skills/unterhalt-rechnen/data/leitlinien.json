@@ -299,7 +299,8 @@
       "nr": "–",
       "text": "Keine eigene Regel; Aufrundung auf volle Euro angenommen. [UNSICHER]"
      },
-     "quelle_art": "Pressemitteilung SOLG Nr. 3/2023 (FamRZ-Abdruck): DT als Orientierung, nur Selbstbehalte festgelegt"
+     "quelle_art": "Pressemitteilung SOLG Nr. 3/2023 (FamRZ-Abdruck): DT als Orientierung, nur Selbstbehalte festgelegt",
+     "eingruppierung": "Keine eigene Regel; Eingruppierung nach Düsseldorfer Tabelle Anm. A [UNSICHER]."
     },
     "2025": {
      "name": "Saarländisches OLG (Düsseldorfer Tabelle ohne eigene Leitlinien)",
@@ -340,7 +341,8 @@
       "nr": "–",
       "text": "Keine eigene Regel; Aufrundung auf volle Euro angenommen. [UNSICHER]"
      },
-     "quelle_art": "Fassung 2025 nicht abgerufen; wie 2024 angenommen (Übernahme der Leitlinien NRW erst ab 01.01.2026) [UNSICHER]"
+     "quelle_art": "Fassung 2025 nicht abgerufen; wie 2024 angenommen (Übernahme der Leitlinien NRW erst ab 01.01.2026) [UNSICHER]; Quelle verweist auf die Fassung 2024",
+     "eingruppierung": "Keine eigene Regel; Eingruppierung nach Düsseldorfer Tabelle Anm. A [UNSICHER]."
     }
    }
   },

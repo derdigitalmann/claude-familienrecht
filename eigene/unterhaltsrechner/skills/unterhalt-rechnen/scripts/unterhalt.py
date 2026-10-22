@@ -256,6 +256,7 @@ def bereinige(abschnitt, ll, rolle, hinweise):
                 abzug_bb = max(abzug_bb, mindest)
         if p.get("max") is not None:
             abzug_bb = min(abzug_bb, dec(p["max"]))
+        abzug_bb = min(abzug_bb, max(netto, D(0)))
         abzug_bb = cent(abzug_bb)
         schritte.append(f"- Pauschale berufsbedingte Aufwendungen {abzug_bb} € (Nr. {p['nr']})")
     elif modus == "konkret":
@@ -559,21 +560,24 @@ def bremer_zuschlag(av, eu, jm):
 
 
 def anrechenbar_pfl(ll, pfl, ku, erw_p, vorabzug, schritte):
+    """Anrechenbares Einkommen des Pflichtigen; Kindesunterhalt und Altersvorsorgeunterhalt (vorabzug)
+    anteilig von Erwerb und sonstigen Einkünften (Mischeinkünfte)."""
     anteil = dec(ll["bonus"]["anteil"])
     basis_p = pfl["erwerb"] + pfl["sonstige"]
     ant = (pfl["erwerb"] / basis_p) if basis_p > 0 else D(1)
+    va_e = vorabzug * ant
     if ll["bonus"]["basis"] == "vor_kindesunterhalt":
-        bonus_p = cent(max(pfl["erwerb_vor_abzuege"] - vorabzug, D(0)) * anteil) if erw_p else D(0)
-        e_p = pfl["erwerb"] - vorabzug - bonus_p - ku * ant
+        bonus_p = cent(max(pfl["erwerb_vor_abzuege"] - va_e, D(0)) * anteil) if erw_p else D(0)
+        e_p = pfl["erwerb"] - va_e - bonus_p - ku * ant
         schritte.append(f"Pflichtiger: Bonus {anteil} vom Erwerbseinkommen vor Abzug Kindesunterhalt und Verbindlichkeiten"
-                        + (f" (nach Abzug Altersvorsorgeunterhalt {cent(vorabzug)})" if vorabzug else "") + f" = {bonus_p} € (Nr. {ll['bonus']['nr']})")
+                        + (f" (nach Abzug Altersvorsorgeunterhalt, Anteil {cent(va_e)})" if vorabzug else "") + f" = {bonus_p} € (Nr. {ll['bonus']['nr']})")
     else:
-        e_vor = pfl["erwerb"] - ku * ant - vorabzug
+        e_vor = pfl["erwerb"] - ku * ant - va_e
         bonus_p = cent(max(e_vor, D(0)) * anteil) if erw_p else D(0)
         e_p = e_vor - bonus_p
         schritte.append(f"Pflichtiger: Erwerb {pfl['erwerb']} - Kindesunterhalt (Anteil) {cent(ku * ant)}"
-                        + (f" - Altersvorsorgeunterhalt {cent(vorabzug)}" if vorabzug else "") + f" = {cent(e_vor)}; Bonus {anteil} = {bonus_p} € (Nr. {ll['bonus']['nr']})")
-    s_p = pfl["sonstige"] - ku * (1 - ant)
+                        + (f" - Altersvorsorgeunterhalt (Anteil) {cent(va_e)}" if vorabzug else "") + f" = {cent(e_vor)}; Bonus {anteil} = {bonus_p} € (Nr. {ll['bonus']['nr']})")
+    s_p = pfl["sonstige"] - (ku + vorabzug) * (1 - ant)
     if e_p < 0:
         s_p += e_p
         e_p = D(0)
@@ -600,12 +604,14 @@ def ehegatte_monat(jm, dtj, ll, ein, pfl, ku_zahl_rang1, ku_zahl_r4, hinweise):
     anr_b = anrechenbar_einkommen(ll, berech, erw_b)
 
     def stufe(vorabzug, s):
+        """Liefert (anr_p, anspruch, mindest, bedarf_roh). bedarf_roh: Halbteilungsbedarf vor Anhebung auf den Mindestbedarf."""
         anr_p = anrechenbar_pfl(ll, pfl, ku, erw_p, vorabzug, s)
         if berech:
             s.append(f"Berechtigter: bereinigt {berech['gesamt']} € - Bonus {cent(berech['gesamt'] - anr_b)} € = {anr_b} €")
         else:
             s.append("Berechtigter: kein Einkommen")
-        bedarf = (anr_p + anr_b) / 2
+        roh = (anr_p + anr_b) / 2
+        bedarf = roh
         s.append(f"Bedarf (Halbteilung): ({anr_p} + {anr_b}) / 2 = {cent(bedarf)} €")
         mindest = False
         if eh.get("mindestbedarf", True) and bedarf < mb:
@@ -613,63 +619,10 @@ def ehegatte_monat(jm, dtj, ll, ein, pfl, ku_zahl_rang1, ku_zahl_r4, hinweise):
             bedarf, mindest = mb, True
         anspruch = max(bedarf - anr_b, D(0))
         s.append(f"Anspruch: {cent(bedarf)} - {anr_b} = {cent(anspruch)} €")
-        return anr_p, anspruch, mindest
+        return anr_p, anspruch, mindest, roh
 
-    # Altersvorsorgeunterhalt (§§ 1361 Abs. 1 S. 2, 1578 Abs. 3 BGB), zweistufig nach Bremer Tabelle (Leitlinien Nr. 15.4)
-    av = eh.get("altersvorsorge")
-    avu = D(0)
-    av_aktiv = bool(av) and monat(av.get("ab") or "1900-01") <= jm
-    anr_p, anspruch, mindest = stufe(D(0), schritte)
-    anr_p1 = anr_p
-    if av_aktiv:
-        if mindest or anspruch <= 0:
-            schritte.append("Kein Altersvorsorgeunterhalt: Elementarunterhalt erreicht nur den Mindestbedarf; Vorrang des Existenzminimums (Leitlinien Nr. 15.4).")
-        else:
-            satz = dec(av.get("rv_beitragssatz") or RV_BEITRAGSSATZ.get(jm[0], D("18.6")))
-            zuschlag = bremer_zuschlag(av, anspruch, jm)
-            brutto = cent(anspruch * (100 + zuschlag) / 100)
-            avu = cent(brutto * satz / 100)
-            schritte.append(f"Altersvorsorge Stufe 1: vorläufiger Elementarunterhalt {cent(anspruch)} € + {zuschlag} % Zuschlag (Bremer Tabelle) = Bruttobemessung {brutto} € x {satz} % Rentenversicherung = {avu} €")
-            if av.get("einstufig"):
-                schritte.append("Einstufige Berechnung (Leitlinien Nr. 15.4 Abs. 3): Elementarunterhalt bleibt unverändert.")
-            else:
-                schritte.append("Altersvorsorge Stufe 2: Altersvorsorgeunterhalt vom Einkommen des Pflichtigen vorweg abziehen, Elementarunterhalt neu:")
-                anr_p, anspruch, mindest = stufe(avu, schritte)
-            if not av.get("bremer_tabelle"):
-                hinweise.add("Altersvorsorgeunterhalt: Zuschlag nach Bremer Tabelle ist als fester Prozentsatz eingegeben. Prüfen, ob er zur Höhe des vorläufigen Elementarunterhalts jedes Monats passt (Bremer Tabelle des jeweiligen Jahres).")
-            hinweise.add("Altersvorsorgeunterhalt: vorläufiger Elementarunterhalt ohne Einkünfte des Berechtigten, die selbst zu Altersvorsorge führen, nicht gesondert bereinigt (Leitlinien NRW 15.4 Abs. 2); bei sehr guten Verhältnissen einstufig rechnen; zusätzliche Altersvorsorge des Pflichtigen kann bis 4 % Erhöhung rechtfertigen.")
-
-    # Dreiteilung bei neuem Ehegatten (BGH FamRZ 2012, 281; Leitlinien Nr. 15.5 und 24.3)
-    ne = ein["pflichtiger"].get("neuer_ehegatte")
-    if ne and monat(ne.get("ab") or "1900-01") <= jm:
-        rang = ne.get("rang", "gleich")
-        if rang == "neuer_nachrangig":
-            schritte.append("Neuer Ehegatte nachrangig (§ 1609 BGB): Anspruch des geschiedenen Ehegatten unberührt (Leitlinien Nr. 24.3 Abs. 3).")
-        else:
-            nb = bereinige(gueltig(ne["einkommen"], jm, "neuer Ehegatte"), ll, "neuer Ehegatte", hinweise) if ne.get("einkommen") else None
-            anr_n = anrechenbar_einkommen(ll, nb, bool(ne.get("erwerbstaetig", False)))
-            # Dreiteilung auf Basis des Einkommens vor Abzug des Altersvorsorgeunterhalts; begrenzt wird der Gesamtanspruch
-            anr_p_dt = anr_p1 if not ne.get("anrechenbar_pflichtiger") else dec(ne["anrechenbar_pflichtiger"])
-            drittel = (anr_p_dt + anr_b + anr_n) / 3
-            dt_anspruch = max(drittel - anr_b, D(0))
-            schritte.append(f"Dreiteilung (Leistungsfähigkeit, § 1581 BGB): ({anr_p_dt} + {anr_b} + neuer Ehegatte {anr_n}) / 3 = {cent(drittel)} €; abzüglich eigenes Einkommen {anr_b} = {cent(dt_anspruch)} €")
-            gesamt = anspruch + avu
-            if dt_anspruch < gesamt:
-                if avu:
-                    f = dt_anspruch / gesamt
-                    schritte.append(f"Elementar- und Altersvorsorgeunterhalt zusammen {cent(gesamt)} € über dem Dreiteilungsbetrag: beide anteilig gekürzt (Faktor {str(f.quantize(D('0.0001'))).replace(".", ",")})")
-                    anspruch, avu = anspruch * f, cent(avu * f)
-                    hinweise.add(f"{mstr(jm)}: Dreiteilung begrenzt Elementar- und Altersvorsorgeunterhalt; anteilige Kürzung ist eine Annahme des Rechners, Verteilung im Einzelfall prüfen.")
-                else:
-                    schritte.append(f"Begrenzt auf Dreiteilungsbetrag {cent(dt_anspruch)} € (statt {cent(anspruch)} €)")
-                    anspruch = dt_anspruch
-            else:
-                schritte.append("Dreiteilungsbetrag nicht niedriger: keine Begrenzung.")
-            if rang == "neuer_vorrangig":
-                hinweise.add("Neuer Ehegatte vorrangig (§ 1609 Nr. 2 BGB): Sein Anspruch geht im Rahmen der Leistungsfähigkeit vor (Leitlinien Nr. 24.3 Abs. 3); Dreiteilung ist hier nur Obergrenze. Weitere Kürzung im Einzelfall prüfen.")
-            hinweise.add("Dreiteilung: Einkommen des Pflichtigen einschließlich Splittingvorteil aus der neuen Ehe ansetzen ('neuer_ehegatte.anrechenbar_pflichtiger', falls abweichend), Ersparnis durch Zusammenleben (Synergie) und Billigkeitsabwägung im Einzelfall prüfen (BGH FamRZ 2012, 281; Leitlinien Nr. 15.5).")
-    if eh.get("altersvorsorge") is None:
-        hinweise.add("Ehegattenunterhalt: Wird Altersvorsorgeunterhalt verlangt, 'ehegatte.altersvorsorge' mit Zuschlag nach Bremer Tabelle angeben; dann zweistufige Berechnung, der Elementarunterhalt sinkt.")
+    def still(vorabzug):
+        return stufe(vorabzug, [])
 
     # Leistungsfähigkeit ohne Bonus
     sbx = ll["selbstbehalt"]
@@ -678,6 +631,92 @@ def ehegatte_monat(jm, dtj, ll, ein, pfl, ku_zahl_rang1, ku_zahl_r4, hinweise):
         sb = dtj["selbstbehalt"]["ehegatte_erwerbstaetig" if erw_p else "ehegatte_nicht_erwerbstaetig"]
     sb = kuerzung(dec(sb) + zuschlag_wohnen(ein["pflichtiger"], dtj["selbstbehalt"]["ehegatte_wohnkosten"]), ein["pflichtiger"])
     verfuegbar = pfl["gesamt"] - ku_zahl_rang1 - sb
+
+    # Altersvorsorgeunterhalt (§§ 1361 Abs. 1 S. 2, 1578 Abs. 3 BGB), zweistufig nach Bremer Tabelle (Leitlinien Nr. 15.4)
+    av = eh.get("altersvorsorge")
+    avu = D(0)
+    av_aktiv = bool(av) and monat(av.get("ab") or "1900-01") <= jm
+    anr_p, anspruch, mindest, _ = stufe(D(0), schritte)
+    anr_p1, eu1 = anr_p, anspruch
+    zuschlag = satz = None
+    if av_aktiv:
+        satz = dec(av.get("rv_beitragssatz") or RV_BEITRAGSSATZ.get(jm[0], D("18.6")))
+        if mindest or anspruch <= 0:
+            schritte.append("Kein Altersvorsorgeunterhalt: Elementarunterhalt erreicht nur den Mindestbedarf; Vorrang des Existenzminimums (Leitlinien Nr. 15.4).")
+            av_aktiv = False
+        else:
+            zuschlag = bremer_zuschlag(av, anspruch, jm)
+            brutto = cent(anspruch * (100 + zuschlag) / 100)
+            avu = cent(brutto * satz / 100)
+            schritte.append(f"Altersvorsorge Stufe 1: vorläufiger Elementarunterhalt {cent(anspruch)} € + {zuschlag} % Zuschlag (Bremer Tabelle) = Bruttobemessung {brutto} € x {satz} % Rentenversicherung = {avu} €")
+            if av.get("einstufig"):
+                schritte.append("Einstufige Berechnung (Leitlinien Nr. 15.4 Abs. 3): Elementarunterhalt bleibt unverändert.")
+            else:
+                # Mindestbedarf nach Stufe 2 wahren: AVU höchstens so hoch, dass der Halbteilungsbedarf den Mindestbedarf erreicht
+                _, _, m2, roh2 = still(avu)
+                if m2 and eh.get("mindestbedarf", True):
+                    _, _, _, roh1 = still(D(0))
+                    k = (roh1 - roh2) / avu if avu else D(0)
+                    grenze_av = cent(max((roh1 - mb) / k, D(0))) if k > 0 else D(0)
+                    schritte.append(f"Altersvorsorgeunterhalt auf {grenze_av} € begrenzt, damit der Elementarunterhalt nach Stufe 2 den Mindestbedarf {mb} € nicht unterschreitet (Vorrang Existenzminimum)")
+                    avu = grenze_av
+                # Leistungsfähigkeit: Elementar- und Vorsorgeunterhalt zusammen höchstens verfügbar; AVU nur, soweit der Elementarunterhalt gesichert ist
+                _, eu2, _, _ = still(avu)
+                if avu and eu2 + avu > verfuegbar:
+                    if verfuegbar <= eu1:
+                        neu = D(0)
+                    else:
+                        k = (eu1 - eu2) / avu
+                        neu = cent(min(max((verfuegbar - eu1) / (1 - k), D(0)), avu))
+                    schritte.append(f"Leistungsfähigkeit {cent(verfuegbar)} € reicht nicht für Elementar- und Vorsorgeunterhalt: Altersvorsorgeunterhalt so bemessen, dass beide zusammen die Leistungsfähigkeit ausschöpfen ({cent(avu)} € -> {neu} €; Vorrang Elementarunterhalt, Leitlinien Nr. 15.4)")
+                    avu = neu
+                schritte.append("Altersvorsorge Stufe 2: Altersvorsorgeunterhalt vom Einkommen des Pflichtigen vorweg abziehen, Elementarunterhalt neu:")
+                anr_p, anspruch, mindest, _ = stufe(avu, schritte)
+            if not av.get("bremer_tabelle"):
+                hinweise.add("Altersvorsorgeunterhalt: Zuschlag nach Bremer Tabelle ist als fester Prozentsatz eingegeben. Prüfen, ob er zur Höhe des vorläufigen Elementarunterhalts jedes Monats passt (Bremer Tabelle des jeweiligen Jahres).")
+            hinweise.add("Altersvorsorgeunterhalt: vorläufiger Elementarunterhalt ohne Einkünfte des Berechtigten, die selbst zu Altersvorsorge führen, nicht gesondert bereinigt (Leitlinien NRW 15.4 Abs. 2); bei sehr guten Verhältnissen einstufig rechnen; zusätzliche Altersvorsorge des Pflichtigen kann bis 4 % Erhöhung rechtfertigen.")
+
+    # Dreiteilung bei neuem Ehegatten (BGH FamRZ 2012, 281; Leitlinien Nr. 15.5 und 24.3)
+    dt_deckel = None
+    ne = ein["pflichtiger"].get("neuer_ehegatte")
+    if ne and monat(ne.get("ab") or "1900-01") <= jm:
+        rang = ne.get("rang", "gleich")
+        if rang == "neuer_nachrangig":
+            schritte.append("Neuer Ehegatte nachrangig (§ 1609 BGB): Anspruch des geschiedenen Ehegatten unberührt (Leitlinien Nr. 24.3 Abs. 3).")
+        else:
+            nb = bereinige(gueltig(ne["einkommen"], jm, "neuer Ehegatte"), ll, "neuer Ehegatte", hinweise) if ne.get("einkommen") else None
+            anr_n = anrechenbar_einkommen(ll, nb, bool(ne.get("erwerbstaetig", False)))
+            fest = dec(ne["anrechenbar_pflichtiger"]) if ne.get("anrechenbar_pflichtiger") is not None else None
+            p1 = fest if fest is not None else anr_p1
+            dt1 = max((p1 + anr_b + anr_n) / 3 - anr_b, D(0))
+            schritte.append(f"Dreiteilung (Leistungsfähigkeit, § 1581 BGB): ({p1} + {anr_b} + neuer Ehegatte {anr_n}) / 3 - eigenes Einkommen {anr_b} = {cent(dt1)} €")
+            if av_aktiv and avu and not av.get("einstufig"):
+                # zweistufig innerhalb der Dreiteilung: AVU aus dem Dreiteilungsbetrag, dann Drittel nach Vorwegabzug des AVU
+                if dt1 < eu1:
+                    avu_dt = cent(cent(dt1 * (100 + bremer_zuschlag(av, dt1, jm)) / 100) * satz / 100)
+                    p2 = (fest - avu_dt) if fest is not None else still(avu_dt)[0]
+                    dt2 = max((p2 + anr_b + anr_n) / 3 - anr_b, D(0))
+                    schritte.append(f"Altersvorsorgeunterhalt aus Dreiteilungsbetrag {cent(dt1)} €: {avu_dt} €; Drittel nach Vorwegabzug ({cent(p2)} + {anr_b} + {anr_n}) / 3 - {anr_b} = {cent(dt2)} €")
+                    if dt2 < anspruch or avu_dt < avu:
+                        anspruch, avu = min(anspruch, dt2), min(avu, avu_dt)
+                        dt_deckel = True
+                        schritte.append(f"Begrenzt durch Dreiteilung: Elementarunterhalt {cent(anspruch)} €, Altersvorsorgeunterhalt {cent(avu)} €")
+                else:
+                    schritte.append("Dreiteilungsbetrag nicht niedriger als der Halbteilungsbetrag: keine Begrenzung.")
+            elif dt1 < anspruch:
+                schritte.append(f"Begrenzt auf Dreiteilungsbetrag {cent(dt1)} € (statt {cent(anspruch)} €)")
+                anspruch = dt1
+                dt_deckel = True
+            else:
+                schritte.append("Dreiteilungsbetrag nicht niedriger: keine Begrenzung.")
+            if rang == "neuer_vorrangig":
+                hinweise.add("Neuer Ehegatte vorrangig (§ 1609 Nr. 2 BGB): Sein Anspruch geht im Rahmen der Leistungsfähigkeit vor (Leitlinien Nr. 24.3 Abs. 3); Dreiteilung ist hier nur Obergrenze. Weitere Kürzung im Einzelfall prüfen.")
+            hinweise.add("Dreiteilung: Einkommen des Pflichtigen einschließlich Splittingvorteil aus der neuen Ehe ansetzen ('neuer_ehegatte.anrechenbar_pflichtiger', falls abweichend), Ersparnis durch Zusammenleben (Synergie) und Billigkeitsabwägung im Einzelfall prüfen (BGH FamRZ 2012, 281; Leitlinien Nr. 15.5).")
+            if av_aktiv and avu:
+                hinweise.add("Dreiteilung mit Altersvorsorgeunterhalt: zweistufig innerhalb der Dreiteilung gerechnet (AVU aus dem Dreiteilungsbetrag, Drittel nach Vorwegabzug). Methode in Rechtsprechung und Literatur nicht einheitlich [UNSICHER]; im Einzelfall prüfen.")
+    if eh.get("altersvorsorge") is None:
+        hinweise.add("Ehegattenunterhalt: Wird Altersvorsorgeunterhalt verlangt, 'ehegatte.altersvorsorge' mit Zuschlag nach Bremer Tabelle angeben; dann zweistufige Berechnung, der Elementarunterhalt sinkt.")
+
     schritte.append(f"Leistungsfähigkeit: {pfl['gesamt']} - vorrangiger Kindesunterhalt {cent(ku_zahl_rang1)} - Selbstbehalt {sb} € (Nr. {sbx['nr']}) = {cent(verfuegbar)} €")
     begrenzt = verfuegbar < anspruch
     if begrenzt:
@@ -700,12 +739,17 @@ def ehegatte_monat(jm, dtj, ll, ein, pfl, ku_zahl_rang1, ku_zahl_r4, hinweise):
         else:
             schritte.append(f"Zahlbetrag gerundet ({ll['rundung']['text'].rstrip('.')}, Nr. {ll['rundung']['nr']}): {betrag} €")
     avu_betrag = None
-    if av_aktiv:
+    if eh.get("altersvorsorge") and monat(eh["altersvorsorge"].get("ab") or "1900-01") <= jm:
         rest = max(verfuegbar - betrag, D(0))
         avu_lf = min(avu, rest)
         if avu_lf < avu:
             schritte.append(f"Altersvorsorgeunterhalt durch Leistungsfähigkeit begrenzt (Vorrang Elementarunterhalt): {cent(avu)} € auf {cent(avu_lf)} €")
-        avu_betrag = min(runde(avu_lf, ll, ehegatte=True), rest.quantize(D(1), ROUND_FLOOR)) if avu_lf > 0 else D(0)
+        if avu_lf <= 0:
+            avu_betrag = D(0)
+        elif dt_deckel or avu_lf < avu:
+            avu_betrag = avu_lf.quantize(D(1), ROUND_FLOOR)   # Deckel nicht durch Aufrundung überschreiten
+        else:
+            avu_betrag = min(runde(avu_lf, ll, ehegatte=True), rest.quantize(D(1), ROUND_FLOOR))
         schritte.append(f"Altersvorsorgeunterhalt Zahlbetrag: {avu_betrag} € (zweckgebunden, § 1578 Abs. 3 BGB)")
     return {"anspruch": cent(anspruch), "zahlbetrag": betrag, "altersvorsorge": avu_betrag, "schritte": schritte, "art": eh.get("art", "trennung")}
 

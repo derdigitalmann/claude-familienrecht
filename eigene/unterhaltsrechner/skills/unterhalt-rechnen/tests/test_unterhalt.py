@@ -305,10 +305,18 @@ pruefe("AVU Tabelle Betrag", r["soll"]["Ehegatte Altersvorsorge"], 406)
 #     Mindestbedarf: P 2.500 -> 1.125 < 1.200 -> kein AVU
 r = m0(avu_fall(2500, {"bremer_zuschlag_prozent": 25}))
 pruefe("AVU entfällt bei Mindestbedarf", r["soll"]["Ehegatte Altersvorsorge"], 0)
-#     Leistungsfähigkeit: P 3.000: Stufe 1 1.350 -> 313,88; Stufe 2 (2.686,12 - 268,61) / 2 = 1.208,76 -> 1.209; frei 1.400 - 1.209 = 191
+#     Leistungsfähigkeit 1.400 (P 3.000, SB 1.600): e + a = 1.400 mit e = (3.000 - a) x 0,9 / 2 -> a = 90,91, e = 1.309,09
+#     Elementar aufgerundet 1.310, AVU Rest 90
 r = m0(avu_fall(3000, {"bremer_zuschlag_prozent": 25}))
-pruefe("AVU Elementar vorrangig", r["soll"]["Ehegatte"], 1209)
-pruefe("AVU begrenzt durch Leistungsfähigkeit", r["soll"]["Ehegatte Altersvorsorge"], 191)
+pruefe("AVU Elementar vorrangig", r["soll"]["Ehegatte"], 1310)
+pruefe("AVU begrenzt durch Leistungsfähigkeit", r["soll"]["Ehegatte Altersvorsorge"], 90)
+#     Mindestbedarf nach Stufe 2: P 2.700, SB um 20 % gekürzt; Stufe 1 1.215, AVU 271,19 würde Stufe 2 auf 1.092,96 drücken
+#     -> AVU höchstens (1.215 - 1.200) / 0,45 = 33,33 -> Elementar 1.200, AVU aufgerundet 34
+e = avu_fall(2700, {"bremer_zuschlag_prozent": 20})
+e["pflichtiger"]["selbstbehalt_kuerzung_prozent"] = 20
+r = m0(e)
+pruefe("AVU wahrt Mindestbedarf Elementar", r["soll"]["Ehegatte"], 1200)
+pruefe("AVU wahrt Mindestbedarf Betrag", r["soll"]["Ehegatte Altersvorsorge"], 34)
 try:
     u.berechne(avu_fall(4000, {"bremer_zuschlag_prozent": 25}, art="trennung"))
     FEHLER.append("AVU Trennung ohne ab: kein Fehler ausgelöst")
@@ -328,6 +336,15 @@ def dt_fall(rang):
 
 pruefe("Dreiteilung Gleichrang", dt_fall("gleich"), 1500)
 pruefe("Dreiteilung neuer Ehegatte nachrangig", dt_fall("neuer_nachrangig"), 1800)
+#     Dreiteilung mit AVU, zweistufig innerhalb der Dreiteilung: P 6.000, Neue 0, Zuschlag 30 %
+#     Drittel 5.400 / 3 = 1.800; AVU 1.800 x 1,3 x 18,6 % = 435,24; (6.000 - 435,24) x 0,9 / 3 = 1.669,43 -> 1.670; AVU 435 (abgerundet, Deckel)
+e = basis(pflichtiger={"einkommen": [{"ab": "2026-01", "netto": 6000}], "neuer_ehegatte": {"rang": "gleich"}},
+          ehegatte={"art": "nachehelich", "rechtskraft_scheidung": "2025-06-01", "altersvorsorge": {"bremer_zuschlag_prozent": 30}})
+r = m0(e)
+pruefe("Dreiteilung mit AVU Elementar", r["soll"]["Ehegatte"], 1670)
+pruefe("Dreiteilung mit AVU Betrag", r["soll"]["Ehegatte Altersvorsorge"], 435)
+pruefe("Pauschale nicht über Netto", u.bereinige({"netto": 20, "berufsbedingt": {"modus": "pauschal"}},
+       u.leitlinie_fuer(lls, "niedersachsen", 2024, "Braunschweig"), "P", set())["berufsbedingt"], "20.00")
 try:
     u.berechne(basis(pflichtiger={"einkommen": [{"ab": "2026-01", "netto": 4000}], "neuer_ehegatte": {"rang": "gleich"}},
                      ehegatte={"art": "trennung"}))
