@@ -27,10 +27,12 @@ Gesammelt aus Foren (finanztip-Community, 123recht, rund-ums-baby), Fachportalen
 | 21 | Nachehelicher Unterhalt vor Rechtskraft der Scheidung | davor Trennungsunterhalt, eigener Anspruch | H |
 | 22 | Unterhaltsvorschuss im Rückstand nicht abgezogen | Anspruch in Höhe der Leistung auf das Land übergegangen (§ 7 Abs. 1 UVG) | R (`unterhaltsvorschuss`) |
 | 23 | Verwirkung und Verjährung alter Rückstände übersehen | Zeitmoment nach gut einem Jahr möglich, Umstandsmoment nötig (BGH XII ZB 133/17; AG Hagen 130 F 131/11); Verjährung drei Jahre, Hemmung § 207 BGB | H (`stichtag`) |
-| 24 | Altersvorsorgeunterhalt ohne zweistufige Rechnung | Bremer Tabelle, Elementarunterhalt sinkt | H (nicht berechnet) |
+| 24 | Altersvorsorgeunterhalt ohne zweistufige Rechnung | Stufe 1: vorläufiger Elementarunterhalt + Zuschlag Bremer Tabelle = Bruttobemessung x RV-Beitragssatz; Stufe 2: AVU vom Einkommen des Pflichtigen abziehen, Elementarunterhalt neu; Elementarunterhalt hat Vorrang (Leitlinien NRW 15.4); beim Trennungsunterhalt erst ab Rechtshängigkeit des Scheidungsantrags (§ 1361 Abs. 1 S. 2 BGB) | R (`ehegatte.altersvorsorge`; Zuschlag wird eingegeben) |
 | 25 | Selbstständige nur mit BWA oder einem Jahr | Drei-Jahres-Schnitt aus Steuerbescheiden und Abschlüssen, Steuern, Vorsorge, Entnahmen | R + H, Ergebnis VORLÄUFIG |
 | 26 | Unvollständige Auskunft als Rechengrundlage | erst Auskunft und Belege (§ 1605 BGB, § 235 FamFG), Beweislast für Abzüge beim Pflichtigen | S |
 | 27 | Präklusion bei Abänderung übersehen | Tatsachen, die bei der Erstberechnung bekannt waren, sind ausgeschlossen (§ 238 Abs. 2 FamFG) | S |
+| 28 | Neuer Ehegatte: Dreiteilung schon beim Bedarf oder trotz Nachrang | Bedarf des Geschiedenen nach den ehelichen Lebensverhältnissen; Dreiteilung nur bei der Leistungsfähigkeit (§ 1581 BGB) und nur bei Gleich- oder Vorrang des neuen Ehegatten (BGH FamRZ 2012, 281; Leitlinien NRW 15.5, 24.3, Hamburg 15.5) | R (`pflichtiger.neuer_ehegatte`) |
+| 29 | Rückstand aus Vorjahren mit aktueller Leitlinie gerechnet | Fassung des jeweiligen Jahres; Niedersachsen 2024/2025 und NRW 2024 mit getrennten Leitlinien je OLG | R (`historie`, `olg`) |
 
 ## Quellen
 

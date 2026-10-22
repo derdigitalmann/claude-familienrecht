@@ -1,6 +1,6 @@
 ---
 name: unterhalt-rechnen
-description: Berechnet Kindes- und Ehegattenunterhalt (Trennung, nachehelich) mit festem Rechenkern nach Düsseldorfer Tabelle 2024 bis 2026 und der Leitlinie des zuständigen OLG, Monat für Monat mit Mangelfall, Haftungsquote Volljähriger und Rückstand; prüft auch Gegenrechnungen. Testphase, eigene Ergänzung von digitalmann, nicht von Klotzkette.
+description: Berechnet Kindes- und Ehegattenunterhalt (Trennung, nachehelich) mit festem Rechenkern nach Düsseldorfer Tabelle 2026 (2024 und 2025 nur für Rückstände) und der Leitlinie des zuständigen OLG in der Fassung des jeweiligen Jahres, Monat für Monat mit Mangelfall, Haftungsquote Volljähriger und Rückstand; prüft auch Gegenrechnungen. Testphase, eigene Ergänzung von digitalmann, nicht von Klotzkette.
 ---
 
 # Unterhalt rechnen (Testphase)
@@ -20,8 +20,11 @@ Ohne Leitlinie bricht das Skript ab. Nie eine Leitlinie unterstellen, auch nicht
    - Sonst Kindesunterhalt Minderjähriger und privilegierter Volljähriger: Gericht am gewöhnlichen Aufenthalt des Kindes oder des handelnden Elternteils (§ 232 Abs. 1 Nr. 2 FamFG).
    - Übrige Fälle: § 232 Abs. 3 FamFG in Verbindung mit der ZPO, in der Regel Wohnsitz des Antragsgegners.
    - Maßgebend ist die Leitlinie des OLG, zu dessen Bezirk dieses Amtsgericht gehört.
-2. Die Auswahl mit der Liste aus `python3 scripts/unterhalt.py --leitlinien` vorlegen (AskUserQuestion, falls verfügbar; sonst als Liste). Bei Rheinland-Pfalz nach OLG-Bezirk unterscheiden: Koblenz eigene Leitlinie, Zweibrücken SüdL. Saarbrücken orientiert sich an den Leitlinien NRW.
+2. Die Auswahl mit der Liste aus `python3 scripts/unterhalt.py --leitlinien` vorlegen (AskUserQuestion, falls verfügbar; sonst als Liste). Bei Rheinland-Pfalz nach OLG-Bezirk unterscheiden: Koblenz eigene Leitlinie, Zweibrücken SüdL. Saarbrücken orientiert sich seit 2026 an den Leitlinien NRW, davor gab es nur Selbstbehalte.
 3. Die gewählte `id` in die Eingabe übernehmen und im Ergebnis nennen.
+4. Reicht der Zeitraum in Jahre mit getrennten Leitlinien (Niedersachsen 2024 und 2025: Braunschweig, Celle, Oldenburg; NRW 2024: Düsseldorf, Hamm, Köln), zusätzlich das OLG abfragen und als `olg` setzen. Ohne diese Angabe bricht das Skript ab.
+
+Die Düsseldorfer Tabelle 2026 ist die Haupttabelle. Die Tabellen 2024 und 2025 und die Leitlinienfassungen dieser Jahre dienen nur der Berechnung von Rückständen.
 
 ### 2. Daten erheben
 
@@ -32,7 +35,8 @@ Zuerst aus den Unterlagen (Gehaltsabrechnungen, Jahresmeldung, Steuerbescheid, K
 | Zeitraum | von, bis (JJJJ-MM); für Rückstand auch Zahlungen je Monat und Empfänger |
 | Pflichtiger | erwerbstätig ja/nein; Nettoerwerbseinkommen (Jahresschnitt inkl. Sonderzahlungen, Steuererstattungen); sonstige Einkünfte (Rente, ALG, Miete); Wohnvorteil; berufsbedingte Aufwendungen (Pauschale oder konkret: Entfernung km, Arbeitstage); Abzüge (Kredite, Altersvorsorge bis 4 % brutto, Kinderbetreuung); Warmmiete, falls über dem im Selbstbehalt enthaltenen Anteil; Zusammenleben mit Partner (Kürzung Selbstbehalt) |
 | Kinder | Name, Geburtsdatum, Status ab 18 (privilegiert, volljährig, Student mit eigenem Haushalt), Kindergeldbezug, eigenes Einkommen, Mehrbedarf, erweiterter Umgang (Abzug 10 bis 15 %, BGH XII ZB 415/25) |
-| Ehegatte | Trennung oder nachehelich, erwerbstätig ja/nein, Einkommen wie oben |
+| Ehegatte | Trennung oder nachehelich, erwerbstätig ja/nein, Einkommen wie oben; Altersvorsorgeunterhalt verlangt? Dann Zuschlag aus der Bremer Tabelle des Jahres (Prozentsatz oder Tabellenzeilen vom Nutzer, nicht schätzen) und beim Trennungsunterhalt Monat der Rechtshängigkeit des Scheidungsantrags |
+| neuer Ehegatte | nur nachehelich: Wiederheirat seit wann, Einkommen des neuen Ehegatten, Rang nach § 1609 BGB (Kinderbetreuung, lange Ehe); Rang ist eine Wertung, mit dem Nutzer klären |
 | anderer Elternteil | nur bei volljährigen Kindern: Einkommen für die Haftungsquote |
 | Änderungen | jede Einkommensänderung als eigener Abschnitt mit `ab` |
 | Rückstand | Datum von Auskunftsverlangen oder Mahnung je Berechtigtem, Unterhaltsvorschuss je Kind, bei nachehelichem Unterhalt Rechtskraft der Scheidung und Rechtshängigkeit |
@@ -63,7 +67,7 @@ Vor der Ausgabe `references/fallstricke.md` durchgehen. Punkte mit "S" (nur Skil
 
 1. Hinweise und Annahmen des Skripts vollständig an den Nutzer weitergeben, insbesondere Abweichungen von der Leitlinie (Pauschale, wo die Leitlinie keine kennt), Mangelfall, Begrenzung durch Selbstbehalt.
 2. Plausibilität: Eingruppierung, Altersstufenwechsel, Kindergeldanteil, Selbstbehalt.
-3. Nicht automatisiert und daher gesondert zu prüfen: Wechselmodell, Altersvorsorge- und Krankenvorsorgeunterhalt, Dreiteilung bei neuem Ehegatten, § 1578b BGB, Verwirkung, konkreter Bedarf bei hohem Einkommen, Brutto-Netto-Rechnung.
+3. Nicht automatisiert und daher gesondert zu prüfen: Wechselmodell, Krankenvorsorgeunterhalt, Zuschlag nach Bremer Tabelle (Nutzer liefert Prozentsatz oder Tabellenzeilen des Jahres), Rangfrage beim neuen Ehegatten (§ 1609 BGB), § 1578b BGB, Verwirkung, konkreter Bedarf bei hohem Einkommen, Brutto-Netto-Rechnung.
 4. Ausgabe nach Bedarf: Markdown im Chat oder Excel-Berechnungsblatt direkt aus dem Skript (`--xlsx berechnung.xlsx`; Blätter Übersicht, Monate mit Summenformeln, Rechenweg, Rückstand, Hinweise). PDF bei Bedarf aus der Markdown-Ausgabe. Der Testphasen-Hinweis, gegebenenfalls VORLÄUFIG, und die Leitlinie mit Fundstelle bleiben in jeder Ausgabe stehen.
 
 ## Prüfmodus: Gegenrechnung

@@ -8,6 +8,7 @@ Aufruf:
 Eigene Ergänzung von digitalmann, nicht von Klotzkette. Ergebnisse immer nachprüfen.
 """
 import argparse
+import copy
 import json
 import sys
 from datetime import date, timedelta
@@ -17,7 +18,7 @@ from pathlib import Path
 DATA = Path(__file__).resolve().parent.parent / "data"
 D = Decimal
 C = D("0.01")
-VERSION = "0.3.2"
+VERSION = "0.4.0"
 
 
 def dec(x):
@@ -52,6 +53,46 @@ def leitlinie_aufloesen(lls, lid):
         basis.update({k: ll[k] for k in ("id", "name", "olg", "bundeslaender", "quelle", "quelle_art")})
         basis["verweis"] = ll["verweis"]
         return basis
+    return ll
+
+
+BLOECKE = ("berufsbedingt", "fahrtkosten", "bonus", "selbstbehalt", "rundung")
+
+
+def _olg_schluessel(x):
+    return x.lower().replace("ü", "ue").replace("ö", "oe").replace("ä", "ae").replace("ß", "ss").replace(" ", "")
+
+
+def leitlinie_fuer(lls, lid, jahr, olg=None):
+    """Leitlinienparameter für ein Kalenderjahr. Hauptstand ist 2026; für 2024 und 2025 werden die in
+    'historie' hinterlegten Abweichungen der damaligen Fassung angewandt. 'je_olg': in diesem Jahr galten
+    getrennte Leitlinien je OLG, dann ist die Eingabe 'olg' erforderlich."""
+    ll = copy.deepcopy(leitlinie_aufloesen(lls, lid))
+    ll["fassung"] = str(jahr)
+    if jahr >= 2026:
+        ll["fassung"] = "2026"
+        return ll
+    h = lls[lid].get("historie", {}).get(str(jahr))
+    if h is None:
+        ll["fassung_hinweis"] = f"Für {jahr} ist keine Fassung der Leitlinie hinterlegt; Parameter Stand 2026. Damalige Fassung prüfen."
+        return ll
+    h = dict(h)
+    je = h.pop("je_olg", None)
+
+    def anwenden(x):
+        for k, v in x.items():
+            ll[k] = copy.deepcopy(v)
+
+    anwenden(h)
+    if je:
+        if not olg:
+            raise Fehler(f"{ll['name']}: {jahr} galten getrennte Leitlinien der OLG {', '.join(je)}. "
+                         f"Zuständiges OLG als 'olg' angeben.")
+        treffer = [k for k in je if _olg_schluessel(k) == _olg_schluessel(olg)]
+        if not treffer:
+            raise Fehler(f"olg '{olg}' passt nicht zu {lid} {jahr} (möglich: {', '.join(je)})")
+        anwenden(je[treffer[0]])
+        ll["fassung"] = f"{jahr} ({treffer[0]})"
     return ll
 
 
@@ -205,12 +246,17 @@ def bereinige(abschnitt, ll, rolle, hinweise):
             hinweise.add(f"{rolle}: Pauschale nach Nr. {p['nr']} nur bei fiktivem Einkommen. Pauschale trotzdem angesetzt, weil so eingegeben. Prüfen.")
         abzug_bb = netto * dec(p["prozent"] or 5) / 100
         if p.get("min") is not None and netto > 0:
+            mindest = dec(p["min"])
+            mn = p.get("min_niedrig")
+            if mn and netto < dec(mn["unter_netto"]):
+                mindest = dec(mn["betrag"])
             if abschnitt.get("teilzeit"):
                 hinweise.add(f"{rolle}: Teilzeit, Mindestbetrag der Pauschale nicht angewandt.")
             else:
-                abzug_bb = max(abzug_bb, dec(p["min"]))
+                abzug_bb = max(abzug_bb, mindest)
         if p.get("max") is not None:
             abzug_bb = min(abzug_bb, dec(p["max"]))
+        abzug_bb = min(abzug_bb, max(netto, D(0)))
         abzug_bb = cent(abzug_bb)
         schritte.append(f"- Pauschale berufsbedingte Aufwendungen {abzug_bb} € (Nr. {p['nr']})")
     elif modus == "konkret":
@@ -257,9 +303,11 @@ def bereinige(abschnitt, ll, rolle, hinweise):
             "gesamt": gesamt, "schritte": schritte}
 
 
-def runde(betrag, ll):
+def runde(betrag, ll, ehegatte=False):
     if betrag <= 0:
         return D(0)
+    if ehegatte and ll["rundung"].get("ehegatte") == "fuenf_euro":
+        return (betrag / 5).quantize(D(1), ROUND_HALF_UP) * 5
     if ll["rundung"]["modus"] == "aufrunden":
         return betrag.quantize(D(1), ROUND_CEILING)
     return betrag.quantize(D(1), ROUND_HALF_UP)
@@ -498,44 +546,84 @@ def kuerzung(sb, person):
 
 # --------------------------------------------------------------- Ehegattenunterhalt
 
+RV_BEITRAGSSATZ = {2024: D("18.6"), 2025: D("18.6"), 2026: D("18.6")}
+
+
+def bremer_zuschlag(av, eu, jm):
+    """Zuschlag in Prozent nach Bremer Tabelle für den vorläufigen Elementarunterhalt."""
+    if av.get("bremer_tabelle"):
+        for z in sorted(av["bremer_tabelle"], key=lambda r: r["bis"]):
+            if eu <= dec(z["bis"]):
+                return dec(z["prozent"])
+        raise Fehler(f"{mstr(jm)}: vorläufiger Elementarunterhalt {cent(eu)} € liegt über der letzten Zeile der eingegebenen Bremer Tabelle")
+    return dec(av["bremer_zuschlag_prozent"])
+
+
+def anrechenbar_pfl(ll, pfl, ku, erw_p, vorabzug, schritte):
+    """Anrechenbares Einkommen des Pflichtigen; Kindesunterhalt und Altersvorsorgeunterhalt (vorabzug)
+    anteilig von Erwerb und sonstigen Einkünften (Mischeinkünfte)."""
+    anteil = dec(ll["bonus"]["anteil"])
+    basis_p = pfl["erwerb"] + pfl["sonstige"]
+    ant = (pfl["erwerb"] / basis_p) if basis_p > 0 else D(1)
+    va_e = vorabzug * ant
+    if ll["bonus"]["basis"] == "vor_kindesunterhalt":
+        bonus_p = cent(max(pfl["erwerb_vor_abzuege"] - va_e, D(0)) * anteil) if erw_p else D(0)
+        e_p = pfl["erwerb"] - va_e - bonus_p - ku * ant
+        schritte.append(f"Pflichtiger: Bonus {anteil} vom Erwerbseinkommen vor Abzug Kindesunterhalt und Verbindlichkeiten"
+                        + (f" (nach Abzug Altersvorsorgeunterhalt, Anteil {cent(va_e)})" if vorabzug else "") + f" = {bonus_p} € (Nr. {ll['bonus']['nr']})")
+    else:
+        e_vor = pfl["erwerb"] - ku * ant - va_e
+        bonus_p = cent(max(e_vor, D(0)) * anteil) if erw_p else D(0)
+        e_p = e_vor - bonus_p
+        schritte.append(f"Pflichtiger: Erwerb {pfl['erwerb']} - Kindesunterhalt (Anteil) {cent(ku * ant)}"
+                        + (f" - Altersvorsorgeunterhalt (Anteil) {cent(va_e)}" if vorabzug else "") + f" = {cent(e_vor)}; Bonus {anteil} = {bonus_p} € (Nr. {ll['bonus']['nr']})")
+    s_p = pfl["sonstige"] - (ku + vorabzug) * (1 - ant)
+    if e_p < 0:
+        s_p += e_p
+        e_p = D(0)
+    anr_p = cent(e_p + s_p)
+    schritte.append(f"Pflichtiger anrechenbar: {cent(e_p)} € Erwerb + {cent(s_p)} € sonstige = {anr_p} €")
+    return anr_p
+
+
+def anrechenbar_einkommen(ll, b, erw):
+    if not b:
+        return D(0)
+    bonus = cent(max(b["erwerb"], D(0)) * dec(ll["bonus"]["anteil"])) if erw else D(0)
+    return cent(b["erwerb"] - bonus + b["sonstige"])
+
+
 def ehegatte_monat(jm, dtj, ll, ein, pfl, ku_zahl_rang1, ku_zahl_r4, hinweise):
     eh = ein["ehegatte"]
     schritte = []
     berech = bereinige(gueltig(eh["einkommen"], jm, "Ehegatte"), ll, "Berechtigter", hinweise) if eh.get("einkommen") else None
     erw_p = bool(ein["pflichtiger"].get("erwerbstaetig", True))
     erw_b = bool(eh.get("erwerbstaetig", False))
-    anteil = dec(ll["bonus"]["anteil"])
     ku = ku_zahl_rang1 + ku_zahl_r4
-    # Kindesunterhalt anteilig von Erwerb und sonstigen Einkünften (Mischeinkünfte)
-    basis_p = pfl["erwerb"] + pfl["sonstige"]
-    ant = (pfl["erwerb"] / basis_p) if basis_p > 0 else D(1)
-    if ll["bonus"]["basis"] == "vor_kindesunterhalt":
-        bonus_p = cent(pfl["erwerb_vor_abzuege"] * anteil) if erw_p else D(0)
-        e_p = pfl["erwerb"] - bonus_p - ku * ant
-        schritte.append(f"Pflichtiger: Bonus {anteil} vom Erwerbseinkommen vor Abzug Kindesunterhalt und Verbindlichkeiten = {bonus_p} € (Nr. {ll['bonus']['nr']})")
-    else:
-        e_vor = pfl["erwerb"] - ku * ant
-        bonus_p = cent(max(e_vor, D(0)) * anteil) if erw_p else D(0)
-        e_p = e_vor - bonus_p
-        schritte.append(f"Pflichtiger: Erwerb {pfl['erwerb']} - Kindesunterhalt (Anteil) {cent(ku * ant)} = {cent(e_vor)}; Bonus {anteil} = {bonus_p} € (Nr. {ll['bonus']['nr']})")
-    s_p = pfl["sonstige"] - ku * (1 - ant)
-    anr_p = cent(e_p + s_p)
-    schritte.append(f"Pflichtiger anrechenbar: {cent(e_p)} € Erwerb + {cent(s_p)} € sonstige = {anr_p} €")
-    if berech:
-        bonus_b = cent(max(berech["erwerb"], D(0)) * anteil) if erw_b else D(0)
-        anr_b = cent(berech["erwerb"] - bonus_b + berech["sonstige"])
-        schritte.append(f"Berechtigter: bereinigt {berech['gesamt']} € - Bonus {bonus_b} € = {anr_b} €")
-    else:
-        anr_b = D(0)
-        schritte.append("Berechtigter: kein Einkommen")
-    bedarf = (anr_p + anr_b) / 2
-    schritte.append(f"Bedarf (Halbteilung): ({anr_p} + {anr_b}) / 2 = {cent(bedarf)} €")
     mb = dec(dtj["ehegatte_mindestbedarf"]["nicht_erwerbstaetig"])
-    if eh.get("mindestbedarf", True) and bedarf < mb:
-        schritte.append(f"Mindestbedarf {mb} € (Existenzminimum, BGH XII ZR 64/09; DT B III) statt {cent(bedarf)} €")
-        bedarf = mb
-    anspruch = max(bedarf - anr_b, D(0))
-    schritte.append(f"Anspruch vor Leistungsfähigkeit: {cent(bedarf)} - {anr_b} = {cent(anspruch)} €")
+    anr_b = anrechenbar_einkommen(ll, berech, erw_b)
+
+    def stufe(vorabzug, s):
+        """Liefert (anr_p, anspruch, mindest, bedarf_roh). bedarf_roh: Halbteilungsbedarf vor Anhebung auf den Mindestbedarf."""
+        anr_p = anrechenbar_pfl(ll, pfl, ku, erw_p, vorabzug, s)
+        if berech:
+            s.append(f"Berechtigter: bereinigt {berech['gesamt']} € - Bonus {cent(berech['gesamt'] - anr_b)} € = {anr_b} €")
+        else:
+            s.append("Berechtigter: kein Einkommen")
+        roh = (anr_p + anr_b) / 2
+        bedarf = roh
+        s.append(f"Bedarf (Halbteilung): ({anr_p} + {anr_b}) / 2 = {cent(bedarf)} €")
+        mindest = False
+        if eh.get("mindestbedarf", True) and bedarf < mb:
+            s.append(f"Mindestbedarf {mb} € (Existenzminimum, BGH XII ZR 64/09; DT B III) statt {cent(bedarf)} €")
+            bedarf, mindest = mb, True
+        anspruch = max(bedarf - anr_b, D(0))
+        s.append(f"Anspruch: {cent(bedarf)} - {anr_b} = {cent(anspruch)} €")
+        return anr_p, anspruch, mindest, roh
+
+    def still(vorabzug):
+        return stufe(vorabzug, [])
+
     # Leistungsfähigkeit ohne Bonus
     sbx = ll["selbstbehalt"]
     sb = sbx["ehegatte_erwerbstaetig" if erw_p else "ehegatte_nicht_erwerbstaetig"]
@@ -543,6 +631,92 @@ def ehegatte_monat(jm, dtj, ll, ein, pfl, ku_zahl_rang1, ku_zahl_r4, hinweise):
         sb = dtj["selbstbehalt"]["ehegatte_erwerbstaetig" if erw_p else "ehegatte_nicht_erwerbstaetig"]
     sb = kuerzung(dec(sb) + zuschlag_wohnen(ein["pflichtiger"], dtj["selbstbehalt"]["ehegatte_wohnkosten"]), ein["pflichtiger"])
     verfuegbar = pfl["gesamt"] - ku_zahl_rang1 - sb
+
+    # Altersvorsorgeunterhalt (§§ 1361 Abs. 1 S. 2, 1578 Abs. 3 BGB), zweistufig nach Bremer Tabelle (Leitlinien Nr. 15.4)
+    av = eh.get("altersvorsorge")
+    avu = D(0)
+    av_aktiv = bool(av) and monat(av.get("ab") or "1900-01") <= jm
+    anr_p, anspruch, mindest, _ = stufe(D(0), schritte)
+    anr_p1, eu1 = anr_p, anspruch
+    zuschlag = satz = None
+    if av_aktiv:
+        satz = dec(av.get("rv_beitragssatz") or RV_BEITRAGSSATZ.get(jm[0], D("18.6")))
+        if mindest or anspruch <= 0:
+            schritte.append("Kein Altersvorsorgeunterhalt: Elementarunterhalt erreicht nur den Mindestbedarf; Vorrang des Existenzminimums (Leitlinien Nr. 15.4).")
+            av_aktiv = False
+        else:
+            zuschlag = bremer_zuschlag(av, anspruch, jm)
+            brutto = cent(anspruch * (100 + zuschlag) / 100)
+            avu = cent(brutto * satz / 100)
+            schritte.append(f"Altersvorsorge Stufe 1: vorläufiger Elementarunterhalt {cent(anspruch)} € + {zuschlag} % Zuschlag (Bremer Tabelle) = Bruttobemessung {brutto} € x {satz} % Rentenversicherung = {avu} €")
+            if av.get("einstufig"):
+                schritte.append("Einstufige Berechnung (Leitlinien Nr. 15.4 Abs. 3): Elementarunterhalt bleibt unverändert.")
+            else:
+                # Mindestbedarf nach Stufe 2 wahren: AVU höchstens so hoch, dass der Halbteilungsbedarf den Mindestbedarf erreicht
+                _, _, m2, roh2 = still(avu)
+                if m2 and eh.get("mindestbedarf", True):
+                    _, _, _, roh1 = still(D(0))
+                    k = (roh1 - roh2) / avu if avu else D(0)
+                    grenze_av = cent(max((roh1 - mb) / k, D(0))) if k > 0 else D(0)
+                    schritte.append(f"Altersvorsorgeunterhalt auf {grenze_av} € begrenzt, damit der Elementarunterhalt nach Stufe 2 den Mindestbedarf {mb} € nicht unterschreitet (Vorrang Existenzminimum)")
+                    avu = grenze_av
+                # Leistungsfähigkeit: Elementar- und Vorsorgeunterhalt zusammen höchstens verfügbar; AVU nur, soweit der Elementarunterhalt gesichert ist
+                _, eu2, _, _ = still(avu)
+                if avu and eu2 + avu > verfuegbar:
+                    if verfuegbar <= eu1:
+                        neu = D(0)
+                    else:
+                        k = (eu1 - eu2) / avu
+                        neu = cent(min(max((verfuegbar - eu1) / (1 - k), D(0)), avu))
+                    schritte.append(f"Leistungsfähigkeit {cent(verfuegbar)} € reicht nicht für Elementar- und Vorsorgeunterhalt: Altersvorsorgeunterhalt so bemessen, dass beide zusammen die Leistungsfähigkeit ausschöpfen ({cent(avu)} € -> {neu} €; Vorrang Elementarunterhalt, Leitlinien Nr. 15.4)")
+                    avu = neu
+                schritte.append("Altersvorsorge Stufe 2: Altersvorsorgeunterhalt vom Einkommen des Pflichtigen vorweg abziehen, Elementarunterhalt neu:")
+                anr_p, anspruch, mindest, _ = stufe(avu, schritte)
+            if not av.get("bremer_tabelle"):
+                hinweise.add("Altersvorsorgeunterhalt: Zuschlag nach Bremer Tabelle ist als fester Prozentsatz eingegeben. Prüfen, ob er zur Höhe des vorläufigen Elementarunterhalts jedes Monats passt (Bremer Tabelle des jeweiligen Jahres).")
+            hinweise.add("Altersvorsorgeunterhalt: vorläufiger Elementarunterhalt ohne Einkünfte des Berechtigten, die selbst zu Altersvorsorge führen, nicht gesondert bereinigt (Leitlinien NRW 15.4 Abs. 2); bei sehr guten Verhältnissen einstufig rechnen; zusätzliche Altersvorsorge des Pflichtigen kann bis 4 % Erhöhung rechtfertigen.")
+
+    # Dreiteilung bei neuem Ehegatten (BGH FamRZ 2012, 281; Leitlinien Nr. 15.5 und 24.3)
+    dt_deckel = None
+    ne = ein["pflichtiger"].get("neuer_ehegatte")
+    if ne and monat(ne.get("ab") or "1900-01") <= jm:
+        rang = ne.get("rang", "gleich")
+        if rang == "neuer_nachrangig":
+            schritte.append("Neuer Ehegatte nachrangig (§ 1609 BGB): Anspruch des geschiedenen Ehegatten unberührt (Leitlinien Nr. 24.3 Abs. 3).")
+        else:
+            nb = bereinige(gueltig(ne["einkommen"], jm, "neuer Ehegatte"), ll, "neuer Ehegatte", hinweise) if ne.get("einkommen") else None
+            anr_n = anrechenbar_einkommen(ll, nb, bool(ne.get("erwerbstaetig", False)))
+            fest = dec(ne["anrechenbar_pflichtiger"]) if ne.get("anrechenbar_pflichtiger") is not None else None
+            p1 = fest if fest is not None else anr_p1
+            dt1 = max((p1 + anr_b + anr_n) / 3 - anr_b, D(0))
+            schritte.append(f"Dreiteilung (Leistungsfähigkeit, § 1581 BGB): ({p1} + {anr_b} + neuer Ehegatte {anr_n}) / 3 - eigenes Einkommen {anr_b} = {cent(dt1)} €")
+            if av_aktiv and avu and not av.get("einstufig"):
+                # zweistufig innerhalb der Dreiteilung: AVU aus dem Dreiteilungsbetrag, dann Drittel nach Vorwegabzug des AVU
+                if dt1 < eu1:
+                    avu_dt = cent(cent(dt1 * (100 + bremer_zuschlag(av, dt1, jm)) / 100) * satz / 100)
+                    p2 = (fest - avu_dt) if fest is not None else still(avu_dt)[0]
+                    dt2 = max((p2 + anr_b + anr_n) / 3 - anr_b, D(0))
+                    schritte.append(f"Altersvorsorgeunterhalt aus Dreiteilungsbetrag {cent(dt1)} €: {avu_dt} €; Drittel nach Vorwegabzug ({cent(p2)} + {anr_b} + {anr_n}) / 3 - {anr_b} = {cent(dt2)} €")
+                    if dt2 < anspruch or avu_dt < avu:
+                        anspruch, avu = min(anspruch, dt2), min(avu, avu_dt)
+                        dt_deckel = True
+                        schritte.append(f"Begrenzt durch Dreiteilung: Elementarunterhalt {cent(anspruch)} €, Altersvorsorgeunterhalt {cent(avu)} €")
+                else:
+                    schritte.append("Dreiteilungsbetrag nicht niedriger als der Halbteilungsbetrag: keine Begrenzung.")
+            elif dt1 < anspruch:
+                schritte.append(f"Begrenzt auf Dreiteilungsbetrag {cent(dt1)} € (statt {cent(anspruch)} €)")
+                anspruch = dt1
+                dt_deckel = True
+            else:
+                schritte.append("Dreiteilungsbetrag nicht niedriger: keine Begrenzung.")
+            if rang == "neuer_vorrangig":
+                hinweise.add("Neuer Ehegatte vorrangig (§ 1609 Nr. 2 BGB): Sein Anspruch geht im Rahmen der Leistungsfähigkeit vor (Leitlinien Nr. 24.3 Abs. 3); Dreiteilung ist hier nur Obergrenze. Weitere Kürzung im Einzelfall prüfen.")
+            hinweise.add("Dreiteilung: Einkommen des Pflichtigen einschließlich Splittingvorteil aus der neuen Ehe ansetzen ('neuer_ehegatte.anrechenbar_pflichtiger', falls abweichend), Ersparnis durch Zusammenleben (Synergie) und Billigkeitsabwägung im Einzelfall prüfen (BGH FamRZ 2012, 281; Leitlinien Nr. 15.5).")
+            if av_aktiv and avu:
+                hinweise.add("Dreiteilung mit Altersvorsorgeunterhalt: zweistufig innerhalb der Dreiteilung gerechnet (AVU aus dem Dreiteilungsbetrag, Drittel nach Vorwegabzug). Methode in Rechtsprechung und Literatur nicht einheitlich [UNSICHER]; im Einzelfall prüfen.")
+    if eh.get("altersvorsorge") is None:
+        hinweise.add("Ehegattenunterhalt: Wird Altersvorsorgeunterhalt verlangt, 'ehegatte.altersvorsorge' mit Zuschlag nach Bremer Tabelle angeben; dann zweistufige Berechnung, der Elementarunterhalt sinkt.")
+
     schritte.append(f"Leistungsfähigkeit: {pfl['gesamt']} - vorrangiger Kindesunterhalt {cent(ku_zahl_rang1)} - Selbstbehalt {sb} € (Nr. {sbx['nr']}) = {cent(verfuegbar)} €")
     begrenzt = verfuegbar < anspruch
     if begrenzt:
@@ -553,18 +727,31 @@ def ehegatte_monat(jm, dtj, ll, ein, pfl, ku_zahl_rang1, ku_zahl_r4, hinweise):
         hinweise.add("Volljährige nicht privilegierte Kinder sind beim Bedarf vorweg abgezogen, aber nachrangig (§ 1609 Nr. 4 BGB). Ob der Vorwegabzug angemessen ist, im Einzelfall prüfen.")
     if pfl["gesamt"] + (berech["gesamt"] if berech else 0) > dtj["hoechstes_einkommen"]:
         hinweise.add(f"{mstr(jm)}: Familieneinkommen über {dtj['hoechstes_einkommen']} €; konkrete Bedarfsbemessung prüfen (Nr. 15.3).")
+    grenze = max(verfuegbar, D(0)).quantize(D(1), ROUND_FLOOR)
     if begrenzt:
         betrag = anspruch.quantize(D(1), ROUND_FLOOR)
         schritte.append(f"Zahlbetrag auf volle Euro abgerundet, damit der Selbstbehalt gewahrt bleibt: {betrag} €")
     else:
-        betrag = runde(anspruch, ll)
-        grenze = max(verfuegbar, D(0)).quantize(D(1), ROUND_FLOOR)
+        betrag = runde(anspruch, ll, ehegatte=True)
         if betrag > grenze:
             betrag = grenze
             schritte.append(f"Zahlbetrag gerundet, aber nicht über die Leistungsfähigkeit ({cent(verfuegbar)} €): {betrag} €")
         else:
             schritte.append(f"Zahlbetrag gerundet ({ll['rundung']['text'].rstrip('.')}, Nr. {ll['rundung']['nr']}): {betrag} €")
-    return {"anspruch": cent(anspruch), "zahlbetrag": betrag, "schritte": schritte, "art": eh.get("art", "trennung")}
+    avu_betrag = None
+    if eh.get("altersvorsorge") and monat(eh["altersvorsorge"].get("ab") or "1900-01") <= jm:
+        rest = max(verfuegbar - betrag, D(0))
+        avu_lf = min(avu, rest)
+        if avu_lf < avu:
+            schritte.append(f"Altersvorsorgeunterhalt durch Leistungsfähigkeit begrenzt (Vorrang Elementarunterhalt): {cent(avu)} € auf {cent(avu_lf)} €")
+        if avu_lf <= 0:
+            avu_betrag = D(0)
+        elif dt_deckel or avu_lf < avu:
+            avu_betrag = avu_lf.quantize(D(1), ROUND_FLOOR)   # Deckel nicht durch Aufrundung überschreiten
+        else:
+            avu_betrag = min(runde(avu_lf, ll, ehegatte=True), rest.quantize(D(1), ROUND_FLOOR))
+        schritte.append(f"Altersvorsorgeunterhalt Zahlbetrag: {avu_betrag} € (zweckgebunden, § 1578 Abs. 3 BGB)")
+    return {"anspruch": cent(anspruch), "zahlbetrag": betrag, "altersvorsorge": avu_betrag, "schritte": schritte, "art": eh.get("art", "trennung")}
 
 
 # --------------------------------------------------------------- Hauptlauf
@@ -590,7 +777,6 @@ def pruefungen_eingabe(ein, hinweise):
             hinweise.add("Pflichtiger: Splittingvorteil aus neuer Ehe ist beim Kindesunterhalt (gesteigerte Unterhaltspflicht) einzusetzen, beim Unterhalt des geschiedenen Ehegatten nicht (BVerfG; BGH). Netto ggf. getrennt berechnen (vgl. OLG München 12 UF 824/24 e).")
     if eh:
         hinweise.add("Ehegattenunterhalt: Obliegenheit, Steuervorteile zu nutzen; Realsplitting (§ 10 Abs. 1a Nr. 1 EStG) bei unstreitigem oder tituliertem Unterhalt im Netto des Pflichtigen berücksichtigen (Leitlinien Nr. 10.1.1).")
-        hinweise.add("Ehegattenunterhalt: Wird Altersvorsorgeunterhalt verlangt, ist zweistufig zu rechnen (Bremer Tabelle); der Elementarunterhalt sinkt dann. Der Rechner berechnet nur Elementarunterhalt.")
         if eh.get("art") == "nachehelich":
             if not eh.get("rechtskraft_scheidung"):
                 hinweise.add("Nachehelicher Unterhalt erst ab Rechtskraft der Scheidung; davor Trennungsunterhalt (nicht identisch, eigener Titel). 'ehegatte.rechtskraft_scheidung' angeben.")
@@ -611,6 +797,10 @@ def rueckstand_rechnen(ein, monate_out, hinweise):
     eh = ein.get("ehegatte") or {}
     if eh:
         verzug["Ehegatte"] = verzugsmonat(eh.get("verzug_ab"))
+        if eh.get("altersvorsorge"):
+            verzug["Ehegatte Altersvorsorge"] = verzugsmonat(eh["altersvorsorge"].get("verzug_ab") or eh.get("verzug_ab"))
+            if not eh["altersvorsorge"].get("verzug_ab"):
+                hinweise.add("Altersvorsorgeunterhalt für die Vergangenheit nur ab Verzug oder Auskunftsverlangen, das erkennbar auch Vorsorgeunterhalt betrifft (BGH FamRZ 2007, 193). Hier Verzugsbeginn des Elementarunterhalts übernommen; 'ehegatte.altersvorsorge.verzug_ab' prüfen.")
     rh = monat(eh["rechtshaengig_ab"]) if eh.get("rechtshaengig_ab") else None
     hat_zahlungen = bool(ein.get("zahlungen"))
     rueck = {}
@@ -625,7 +815,7 @@ def rueckstand_rechnen(ein, monate_out, hinweise):
             vz = verzug.get(name)
             if vz and jm < vz:
                 continue
-            if name == "Ehegatte" and eh.get("art") == "nachehelich" and rh and (jm[0] * 12 + jm[1]) < (rh[0] * 12 + rh[1]) - 12:
+            if name.startswith("Ehegatte") and eh.get("art") == "nachehelich" and rh and (jm[0] * 12 + jm[1]) < (rh[0] * 12 + rh[1]) - 12:
                 r["ausgeschlossen_1585b"] += max(soll - ist, D(0))
                 continue
             r["soll_ab_verzug"] += soll
@@ -760,13 +950,28 @@ def validiere(ein):
         einkommen(pfl.get("einkommen"), "pflichtiger.einkommen")
         zahl(pfl.get("warmmiete"), "pflichtiger.warmmiete", min0=True)
         zahl(pfl.get("selbstbehalt_kuerzung_prozent"), "pflichtiger.selbstbehalt_kuerzung_prozent", min0=True)
+        ne = pfl.get("neuer_ehegatte")
+        if ne is not None:
+            if not isinstance(ne, dict):
+                fehler.append("pflichtiger.neuer_ehegatte: Objekt erforderlich")
+            else:
+                if ne.get("rang", "gleich") not in ("gleich", "neuer_vorrangig", "neuer_nachrangig"):
+                    fehler.append(f"pflichtiger.neuer_ehegatte.rang: unbekannt '{ne.get('rang')}' (gleich, neuer_vorrangig, neuer_nachrangig)")
+                if ne.get("einkommen") is not None:
+                    einkommen(ne["einkommen"], "pflichtiger.neuer_ehegatte.einkommen")
+                if ne.get("ab"):
+                    jm(ne["ab"], "pflichtiger.neuer_ehegatte.ab")
+                zahl(ne.get("anrechenbar_pflichtiger"), "pflichtiger.neuer_ehegatte.anrechenbar_pflichtiger", min0=True)
+                eh0 = ein.get("ehegatte") or {}
+                if not eh0 or eh0.get("art", "trennung") != "nachehelich":
+                    fehler.append("pflichtiger.neuer_ehegatte: Dreiteilung nur beim nachehelichen Unterhalt (ehegatte.art = nachehelich)")
     namen = set()
     for i, k in enumerate(ein.get("kinder") or []):
         f = f"kinder[{i}]"
         n = k.get("name")
         if not n:
             fehler.append(f"{f}.name fehlt")
-        elif n in namen or n == "Ehegatte":
+        elif n in namen or n.startswith("Ehegatte"):
             fehler.append(f"{f}.name '{n}' doppelt oder reserviert; Namen müssen eindeutig sein")
         namen.add(n)
         g = k.get("geburtsdatum")
@@ -805,6 +1010,32 @@ def validiere(ein):
             if eh.get("verzug_ab"):
                 jm(eh["verzug_ab"], "ehegatte.verzug_ab", tag=True)
             namen.add("Ehegatte")
+            av = eh.get("altersvorsorge")
+            if av is not None:
+                if not isinstance(av, dict):
+                    fehler.append("ehegatte.altersvorsorge: Objekt erforderlich")
+                else:
+                    namen.add("Ehegatte Altersvorsorge")
+                    if av.get("bremer_tabelle"):
+                        for j, z_ in enumerate(av["bremer_tabelle"]):
+                            if not isinstance(z_, dict):
+                                fehler.append(f"ehegatte.altersvorsorge.bremer_tabelle[{j}]: Objekt mit 'bis' und 'prozent' erforderlich")
+                                continue
+                            zahl(z_.get("bis"), f"ehegatte.altersvorsorge.bremer_tabelle[{j}].bis", min0=True)
+                            zahl(z_.get("prozent"), f"ehegatte.altersvorsorge.bremer_tabelle[{j}].prozent", min0=True)
+                            if z_.get("bis") is None or z_.get("prozent") is None:
+                                fehler.append(f"ehegatte.altersvorsorge.bremer_tabelle[{j}]: 'bis' und 'prozent' erforderlich")
+                    elif av.get("bremer_zuschlag_prozent") is None:
+                        fehler.append("ehegatte.altersvorsorge: 'bremer_zuschlag_prozent' oder 'bremer_tabelle' (Zeilen aus der Bremer Tabelle des Jahres) angeben")
+                    else:
+                        zahl(av["bremer_zuschlag_prozent"], "ehegatte.altersvorsorge.bremer_zuschlag_prozent", min0=True)
+                    zahl(av.get("rv_beitragssatz"), "ehegatte.altersvorsorge.rv_beitragssatz", min0=True)
+                    if av.get("ab"):
+                        jm(av["ab"], "ehegatte.altersvorsorge.ab")
+                    elif eh.get("art", "trennung") == "trennung":
+                        fehler.append("ehegatte.altersvorsorge.ab fehlt: Trennungsunterhalt umfasst Altersvorsorge erst ab Rechtshängigkeit des Scheidungsantrags (§ 1361 Abs. 1 S. 2 BGB); Monat der Zustellung angeben")
+                    if av.get("verzug_ab"):
+                        jm(av["verzug_ab"], "ehegatte.altersvorsorge.verzug_ab", tag=True)
     if ein.get("anderer_elternteil") is not None:
         einkommen((ein["anderer_elternteil"] or {}).get("einkommen"), "anderer_elternteil.einkommen")
     gm = ein.get("gruppe") or {}
@@ -819,6 +1050,8 @@ def validiere(ein):
             fehler.append(f"zahlungen[{j}].an: '{zg.get('an')}' ist kein Berechtigter ({', '.join(sorted(n for n in namen if n))})")
     if ein.get("stichtag"):
         jm(ein["stichtag"], "stichtag")
+    if ein.get("olg") is not None and not isinstance(ein["olg"], str):
+        fehler.append("olg: Name des Oberlandesgerichts als Text (z. B. \"Celle\")")
     if fehler:
         raise Fehler("Eingabe unvollständig oder fehlerhaft:\n- " + "\n- ".join(fehler))
 
@@ -831,6 +1064,13 @@ def berechne(ein):
     z = ein.get("zeitraum") or {}
     if not z.get("von") or not z.get("bis"):
         raise Fehler("zeitraum.von und zeitraum.bis (JJJJ-MM) fehlen")
+    olg = ein.get("olg")
+    if olg and not any(_olg_schluessel(o) == _olg_schluessel(olg) for o in ll["olg"]):
+        raise Fehler(f"olg '{olg}' gehört nicht zur Leitlinie {ll['name']} ({', '.join(ll['olg'])})")
+    fassungen = {}
+    for jahr in sorted({jm[0] for jm in monate(z["von"], z["bis"])}):
+        if str(jahr) in dt:
+            fassungen[jahr] = leitlinie_fuer(lls, ein["leitlinie"], jahr, olg)
     zahlungen = ein.get("zahlungen", [])
     pruefungen_eingabe(ein, hinweise)
     monate_out = []
@@ -838,8 +1078,13 @@ def berechne(ein):
         dtj = dt.get(str(jm[0]))
         if not dtj:
             raise Fehler(f"Keine Düsseldorfer Tabelle für {jm[0]} hinterlegt (vorhanden: {', '.join(sorted(dt))})")
-        if jm[0] < 2026:
-            hinweise.add("Monate vor 2026: Tabellenwerte des jeweiligen Jahres, Leitlinienparameter Stand 2026. Damalige Leitlinienfassung prüfen.")
+        ll = fassungen[jm[0]]
+        if ll.get("fassung_hinweis"):
+            hinweise.add(ll["fassung_hinweis"])
+        elif jm[0] < 2026:
+            hinweise.add("Monate vor 2026 (Rückstand): Düsseldorfer Tabelle und Leitlinienfassung des jeweiligen Jahres angewandt.")
+        if "[UNSICHER]" in json.dumps(ll, ensure_ascii=False):
+            hinweise.add(f"Leitlinie {ll['name']}, Fassung {ll['fassung']}: einzelne Parameter nicht aus einer eigenen Leitlinie belegt [UNSICHER]; Annahmen im Abschnitt Parameter prüfen.")
         abschnitt = gueltig(ein["pflichtiger"]["einkommen"], jm, "Pflichtiger")
         pfl = bereinige(abschnitt, ll, "Pflichtiger", hinweise)
         kinder, kinfo = kinder_monat(None, jm, dtj, ll, ein, pfl, hinweise)
@@ -867,18 +1112,28 @@ def berechne(ein):
         soll = {k["name"]: k["zahlbetrag"] for k in kinder}
         if eh:
             soll["Ehegatte"] = eh["zahlbetrag"]
+            if eh.get("altersvorsorge") is not None:
+                soll["Ehegatte Altersvorsorge"] = eh["altersvorsorge"]
         ist = {}
         for zg in zahlungen:
             if zg.get("monat") == mstr(jm):
                 ist[zg["an"]] = ist.get(zg["an"], D(0)) + dec(zg.get("betrag"))
-        monate_out.append({"monat": mstr(jm), "dt": jm[0], "pflichtiger": pfl, "kinder": kinder, "kinder_info": kinfo,
+        monate_out.append({"monat": mstr(jm), "dt": jm[0], "leitlinie_fassung": ll["fassung"], "pflichtiger": pfl, "kinder": kinder, "kinder_info": kinfo,
                            "ehegatte": eh, "soll": soll, "ist": ist})
     rueck = rueckstand_rechnen(ein, monate_out, hinweise)
-    return {"version": VERSION, "leitlinie": {k: ll.get(k) for k in ("id", "name", "olg", "quelle", "quelle_art", "verweis")},
+    basis = leitlinie_aufloesen(lls, ein["leitlinie"])
+
+    def parameter(x):
+        return {"berufsbedingt": x["berufsbedingt"], "fahrtkosten": x["fahrtkosten"], "bonus": x["bonus"],
+                "selbstbehalt_ehegatte": x["selbstbehalt"], "rundung": x["rundung"], "eingruppierung": x.get("eingruppierung")}
+    letzte = fassungen[max(fassungen)]
+    return {"version": VERSION, "leitlinie": {k: basis.get(k) for k in ("id", "name", "olg", "quelle", "quelle_art", "verweis")},
+            "olg": olg,
             "vorlaeufig": any(h.startswith("VORLÄUFIG") for h in hinweise),
             "monate": monate_out, "rueckstand": rueck, "hinweise": hinweise_buendeln(hinweise),
-            "parameter": {"berufsbedingt": ll["berufsbedingt"], "fahrtkosten": ll["fahrtkosten"], "bonus": ll["bonus"],
-                          "selbstbehalt_ehegatte": ll["selbstbehalt"], "rundung": ll["rundung"], "eingruppierung": ll.get("eingruppierung")}}
+            "fassungen": {str(j): {"fassung": x["fassung"], "name": x["name"], "quelle": x.get("quelle"), "quelle_art": x.get("quelle_art"),
+                                   "parameter": parameter(x)} for j, x in fassungen.items()},
+            "parameter": parameter(letzte)}
 
 
 # --------------------------------------------------------------- Ausgabe
@@ -892,7 +1147,7 @@ def abschnitte(monate_out):
     """Fasst Monate mit identischem Ergebnis zu Zeitabschnitten zusammen."""
     out = []
     for m in monate_out:
-        key = json.dumps({k: str(v) for k, v in m["soll"].items()}, sort_keys=True) + str(m["kinder_info"].get("gruppe")) + str(m["pflichtiger"]["gesamt"])
+        key = json.dumps({k: str(v) for k, v in m["soll"].items()}, sort_keys=True) + str(m["kinder_info"].get("gruppe")) + str(m["pflichtiger"]["gesamt"]) + str(m.get("leitlinie_fassung"))
         if out and out[-1]["key"] == key:
             out[-1]["bis"] = m["monat"]
             out[-1]["anzahl"] += 1
@@ -947,7 +1202,7 @@ def markdown(r):
     for a in abschnitte(r["monate"]):
         m = a["m"]
         zr = a["von"] if a["von"] == a["bis"] else f"{a['von']} bis {a['bis']}"
-        L.append(f"### {zr} (Düsseldorfer Tabelle {m['dt']})\n")
+        L.append(f"### {zr} (Düsseldorfer Tabelle {m['dt']}, Leitlinie Fassung {m.get('leitlinie_fassung', m['dt'])})\n")
         L.append("**Einkommen Pflichtiger**\n")
         for s in m["pflichtiger"]["schritte"]:
             L.append(f"- {de(s)}")
@@ -983,13 +1238,19 @@ def markdown(r):
     L.append("## Hinweise und Annahmen\n")
     for h in r["hinweise"]:
         L.append(f"- {de(h)}")
-    p = r["parameter"]
-    L.append(f"- Leitlinie berufsbedingte Aufwendungen (Nr. {p['berufsbedingt']['nr']}): {p['berufsbedingt']['text']}")
-    L.append(f"- Leitlinie Fahrtkosten (Nr. {p['fahrtkosten']['nr']}): {p['fahrtkosten']['text']}")
-    L.append(f"- Leitlinie Erwerbstätigenbonus (Nr. {p['bonus']['nr']}): {p['bonus']['text']}")
-    L.append(f"- Leitlinie Ehegattenselbstbehalt (Nr. {p['selbstbehalt_ehegatte']['nr']}): {p['selbstbehalt_ehegatte']['text']}")
-    L.append(f"- Leitlinie Eingruppierung: {p['eingruppierung']}")
-    L.append("- Nicht automatisiert: Wechselmodell, Altersvorsorge- und Krankenvorsorgeunterhalt, Dreiteilung mit neuem Ehegatten, Befristung und Herabsetzung (§ 1578b BGB), Verwirkung, Netto-Ermittlung aus Brutto, Steuern.")
+    fs = r.get("fassungen") or {"": {"fassung": "", "name": ll["name"], "parameter": r["parameter"]}}
+    for j, f in fs.items():
+        p = f["parameter"]
+        if len(fs) > 1 or j != "2026":
+            L.append(f"\n**Parameter {f['name']}, Fassung {f['fassung']}** (Quelle: {f.get('quelle')}; {f.get('quelle_art')})\n")
+        L.append(f"- Leitlinie berufsbedingte Aufwendungen (Nr. {p['berufsbedingt']['nr']}): {p['berufsbedingt']['text']}")
+        L.append(f"- Leitlinie Fahrtkosten (Nr. {p['fahrtkosten']['nr']}): {p['fahrtkosten']['text']}")
+        L.append(f"- Leitlinie Erwerbstätigenbonus (Nr. {p['bonus']['nr']}): {p['bonus']['text']}")
+        L.append(f"- Leitlinie Ehegattenselbstbehalt (Nr. {p['selbstbehalt_ehegatte']['nr']}): {p['selbstbehalt_ehegatte']['text']}")
+        L.append(f"- Leitlinie Rundung (Nr. {p['rundung']['nr']}): {p['rundung']['text']}")
+        if p.get("eingruppierung"):
+            L.append(f"- Leitlinie Eingruppierung: {p['eingruppierung']}")
+    L.append("- Nicht automatisiert: Wechselmodell, Krankenvorsorgeunterhalt, Zuschlag nach Bremer Tabelle (Eingabe), Befristung und Herabsetzung (§ 1578b BGB), Verwirkung, Netto-Ermittlung aus Brutto, Steuern.")
     return "\n".join(L) + "\n"
 
 

@@ -1,7 +1,7 @@
 {
   "name": "unterhaltsrechner",
-  "version": "0.3.2",
-  "description": "Testphase. Unterhaltsrechner mit festem Rechenkern: Kindes- und Ehegattenunterhalt nach Düsseldorfer Tabelle 2024 bis 2026 und der Leitlinie des zuständigen OLG (wird vorab abgefragt), Mangelfall, Haftungsquote, Rückstand. Eigene Ergänzung von digitalmann, nicht von Klotzkette.",
+  "version": "0.4.0",
+  "description": "Testphase. Unterhaltsrechner mit festem Rechenkern: Kindes- und Ehegattenunterhalt nach Düsseldorfer Tabelle 2026 (Haupttabelle; 2024 und 2025 nur für Rückstände) und der Leitlinie des zuständigen OLG in der Fassung des jeweiligen Jahres (wird vorab abgefragt), Mangelfall, Haftungsquote, Altersvorsorgeunterhalt nach Bremer Tabelle, Dreiteilung bei neuem Ehegatten, Rückstand. Eigene Ergänzung von digitalmann, nicht von Klotzkette.",
   "author": {"name": "digitalmann", "url": "https://digitalmann.de"},
   "homepage": "https://github.com/derdigitalmann/claude-familienrecht",
   "license": "MIT",

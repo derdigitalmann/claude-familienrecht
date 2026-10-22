@@ -1,5 +1,5 @@
 {
- "stand": "Leitlinien Stand 01.01.2026, ausgewertet am 08.10.2026, amtliche Quellen abgeglichen am 22.10.2026",
+ "stand": "Leitlinien Stand 01.01.2026, ausgewertet am 08.10.2026, amtliche Quellen abgeglichen am 22.10.2026; Fassungen 2024 und 2025 für Rückstände abgeglichen am 22.10.2026",
  "hinweis": "Parameter, die der Rechner automatisch anwendet. Alles andere steht im Feld text und wird als Hinweis ausgegeben. Für Monate vor 2026 gelten die Parameter von 2026 weiter; die damalige Fassung ist gesondert zu prüfen.",
  "leitlinien": [
   {
@@ -55,7 +55,11 @@
     "nr": "25",
     "text": "Auf volle Euro aufzurunden."
    },
-   "eingruppierung": "Tabelle für zwei Berechtigte; Ab- oder Zuschläge i. d. R. durch Gruppenwechsel; Bedarfskontrollbeträge können herangezogen werden (Nr. 11.2)."
+   "eingruppierung": "Tabelle für zwei Berechtigte; Ab- oder Zuschläge i. d. R. durch Gruppenwechsel; Bedarfskontrollbeträge können herangezogen werden (Nr. 11.2).",
+   "historie": {
+    "2025": {},
+    "2024": {}
+   }
   },
   {
    "id": "nrw",
@@ -105,7 +109,143 @@
     "nr": "25",
     "text": "Auf volle Euro zu runden."
    },
-   "eingruppierung": "Zwei Berechtigte ohne Rücksicht auf Rang; Zu- und Abschläge durch Gruppenwechsel; Bedarfskontrollbeträge können herangezogen werden; nicht bei Volljährigen und beiderseitiger Barunterhaltspflicht (Nr. 11.2)."
+   "eingruppierung": "Zwei Berechtigte ohne Rücksicht auf Rang; Zu- und Abschläge durch Gruppenwechsel; Bedarfskontrollbeträge können herangezogen werden; nicht bei Volljährigen und beiderseitiger Barunterhaltspflicht (Nr. 11.2).",
+   "historie": {
+    "2025": {
+     "quelle": "https://www.famrz.de/files/Media/dokumente/unterhaltsleitlinien/unterhaltsleitlinien-2025/unterhaltsleitlinien-nrw-1-1-2025.pdf"
+    },
+    "2024": {
+     "quelle_art": "FamRZ-Abdrucke der Fassungen 2024 (OLG Düsseldorf, Hamm, Köln); einheitliche Leitlinien NRW erst ab 2025",
+     "je_olg": {
+      "Düsseldorf": {
+       "name": "Leitlinien OLG Düsseldorf",
+       "olg": [
+        "Düsseldorf"
+       ],
+       "berufsbedingt": {
+        "pauschale": "ja",
+        "prozent": 5,
+        "min": 50,
+        "max": 150,
+        "nr": "10.2.1",
+        "text": "Verweis auf Anm. A.3 der Düsseldorfer Tabelle: bei Anhaltspunkten 5 %, mindestens 50 €, höchstens 150 €."
+       },
+       "fahrtkosten": {
+        "modell": "km",
+        "satz": 0.42,
+        "staffel_ab_entfernung_km": 30,
+        "satz_mehrkilometer": 0.28,
+        "arbeitstage_default": 220,
+        "arbeitstage_in_leitlinie": null,
+        "nr": "10.2.2",
+        "text": "0,42 € je gefahrenen km (JVEG); ab dem 31. Entfernungskilometer i. d. R. 0,28 €."
+       },
+       "bonus": {
+        "anteil": 0.1,
+        "basis": "nach_kindesunterhalt",
+        "nr": "15.2",
+        "text": "Bonus 1/10 vom bereinigten Erwerbseinkommen nach Abzug Kindesunterhalt (Zahlbetrag), bei Mischeinkünften anteilig."
+       },
+       "selbstbehalt": {
+        "ehegatte_erwerbstaetig": null,
+        "ehegatte_nicht_erwerbstaetig": null,
+        "nr": "21.4",
+        "text": "1.600 € erwerbstätig, 1.475 € nicht erwerbstätig (wie Düsseldorfer Tabelle)"
+       },
+       "rundung": {
+        "modus": "kaufmaennisch",
+        "nr": "25",
+        "text": "Auf volle Euro zu runden."
+       },
+       "quelle": "https://www.famrz.de/files/Media/dokumente/unterhaltsleitlinien/unterhaltsleitlinien-2024/unterhaltsleitlinien-d%C3%BCsseldorf-1-1-2024.pdf"
+      },
+      "Hamm": {
+       "name": "Leitlinien OLG Hamm",
+       "olg": [
+        "Hamm"
+       ],
+       "berufsbedingt": {
+        "pauschale": "nur_fiktiv",
+        "prozent": 5,
+        "min": null,
+        "max": null,
+        "nr": "10.2.1",
+        "text": "Konkret darzulegen; Pauschale 5 % nur bei fiktivem Erwerbseinkommen."
+       },
+       "fahrtkosten": {
+        "modell": "km",
+        "satz": 0.42,
+        "staffel_ab_entfernung_km": 30,
+        "satz_mehrkilometer": 0.28,
+        "arbeitstage_default": 220,
+        "arbeitstage_in_leitlinie": 220,
+        "nr": "10.2.2",
+        "text": "Vorrang ÖPNV; sonst Entfernungskm x 2 x 0,42 € x 220 : 12; über 30 km einfach empfohlen 0,28 €."
+       },
+       "bonus": {
+        "anteil": 0.1,
+        "basis": "nach_kindesunterhalt",
+        "nr": "15.2",
+        "text": "1/10 vom bereinigten Erwerbseinkommen nach Abzug Kindesunterhalt (Zahlbetrag)."
+       },
+       "selbstbehalt": {
+        "ehegatte_erwerbstaetig": null,
+        "ehegatte_nicht_erwerbstaetig": null,
+        "nr": "21.4",
+        "text": "1.600 € erwerbstätig, 1.475 € nicht erwerbstätig (wie Düsseldorfer Tabelle)"
+       },
+       "rundung": {
+        "modus": "kaufmaennisch",
+        "nr": "25",
+        "text": "Auf volle Euro zu runden."
+       },
+       "quelle": "https://www.famrz.de/files/Media/dokumente/unterhaltsleitlinien/unterhaltsleitlinien-2024/unterhaltsleitlinien-hamm-1-1-2024.pdf"
+      },
+      "Köln": {
+       "name": "Leitlinien OLG Köln",
+       "olg": [
+        "Köln"
+       ],
+       "berufsbedingt": {
+        "pauschale": "nein",
+        "prozent": null,
+        "min": null,
+        "max": null,
+        "nr": "10.2.1",
+        "text": "Pauschale in der Regel nicht; Aufwendungen im Einzelnen darzulegen."
+       },
+       "fahrtkosten": {
+        "modell": "km",
+        "satz": 0.42,
+        "staffel_ab_entfernung_km": 30,
+        "satz_mehrkilometer": 0.28,
+        "arbeitstage_default": 220,
+        "arbeitstage_in_leitlinie": null,
+        "nr": "10.2.2",
+        "text": "0,42 € je gefahrenen km (JVEG); ab ca. 30 km einfach Mehrkilometer i. d. R. 0,28 €."
+       },
+       "bonus": {
+        "anteil": 0.1,
+        "basis": "nach_kindesunterhalt",
+        "nr": "15.2",
+        "text": "1/10 vom bereinigten Erwerbseinkommen nach Abzug Kindesunterhalt (Zahlbetrag)."
+       },
+       "selbstbehalt": {
+        "ehegatte_erwerbstaetig": null,
+        "ehegatte_nicht_erwerbstaetig": null,
+        "nr": "21.4",
+        "text": "1.600 € erwerbstätig, 1.475 € nicht erwerbstätig (wie Düsseldorfer Tabelle)"
+       },
+       "rundung": {
+        "modus": "aufrunden",
+        "nr": "25",
+        "text": "Auf volle Euro aufzurunden."
+       },
+       "quelle": "https://www.famrz.de/files/Media/dokumente/unterhaltsleitlinien/unterhaltsleitlinien-2024/unterhaltsleitlinien-k%C3%B6ln-1-1-2024.pdf"
+      }
+     }
+    }
+   }
   },
   {
    "id": "saarbruecken",
@@ -118,7 +258,93 @@
    ],
    "verweis": "nrw",
    "quelle": "https://www.famrz.de/redaktionsmeldungen/unterhaltsleitlinien-der-oberlandesgerichte-2026.html",
-   "quelle_art": "Übernahme der Leitlinien NRW laut FamRZ-Redaktionsmeldung 2026 und FamRB-Blog; Pressemitteilung des SOLG beim Abgleich nicht abrufbar"
+   "quelle_art": "Übernahme der Leitlinien NRW laut FamRZ-Redaktionsmeldung 2026 und FamRB-Blog; Pressemitteilung des SOLG beim Abgleich nicht abrufbar",
+   "historie": {
+    "2024": {
+     "name": "Saarländisches OLG (Düsseldorfer Tabelle ohne eigene Leitlinien)",
+     "verweis": null,
+     "quelle": "https://www.famrz.de/files/Media/dokumente/unterhaltsleitlinien/unterhaltsleitlinien-2024/unterhaltsleitlinien-saarbr%C3%BCcken-1-1-2024.pdf",
+     "berufsbedingt": {
+      "pauschale": "ja",
+      "prozent": 5,
+      "min": 50,
+      "max": 150,
+      "nr": "DT Anm. A.3",
+      "text": "Keine eigene Leitlinie; Anm. A.3 der Düsseldorfer Tabelle: bei Anhaltspunkten 5 %, mindestens 50 €, höchstens 150 €. [UNSICHER]"
+     },
+     "fahrtkosten": {
+      "modell": "km",
+      "satz": 0.42,
+      "staffel_ab_entfernung_km": null,
+      "satz_mehrkilometer": null,
+      "arbeitstage_default": 220,
+      "arbeitstage_in_leitlinie": null,
+      "nr": "–",
+      "text": "Keine eigene Regel; 0,42 € je gefahrenen km nach § 5 Abs. 2 S. 1 Nr. 2 JVEG angenommen. [UNSICHER]"
+     },
+     "bonus": {
+      "anteil": 0.1,
+      "basis": "nach_kindesunterhalt",
+      "nr": "BGH",
+      "text": "Keine eigene Regel; Bonus 1/10 nach BGH (XII ZB 341/17) angenommen. [UNSICHER]"
+     },
+     "selbstbehalt": {
+      "ehegatte_erwerbstaetig": 1600,
+      "ehegatte_nicht_erwerbstaetig": 1475,
+      "nr": "PM Nr. 3",
+      "text": "Pressemitteilung: 1.600 € erwerbstätig, 1.475 € nicht erwerbstätig."
+     },
+     "rundung": {
+      "modus": "aufrunden",
+      "nr": "–",
+      "text": "Keine eigene Regel; Aufrundung auf volle Euro angenommen. [UNSICHER]"
+     },
+     "quelle_art": "Pressemitteilung SOLG Nr. 3/2023 (FamRZ-Abdruck): DT als Orientierung, nur Selbstbehalte festgelegt",
+     "eingruppierung": "Keine eigene Regel; Eingruppierung nach Düsseldorfer Tabelle Anm. A [UNSICHER]."
+    },
+    "2025": {
+     "name": "Saarländisches OLG (Düsseldorfer Tabelle ohne eigene Leitlinien)",
+     "verweis": null,
+     "quelle": "https://www.famrz.de/files/Media/dokumente/unterhaltsleitlinien/unterhaltsleitlinien-2024/unterhaltsleitlinien-saarbr%C3%BCcken-1-1-2024.pdf",
+     "berufsbedingt": {
+      "pauschale": "ja",
+      "prozent": 5,
+      "min": 50,
+      "max": 150,
+      "nr": "DT Anm. A.3",
+      "text": "Keine eigene Leitlinie; Anm. A.3 der Düsseldorfer Tabelle: bei Anhaltspunkten 5 %, mindestens 50 €, höchstens 150 €. [UNSICHER]"
+     },
+     "fahrtkosten": {
+      "modell": "km",
+      "satz": 0.42,
+      "staffel_ab_entfernung_km": null,
+      "satz_mehrkilometer": null,
+      "arbeitstage_default": 220,
+      "arbeitstage_in_leitlinie": null,
+      "nr": "–",
+      "text": "Keine eigene Regel; 0,42 € je gefahrenen km nach § 5 Abs. 2 S. 1 Nr. 2 JVEG angenommen. [UNSICHER]"
+     },
+     "bonus": {
+      "anteil": 0.1,
+      "basis": "nach_kindesunterhalt",
+      "nr": "BGH",
+      "text": "Keine eigene Regel; Bonus 1/10 nach BGH (XII ZB 341/17) angenommen. [UNSICHER]"
+     },
+     "selbstbehalt": {
+      "ehegatte_erwerbstaetig": 1600,
+      "ehegatte_nicht_erwerbstaetig": 1475,
+      "nr": "PM Nr. 3",
+      "text": "Pressemitteilung: 1.600 € erwerbstätig, 1.475 € nicht erwerbstätig."
+     },
+     "rundung": {
+      "modus": "aufrunden",
+      "nr": "–",
+      "text": "Keine eigene Regel; Aufrundung auf volle Euro angenommen. [UNSICHER]"
+     },
+     "quelle_art": "Fassung 2025 nicht abgerufen; wie 2024 angenommen (Übernahme der Leitlinien NRW erst ab 01.01.2026) [UNSICHER]; Quelle verweist auf die Fassung 2024",
+     "eingruppierung": "Keine eigene Regel; Eingruppierung nach Düsseldorfer Tabelle Anm. A [UNSICHER]."
+    }
+   }
   },
   {
    "id": "niedersachsen",
@@ -168,7 +394,281 @@
     "nr": "25",
     "text": "Auf volle Euro aufzurunden; Ehegattenunterhalt kann auf 5 € gerundet werden."
    },
-   "eingruppierung": "Zwei Berechtigte ohne Rücksicht auf Rang; Höher- oder Herabstufung kann gerechtfertigt sein (Nr. 11.2)."
+   "eingruppierung": "Zwei Berechtigte ohne Rücksicht auf Rang; Höher- oder Herabstufung kann gerechtfertigt sein (Nr. 11.2).",
+   "historie": {
+    "2025": {
+     "quelle_art": "amtliche Fassungen 2025 der OLG Braunschweig, Celle und Oldenburg",
+     "je_olg": {
+      "Celle": {
+       "name": "Leitlinien OLG Celle",
+       "olg": [
+        "Celle"
+       ],
+       "berufsbedingt": {
+        "pauschale": "ja",
+        "prozent": 5,
+        "min": null,
+        "max": null,
+        "nr": "10.2.1",
+        "text": "Bei Anhaltspunkten 5 % des Nettoeinkommens, ohne Mindest- und Höchstbetrag; darüber konkret."
+       },
+       "fahrtkosten": {
+        "modell": "km",
+        "satz": 0.42,
+        "staffel_ab_entfernung_km": 30,
+        "satz_mehrkilometer": 0.28,
+        "arbeitstage_default": 220,
+        "arbeitstage_in_leitlinie": null,
+        "nr": "10.2.2",
+        "text": "0,42 € je gefahrenen km; bei mehr als 30 km einfacher Entfernung ab dem 31. km 0,28 € (kann)."
+       },
+       "bonus": {
+        "anteil": 0.1,
+        "basis": "nach_kindesunterhalt",
+        "nr": "15.2",
+        "text": "1/10 vom bereinigten Erwerbseinkommen nach Abzug Kindesunterhalt (Zahlbetrag)."
+       },
+       "selbstbehalt": {
+        "ehegatte_erwerbstaetig": null,
+        "ehegatte_nicht_erwerbstaetig": null,
+        "nr": "21.4",
+        "text": "1.600 € erwerbstätig, 1.475 € nicht erwerbstätig (wie Düsseldorfer Tabelle)"
+       },
+       "rundung": {
+        "modus": "kaufmaennisch",
+        "nr": "25",
+        "text": "Auf volle Euro zu runden (Kindesunterhalt: § 1612a Abs. 2 S. 2 BGB)."
+       },
+       "quelle": "https://www.famrz.de/files/Media/dokumente/unterhaltsleitlinien/unterhaltsleitlinien-2025/unterhaltsleitlinien-celle-1-1-2025.pdf"
+      },
+      "Braunschweig": {
+       "name": "Leitlinien OLG Braunschweig",
+       "olg": [
+        "Braunschweig"
+       ],
+       "berufsbedingt": {
+        "pauschale": "ja",
+        "prozent": 5,
+        "min": 50,
+        "max": 150,
+        "nr": "10.2.1",
+        "text": "Bei Anhaltspunkten 5 %, mindestens 50 € (25 € bei Netto unter 500 €), höchstens 150 €; darüber konkret.",
+        "min_niedrig": {
+         "unter_netto": 500,
+         "betrag": 25
+        }
+       },
+       "fahrtkosten": {
+        "modell": "km",
+        "satz": 0.42,
+        "staffel_ab_entfernung_km": 30,
+        "satz_mehrkilometer": 0.28,
+        "arbeitstage_default": 220,
+        "arbeitstage_in_leitlinie": null,
+        "nr": "10.2.2",
+        "text": "0,42 € je gefahrenen km (JVEG); ab ca. 30 km einfach Mehrkilometer i. d. R. 0,28 € (kann)."
+       },
+       "bonus": {
+        "anteil": 0.1,
+        "basis": "nach_kindesunterhalt",
+        "nr": "15.2",
+        "text": "1/10 vom bereinigten Erwerbseinkommen nach Abzug Kindesunterhalt (Zahlbetrag)."
+       },
+       "selbstbehalt": {
+        "ehegatte_erwerbstaetig": null,
+        "ehegatte_nicht_erwerbstaetig": null,
+        "nr": "21.4",
+        "text": "1.600 € erwerbstätig, 1.475 € nicht erwerbstätig (wie Düsseldorfer Tabelle)"
+       },
+       "rundung": {
+        "modus": "aufrunden",
+        "nr": "25",
+        "text": "Auf volle Euro aufzurunden."
+       },
+       "quelle": "https://www.famrz.de/files/Media/dokumente/unterhaltsleitlinien/unterhaltsleitlinien-2025/unterhaltsleitlinien-braunschweig-1-1-2025.pdf"
+      },
+      "Oldenburg": {
+       "name": "Leitlinien OLG Oldenburg",
+       "olg": [
+        "Oldenburg"
+       ],
+       "berufsbedingt": {
+        "pauschale": "ja",
+        "prozent": 5,
+        "min": 50,
+        "max": 150,
+        "nr": "10.2.1",
+        "text": "In der Regel 5 %, bei Vollzeit mindestens 50 €, höchstens 150 €; darüber konkret."
+       },
+       "fahrtkosten": {
+        "modell": "km",
+        "satz": 0.42,
+        "staffel_ab_entfernung_km": 30,
+        "satz_mehrkilometer": 0.28,
+        "arbeitstage_default": 220,
+        "arbeitstage_in_leitlinie": null,
+        "nr": "10.2.2",
+        "text": "42 Cent für die ersten 60 gefahrenen km täglich (30 km einfach), ab dem 61. km 28 Cent; Finanzierung enthalten."
+       },
+       "bonus": {
+        "anteil": 0.1,
+        "basis": "nach_kindesunterhalt",
+        "nr": "15.2",
+        "text": "Erwerbstätigenbonus von 1/10 kann berücksichtigt werden."
+       },
+       "selbstbehalt": {
+        "ehegatte_erwerbstaetig": 1600,
+        "ehegatte_nicht_erwerbstaetig": 1600,
+        "nr": "21.4",
+        "text": "Dem Schuldner sind wenigstens 1.600 € zu belassen (ohne Unterscheidung nach Erwerbstätigkeit)."
+       },
+       "rundung": {
+        "modus": "aufrunden",
+        "nr": "25",
+        "text": "Kindesunterhalt auf volle Euro aufgerundet (§ 1612a Abs. 2 S. 2 BGB); Ehegattenunterhalt soll auf fünf Euro gerundet werden.",
+        "ehegatte": "fuenf_euro"
+       },
+       "quelle": "https://www.famrz.de/files/Media/dokumente/unterhaltsleitlinien/unterhaltsleitlinien-2025/unterhaltsleitlinien-oldenburg-1-1-2025.pdf"
+      }
+     }
+    },
+    "2024": {
+     "quelle_art": "FamRZ-Abdrucke der Fassungen 2024 (OLG Braunschweig, Celle, Oldenburg)",
+     "je_olg": {
+      "Celle": {
+       "name": "Leitlinien OLG Celle",
+       "olg": [
+        "Celle"
+       ],
+       "berufsbedingt": {
+        "pauschale": "ja",
+        "prozent": 5,
+        "min": null,
+        "max": null,
+        "nr": "10.2.1",
+        "text": "Bei Anhaltspunkten 5 % des Nettoeinkommens, ohne Mindest- und Höchstbetrag; darüber konkret."
+       },
+       "fahrtkosten": {
+        "modell": "km",
+        "satz": 0.42,
+        "staffel_ab_entfernung_km": 30,
+        "satz_mehrkilometer": 0.28,
+        "arbeitstage_default": 220,
+        "arbeitstage_in_leitlinie": null,
+        "nr": "10.2.2",
+        "text": "0,42 € je gefahrenen km; bei mehr als 30 km einfacher Entfernung ab dem 31. km 0,28 € (kann)."
+       },
+       "bonus": {
+        "anteil": 0.1,
+        "basis": "nach_kindesunterhalt",
+        "nr": "15.2",
+        "text": "1/10 vom bereinigten Erwerbseinkommen nach Abzug Kindesunterhalt (Zahlbetrag)."
+       },
+       "selbstbehalt": {
+        "ehegatte_erwerbstaetig": null,
+        "ehegatte_nicht_erwerbstaetig": null,
+        "nr": "21.4",
+        "text": "1.600 € erwerbstätig, 1.475 € nicht erwerbstätig (wie Düsseldorfer Tabelle)"
+       },
+       "rundung": {
+        "modus": "kaufmaennisch",
+        "nr": "25",
+        "text": "Auf volle Euro zu runden (Kindesunterhalt: § 1612a Abs. 2 S. 2 BGB)."
+       },
+       "quelle": "https://www.famrz.de/files/Media/dokumente/unterhaltsleitlinien/unterhaltsleitlinien-2024/unterhaltsleitlinien-celle-1-1-2024.pdf"
+      },
+      "Braunschweig": {
+       "name": "Leitlinien OLG Braunschweig",
+       "olg": [
+        "Braunschweig"
+       ],
+       "berufsbedingt": {
+        "pauschale": "ja",
+        "prozent": 5,
+        "min": 50,
+        "max": 150,
+        "nr": "10.2.1",
+        "text": "Bei Anhaltspunkten 5 %, mindestens 50 € (25 € bei Netto unter 500 €), höchstens 150 €; darüber konkret.",
+        "min_niedrig": {
+         "unter_netto": 500,
+         "betrag": 25
+        }
+       },
+       "fahrtkosten": {
+        "modell": "km",
+        "satz": 0.42,
+        "staffel_ab_entfernung_km": 30,
+        "satz_mehrkilometer": 0.28,
+        "arbeitstage_default": 220,
+        "arbeitstage_in_leitlinie": null,
+        "nr": "10.2.2",
+        "text": "0,42 € je gefahrenen km (JVEG); ab ca. 30 km einfach Mehrkilometer i. d. R. 0,28 € (kann)."
+       },
+       "bonus": {
+        "anteil": 0.1,
+        "basis": "nach_kindesunterhalt",
+        "nr": "15.2",
+        "text": "1/10 vom bereinigten Erwerbseinkommen nach Abzug Kindesunterhalt (Zahlbetrag)."
+       },
+       "selbstbehalt": {
+        "ehegatte_erwerbstaetig": null,
+        "ehegatte_nicht_erwerbstaetig": null,
+        "nr": "21.4",
+        "text": "1.600 € erwerbstätig, 1.475 € nicht erwerbstätig (wie Düsseldorfer Tabelle)"
+       },
+       "rundung": {
+        "modus": "aufrunden",
+        "nr": "25",
+        "text": "Auf volle Euro aufzurunden."
+       },
+       "quelle": "https://www.famrz.de/files/Media/dokumente/unterhaltsleitlinien/unterhaltsleitlinien-2024/unterhaltsleitlinien-braunschweig-1-1-2024.pdf"
+      },
+      "Oldenburg": {
+       "name": "Leitlinien OLG Oldenburg",
+       "olg": [
+        "Oldenburg"
+       ],
+       "berufsbedingt": {
+        "pauschale": "ja",
+        "prozent": 5,
+        "min": 50,
+        "max": 150,
+        "nr": "10.2.1",
+        "text": "In der Regel 5 %, bei Vollzeit mindestens 50 €, höchstens 150 €; darüber konkret."
+       },
+       "fahrtkosten": {
+        "modell": "km",
+        "satz": 0.42,
+        "staffel_ab_entfernung_km": 30,
+        "satz_mehrkilometer": 0.28,
+        "arbeitstage_default": 220,
+        "arbeitstage_in_leitlinie": null,
+        "nr": "10.2.2",
+        "text": "42 Cent für die ersten 60 gefahrenen km täglich (30 km einfach), ab dem 61. km 28 Cent; Finanzierung enthalten."
+       },
+       "bonus": {
+        "anteil": 0.1,
+        "basis": "nach_kindesunterhalt",
+        "nr": "15.2",
+        "text": "Erwerbstätigenbonus von 1/10 kann berücksichtigt werden."
+       },
+       "selbstbehalt": {
+        "ehegatte_erwerbstaetig": 1600,
+        "ehegatte_nicht_erwerbstaetig": 1600,
+        "nr": "21.4",
+        "text": "Dem Schuldner sind wenigstens 1.600 € zu belassen (ohne Unterscheidung nach Erwerbstätigkeit)."
+       },
+       "rundung": {
+        "modus": "aufrunden",
+        "nr": "25",
+        "text": "Kindesunterhalt auf volle Euro aufgerundet (§ 1612a Abs. 2 S. 2 BGB); Ehegattenunterhalt soll auf fünf Euro gerundet werden.",
+        "ehegatte": "fuenf_euro"
+       },
+       "quelle": "https://www.famrz.de/files/Media/dokumente/unterhaltsleitlinien/unterhaltsleitlinien-2024/unterhaltsleitlinien-oldenburg-1-1-2024.pdf"
+      }
+     }
+    }
+   }
   },
   {
    "id": "kg",
@@ -216,7 +716,11 @@
     "nr": "25",
     "text": "Auf volle Euro aufzurunden."
    },
-   "eingruppierung": "Zwei Berechtigte; Zu- oder Abschläge können angemessen sein; in obersten Gruppen ggf. Bedarfsbegrenzung (Nr. 11.2)."
+   "eingruppierung": "Zwei Berechtigte; Zu- oder Abschläge können angemessen sein; in obersten Gruppen ggf. Bedarfsbegrenzung (Nr. 11.2).",
+   "historie": {
+    "2025": {},
+    "2024": {}
+   }
   },
   {
    "id": "brandenburg",
@@ -264,7 +768,11 @@
     "nr": "25",
     "text": "Kann auf volle Euro gerundet werden."
    },
-   "eingruppierung": "Zwei Berechtigte; bei weniger Berechtigten Höhergruppierung auch um mehr als eine Gruppe möglich; bei mehr Korrektur über Bedarfskontrollbetrag (Nr. 11.2)."
+   "eingruppierung": "Zwei Berechtigte; bei weniger Berechtigten Höhergruppierung auch um mehr als eine Gruppe möglich; bei mehr Korrektur über Bedarfskontrollbetrag (Nr. 11.2).",
+   "historie": {
+    "2025": {},
+    "2024": {}
+   }
   },
   {
    "id": "bremen",
@@ -312,7 +820,11 @@
     "nr": "25",
     "text": "Auf volle € aufzurunden."
    },
-   "eingruppierung": "Zwei Berechtigte, auch Nachrangige zählen; Bedarfskontrollbeträge sind zu beachten: bei Unterschreitung nächst niedrigere Gruppe (Nr. 11.2)."
+   "eingruppierung": "Zwei Berechtigte, auch Nachrangige zählen; Bedarfskontrollbeträge sind zu beachten: bei Unterschreitung nächst niedrigere Gruppe (Nr. 11.2).",
+   "historie": {
+    "2025": {},
+    "2024": {}
+   }
   },
   {
    "id": "dresden",
@@ -360,7 +872,11 @@
     "nr": "25",
     "text": "Auf volle Euro aufzurunden."
    },
-   "eingruppierung": "Zwei Berechtigte; Zu- oder Abschläge können angemessen sein (Nr. 11.2)."
+   "eingruppierung": "Zwei Berechtigte; Zu- oder Abschläge können angemessen sein (Nr. 11.2).",
+   "historie": {
+    "2025": {},
+    "2024": {}
+   }
   },
   {
    "id": "frankfurt",
@@ -408,7 +924,11 @@
     "nr": "25",
     "text": "Auf volle Euro aufzurunden."
    },
-   "eingruppierung": "Zwei Berechtigte (ohne Rücksicht auf Rang, soweit Mittel für Nachrangige vorhanden); i. d. R. Gruppenwechsel (Nr. 11.2)."
+   "eingruppierung": "Zwei Berechtigte (ohne Rücksicht auf Rang, soweit Mittel für Nachrangige vorhanden); i. d. R. Gruppenwechsel (Nr. 11.2).",
+   "historie": {
+    "2025": {},
+    "2024": {}
+   }
   },
   {
    "id": "hamburg",
@@ -456,7 +976,11 @@
     "nr": "25",
     "text": "Auf volle Euro aufzurunden."
    },
-   "eingruppierung": "Zwei Berechtigte; Zu- oder Abschläge können angemessen sein; Bedarfskontrollbeträge zur Angemessenheitskontrolle (Nr. 11.2)."
+   "eingruppierung": "Zwei Berechtigte; Zu- oder Abschläge können angemessen sein; Bedarfskontrollbeträge zur Angemessenheitskontrolle (Nr. 11.2).",
+   "historie": {
+    "2025": {},
+    "2024": {}
+   }
   },
   {
    "id": "koblenz",
@@ -504,7 +1028,11 @@
     "nr": "25",
     "text": "Auf volle Euro zu runden."
    },
-   "eingruppierung": "Eingruppierung nach anrechenbarem Einkommen; Ab- oder Zuschläge nach Anm. A I DT (Nr. 11.2)."
+   "eingruppierung": "Eingruppierung nach anrechenbarem Einkommen; Ab- oder Zuschläge nach Anm. A I DT (Nr. 11.2).",
+   "historie": {
+    "2025": {},
+    "2024": {}
+   }
   },
   {
    "id": "naumburg",
@@ -552,7 +1080,11 @@
     "nr": "25",
     "text": "Stets auf volle Euro aufzurunden."
    },
-   "eingruppierung": "Zwei Berechtigte; i. d. R. Gruppenwechsel (Nr. 11.2)."
+   "eingruppierung": "Zwei Berechtigte; i. d. R. Gruppenwechsel (Nr. 11.2).",
+   "historie": {
+    "2025": {},
+    "2024": {}
+   }
   },
   {
    "id": "rostock",
@@ -600,7 +1132,11 @@
     "nr": "25",
     "text": "Auf volle EUR aufzurunden."
    },
-   "eingruppierung": "Zwei Berechtigte; i. d. R. Gruppenwechsel; Korrektur über Bedarfskontrollbetrag (Nr. 11.2)."
+   "eingruppierung": "Zwei Berechtigte; i. d. R. Gruppenwechsel; Korrektur über Bedarfskontrollbetrag (Nr. 11.2).",
+   "historie": {
+    "2025": {},
+    "2024": {}
+   }
   },
   {
    "id": "schleswig",
@@ -648,7 +1184,11 @@
     "nr": "25",
     "text": "Auf volle Euro aufzurunden, außer Zahlbeträge nach Kindergeldanrechnung."
    },
-   "eingruppierung": "Zwei Berechtigte; i. d. R. eine Stufe herauf oder herab; Bedarfskontrollbetrag kann zur Herabstufung führen; erweiterter Umgang kann Herabstufung rechtfertigen (Nr. 11.2)."
+   "eingruppierung": "Zwei Berechtigte; i. d. R. eine Stufe herauf oder herab; Bedarfskontrollbetrag kann zur Herabstufung führen; erweiterter Umgang kann Herabstufung rechtfertigen (Nr. 11.2).",
+   "historie": {
+    "2025": {},
+    "2024": {}
+   }
   },
   {
    "id": "thueringen",
@@ -696,7 +1236,12 @@
     "nr": "25",
     "text": "Auf volle Euro aufzurunden."
    },
-   "eingruppierung": "Zwei Berechtigte; Zu- oder Abschläge können angemessen sein (Nr. 11.2)."
+   "eingruppierung": "Zwei Berechtigte; Zu- oder Abschläge können angemessen sein (Nr. 11.2).",
+   "historie": {
+    "2025": {},
+    "2024": {}
+   }
   }
- ]
+ ],
+ "hinweis_historie": "Hauptstand ist 2026. 'historie' enthält nur Abweichungen der Fassungen 2024 und 2025; ein leeres Objekt bedeutet: Parameter wie 2026 (abgeglichen). 'je_olg': in diesem Jahr galten getrennte Leitlinien je OLG, Eingabefeld 'olg' erforderlich."
 }
