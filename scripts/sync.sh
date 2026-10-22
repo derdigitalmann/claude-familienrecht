@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Spiegelt die in plugins.txt gelisteten Plugins aus Klotzkette/claude-fuer-deutsches-recht.
+# Spiegelt die in plugins.txt gelisteten Plugins aus Klotzkette/claude-fuer-deutsches-recht
+# und haengt die eigenen Plugins aus eigene/marketplace-eigene.json an (eigene/ wird nicht angefasst).
 set -euo pipefail
 UPSTREAM="https://github.com/Klotzkette/claude-fuer-deutsches-recht.git"
 WORK="$(mktemp -d)"
@@ -23,8 +24,13 @@ for p in sel:
     paths.append(src)
     p['source'] = './plugins/' + src
 m['name'] = 'mehmet-familienrecht'
-m['description'] = 'Familienrecht aus Klotzkette/claude-fuer-deutsches-recht, automatisch gespiegelt.'
-m['plugins'] = sel
+m['description'] = 'Familienrecht aus Klotzkette/claude-fuer-deutsches-recht (gespiegelt) plus eigene Ergaenzungen von digitalmann in Testphase.'
+m['owner'] = {'name': 'digitalmann'}
+eigene = json.load(open('eigene/marketplace-eigene.json'))
+konflikt = {p['name'] for p in eigene} & {p['name'] for p in sel}
+if konflikt:
+    sys.exit(f'Namenskonflikt eigene/Upstream: {sorted(konflikt)}')
+m['plugins'] = sel + eigene
 open(f'{work}/paths.txt', 'w').write('\n'.join(paths) + '\n')
 with open(f'{work}/marketplace.json', 'w') as f:
     json.dump(m, f, ensure_ascii=False, indent=2)

@@ -1,0 +1,4 @@
+{"leitlinie":"nrw","zeitraum":{"von":"2026-01","bis":"2026-01"},
+ "pflichtiger":{"erwerbstaetig":true,"einkommen":[{"ab":"2026-01","netto":1750}]},
+ "kinder":[{"name":"K1","geburtsdatum":"2007-06-01","status_ab_18":"privilegiert"},
+           {"name":"K2","geburtsdatum":"2018-06-01"},{"name":"K3","geburtsdatum":"2020-06-01"}]}

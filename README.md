@@ -24,7 +24,7 @@ Die Auswahl steht in `plugins.txt`. Urheber der Inhalte ist Klotzkette (siehe `N
 
 | Plugin | Inhalt | Status |
 |---|---|---|
-| `unterhaltsrechner` | Berechnung von Kindes- und Ehegattenunterhalt mit festem Rechenkern: Düsseldorfer Tabelle, Leitlinie des zuständigen OLG (wird vor der Berechnung abgefragt), Mangelfall, Rückstand je Monat | in Entwicklung, noch nicht im Marketplace |
+| `unterhaltsrechner` | Berechnung von Kindes- und Ehegattenunterhalt mit festem Rechenkern: Düsseldorfer Tabelle 2024 bis 2026, Leitlinien aller OLG-Bezirke Stand 2026 (die maßgebliche wird vor der Berechnung abgefragt), Mangelfall, Haftungsquote Volljähriger, Rückstand je Monat, Prüfmodus für Gegenrechnungen | Testphase, Version 0.2.0 |
 
 Für die eigenen Ergänzungen gilt:
 
@@ -42,11 +42,12 @@ Für die eigenen Ergänzungen gilt:
 ```
 claude plugin marketplace add derdigitalmann/claude-familienrecht
 claude plugin install fachanwalt-familienrecht@mehmet-familienrecht
+claude plugin install unterhaltsrechner@mehmet-familienrecht
 ```
 
 ## Aktualisierung
 
-Ein GitHub-Workflow gleicht täglich mit dem Original ab und öffnet bei Änderungen einen Pull Request. Nach dem Merge übernehmen Marketplaces mit aktivierter automatischer Synchronisierung die neue Fassung. Der Abgleich ändert nur `plugins/`, die Klotzkette-Einträge im Manifest und die Lizenzdateien. Die eigenen Ergänzungen bleiben davon unberührt.
+Ein GitHub-Workflow gleicht täglich mit dem Original ab und öffnet bei Änderungen einen Pull Request. Nach dem Merge übernehmen Marketplaces mit aktivierter automatischer Synchronisierung die neue Fassung. Der Abgleich ändert nur `plugins/`, die Klotzkette-Einträge im Manifest und die Lizenzdateien. Die eigenen Ergänzungen in `eigene/` bleiben unberührt; ihre Manifest-Einträge stehen in `eigene/marketplace-eigene.json` und werden bei jedem Abgleich angehängt.
 
 ## Lizenz
 

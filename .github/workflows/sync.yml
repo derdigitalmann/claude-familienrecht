@@ -6,7 +6,7 @@ on:
   workflow_dispatch:        # manuell ueber den Actions-Tab
   push:
     branches: [main]
-    paths: [plugins.txt, scripts/sync.sh]
+    paths: [plugins.txt, scripts/sync.sh, eigene/marketplace-eigene.json]
 
 permissions:
   contents: write
