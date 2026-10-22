@@ -1,0 +1,54 @@
+name: Tests eigene Plugins
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths: ['eigene/**', '.claude-plugin/**', '.github/workflows/tests.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Abhaengigkeiten
+        run: pip install openpyxl==3.1.5
+
+      - name: Manifeste pruefen
+        run: |
+          jq -e '.plugins | length > 0' .claude-plugin/marketplace.json > /dev/null
+          for src in $(jq -r '.plugins[].source' .claude-plugin/marketplace.json); do
+            test -f "$src/.claude-plugin/plugin.json" || { echo "fehlt: $src/.claude-plugin/plugin.json"; exit 1; }
+            jq -e . "$src/.claude-plugin/plugin.json" > /dev/null
+          done
+          # Versionen der eigenen Plugins muessen in plugin.json, marketplace-eigene.json und Manifest gleich sein
+          for name in $(jq -r '.[].name' eigene/marketplace-eigene.json); do
+            a=$(jq -r --arg n "$name" '.[] | select(.name==$n) | .version' eigene/marketplace-eigene.json)
+            b=$(jq -r --arg n "$name" '.plugins[] | select(.name==$n) | .version' .claude-plugin/marketplace.json)
+            c=$(jq -r .version "eigene/$name/.claude-plugin/plugin.json")
+            [ "$a" = "$b" ] && [ "$a" = "$c" ] || { echo "Versionskonflikt $name: eigene=$a manifest=$b plugin=$c"; exit 1; }
+          done
+
+      - name: Daten pruefen
+        run: |
+          for f in eigene/*/skills/*/data/*.json; do jq -e . "$f" > /dev/null || { echo "ungueltig: $f"; exit 1; }; done
+
+      - name: Tests
+        run: |
+          set -e
+          n=0
+          for t in eigene/*/skills/*/tests/test_*.py; do
+            [ -f "$t" ] || continue
+            python3 "$t"
+            n=$((n+1))
+          done
+          echo "Testdateien: $n"

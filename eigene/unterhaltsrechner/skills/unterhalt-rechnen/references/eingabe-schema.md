@@ -58,6 +58,7 @@ Alle Beträge in Euro je Monat. Monate als `JJJJ-MM`. Felder ohne Angabe gelten 
 | `sonstige_einkuenfte`, `wohnvorteil` | Einkünfte ohne Bonus (Rente, ALG, Miete, Wohnwert nach Abzug von Zins und Tilgung). |
 | `berufsbedingt.modus` | `pauschal` (Prozentsatz, Mindest- und Höchstbetrag der Leitlinie), `konkret` (Fahrtkosten nach Leitliniensatz und/oder `weitere`), `keine`. |
 | `fahrt.staffel` | `false` schaltet den geringeren Satz für Mehrkilometer ab (Leitlinien: "kann"). |
+| `fahrt.staffel_ab_km` | Schwelle in Entfernungskilometern für den geringeren Satz, wenn die Leitlinie keine nennt (Hamburg) oder abweichend. |
 | `fiktiv`, `teilzeit` | Steuern die Pauschale (NRW nur bei fiktivem Einkommen; Mindestbetrag nicht bei Teilzeit). |
 | `netto_basis` | `jahresschnitt`, wenn das Netto als Jahresschnitt inkl. Sonderzahlungen ermittelt ist (sonst Hinweis). |
 | `brutto` | Bruttoeinkommen für die 4-%-Grenze der sekundären Altersvorsorge. |

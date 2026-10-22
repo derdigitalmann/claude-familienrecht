@@ -4,7 +4,7 @@ Gesammelt aus Foren (finanztip-Community, 123recht, rund-ums-baby), Fachportalen
 
 | Nr. | Fallstrick | Richtig | Rechner |
 |---|---|---|---|
-| 1 | Bedarfskontrollbetrag übersehen, Gruppe zu hoch | Herabstufen, bis der Rest den BKB der Gruppe erreicht (DT Anm. A III) | R |
+| 1 | Bedarfskontrollbetrag übersehen, Gruppe zu hoch | Herabstufen, bis der Rest den BKB der Gruppe erreicht (DT Anm. A III). Rechner zieht Zahlbeträge ab ("nach Abzug aller Unterhaltslasten", Leitlinien Brandenburg/Rostock 11.2); manche Rechner ziehen Tabellenbeträge ab und stufen früher herab | R |
 | 2 | Zahlbetrag mit Tabellenbetrag oder 105 % mit 100 % verwechselt | Zahlbetrag = Bedarf minus Kindergeldanteil; Vorwegabzug beim Ehegattenunterhalt mit Zahlbetrag; dynamischer Prozentsatz ausgewiesen | R |
 | 3 | Altersstufe erst ab dem Geburtstag statt ab Monatsbeginn | ab dem Ersten des Geburtsmonats (§ 1612a Abs. 3 BGB) | R |
 | 4 | Netto aus einer Monatsabrechnung, Sonderzahlungen vergessen | Jahresschnitt inkl. Urlaubs- und Weihnachtsgeld, Boni, Überstunden, Sachbezüge; Steuererstattung im Zahlungsjahr (In-Prinzip, NRW 1.7) | H (`netto_basis`) |

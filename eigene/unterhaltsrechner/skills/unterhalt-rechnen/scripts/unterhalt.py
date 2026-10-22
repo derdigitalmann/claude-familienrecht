@@ -17,7 +17,7 @@ from pathlib import Path
 DATA = Path(__file__).resolve().parent.parent / "data"
 D = Decimal
 C = D("0.01")
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 
 
 def dec(x):
@@ -120,8 +120,11 @@ def fahrtkosten(fk_eing, ll, hinweise):
     tage = dec(fk_eing.get("arbeitstage") or p["arbeitstage_default"] or 220)
     if not fk_eing.get("arbeitstage") and not p.get("arbeitstage_in_leitlinie"):
         hinweise.add(f"Fahrtkosten: {tage} Arbeitstage angenommen, die Leitlinie nennt keine Zahl.")
-    staffel = fk_eing.get("staffel", True) and p["satz_mehrkilometer"] is not None
-    grenze = dec(p["staffel_ab_entfernung_km"]) if staffel else entf
+    ab = fk_eing.get("staffel_ab_km", p["staffel_ab_entfernung_km"])
+    staffel = fk_eing.get("staffel", True) and p["satz_mehrkilometer"] is not None and ab is not None
+    if p["satz_mehrkilometer"] is not None and ab is None and entf > 30:
+        hinweise.add(f"Fahrtkosten: Leitlinie erlaubt bei langen Strecken {p['satz_mehrkilometer']} € je km, nennt aber keine Schwelle. Ohne 'fahrt.staffel_ab_km' kein geringerer Satz angesetzt.")
+    grenze = dec(ab) if staffel else entf
     bis = min(entf, grenze)
     rest = max(entf - grenze, D(0))
     satz = dec(p["satz"])
@@ -846,6 +849,7 @@ def main():
     ap.add_argument("eingabe", nargs="?")
     ap.add_argument("--format", choices=["md", "json"], default="md")
     ap.add_argument("--leitlinien", action="store_true", help="verfügbare Leitlinien auflisten")
+    ap.add_argument("--xlsx", metavar="PFAD", help="zusätzlich Excel-Berechnungsblatt schreiben")
     a = ap.parse_args()
     if a.leitlinien:
         print(leitlinien_liste())
@@ -857,6 +861,15 @@ def main():
     except Fehler as e:
         print(f"FEHLER: {e}", file=sys.stderr)
         sys.exit(2)
+    if a.xlsx:
+        try:
+            sys.path.insert(0, str(Path(__file__).resolve().parent))
+            import export_xlsx
+        except ImportError:
+            print("FEHLER: Für --xlsx wird openpyxl benötigt (pip install openpyxl).", file=sys.stderr)
+            sys.exit(3)
+        export_xlsx.schreibe(r, a.xlsx, abschnitte, de)
+        print(f"Excel-Berechnungsblatt: {a.xlsx}", file=sys.stderr)
     if a.format == "json":
         print(json.dumps(r, default=jsonable, ensure_ascii=False, indent=1))
     else:

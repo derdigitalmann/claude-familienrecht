@@ -188,6 +188,22 @@ r = u.berechne(e)["rueckstand"]["Ehegatte"]
 pruefe("1585b ausgeschlossen (2 x 1.500)", r["ausgeschlossen_1585b"], "3000.00")
 pruefe("1585b verbleibend (2 x 1.500)", r["differenz"], "3000.00")
 
+# 21. Excel-Export (nur wenn openpyxl installiert)
+try:
+    import openpyxl  # noqa: F401
+    import tempfile
+    import export_xlsx
+    e = basis(kinder=[{"name": "X", "geburtsdatum": "2018-05-05"}], zahlungen=[{"monat": "2026-01", "an": "X", "betrag": 100}])
+    r = u.berechne(e)
+    with tempfile.TemporaryDirectory() as td:
+        pfad = Path(td) / "t.xlsx"
+        export_xlsx.schreibe(r, pfad, u.abschnitte, u.de)
+        wb = openpyxl.load_workbook(pfad)
+        pruefe("Excel Blätter", len(wb.sheetnames), 5)
+        pruefe("Excel Zahlbetrag", wb["Übersicht"].cell(row=8, column=6).value, r["monate"][0]["soll"]["X"])
+except ImportError:
+    print("--  Excel-Test übersprungen (openpyxl fehlt)")
+
 if FEHLER:
     print("\nFEHLER:\n" + "\n".join(FEHLER))
     sys.exit(1)
