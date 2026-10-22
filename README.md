@@ -41,9 +41,11 @@ Für die eigenen Ergänzungen gilt:
 
 ```
 claude plugin marketplace add derdigitalmann/claude-familienrecht
-claude plugin install fachanwalt-familienrecht@mehmet-familienrecht
-claude plugin install unterhaltsrechner@mehmet-familienrecht
+claude plugin install fachanwalt-familienrecht@digitalmann-familienrecht
+claude plugin install unterhaltsrechner@digitalmann-familienrecht
 ```
+
+Der Marketplace hieß bis 22.10.2026 `mehmet-familienrecht`. Wer ihn unter dem alten Namen eingebunden hat, entfernt ihn einmal und fügt ihn neu hinzu (siehe unten).
 
 ## Aktualisierung
 
