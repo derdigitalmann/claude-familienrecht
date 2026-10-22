@@ -1,5 +1,5 @@
 {
- "stand": "Leitlinien Stand 01.01.2026, ausgewertet am 08.10.2026",
+ "stand": "Leitlinien Stand 01.01.2026, ausgewertet am 08.10.2026, amtliche Quellen abgeglichen am 22.10.2026",
  "hinweis": "Parameter, die der Rechner automatisch anwendet. Alles andere steht im Feld text und wird als Hinweis ausgegeben. Für Monate vor 2026 gelten die Parameter von 2026 weiter; die damalige Fassung ist gesondert zu prüfen.",
  "leitlinien": [
   {
@@ -117,8 +117,8 @@
     "Saarland"
    ],
    "verweis": "nrw",
-   "quelle": "https://www.saarland.de/solg/DE/presse/pressemitteilungen/pressemitteilungen/medieninfos/2025/pm_2025_12_19_Unterhaltsrechtliche_Leitlinien_01.01.2026",
-   "quelle_art": "Pressemitteilung, Seite beim Abruf nicht erreichbar; Inhalt laut FamRB-Blog (otto-schmidt.de) [UNSICHER]"
+   "quelle": "https://www.famrz.de/redaktionsmeldungen/unterhaltsleitlinien-der-oberlandesgerichte-2026.html",
+   "quelle_art": "Übernahme der Leitlinien NRW laut FamRZ-Redaktionsmeldung 2026 und FamRB-Blog; Pressemitteilung des SOLG beim Abgleich nicht abrufbar"
   },
   {
    "id": "niedersachsen",
@@ -179,8 +179,8 @@
    "bundeslaender": [
     "Berlin"
    ],
-   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Berlin-2026.pdf",
-   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "quelle": "https://www.berlin.de/gerichte/was-moechten-sie-erledigen/familiensachen/unterhaltsrechtlleitlinienkg_01012026.pdf",
+   "quelle_art": "amtlich, Text mit FamRB-Abdruck abgeglichen",
    "berufsbedingt": {
     "pauschale": "ja",
     "prozent": 5,
@@ -275,8 +275,8 @@
    "bundeslaender": [
     "Bremen"
    ],
-   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Bremen-2026.pdf",
-   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "quelle": "https://www.oberlandesgericht.bremen.de/sixcms/media.php/13/Leitlinien%201.1.2026.pdf",
+   "quelle_art": "amtlich, Kernwerte gegen amtliches PDF geprüft",
    "berufsbedingt": {
     "pauschale": "nein",
     "prozent": null,
@@ -323,8 +323,8 @@
    "bundeslaender": [
     "Sachsen"
    ],
-   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Dresden-2026.pdf",
-   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "quelle": "https://www.justiz.sachsen.de/olg/download/Unterhaltsleitlinien_2026.pdf",
+   "quelle_art": "amtlich, Text mit FamRB-Abdruck abgeglichen",
    "berufsbedingt": {
     "pauschale": "ja",
     "prozent": 5,
@@ -372,7 +372,7 @@
     "Hessen"
    ],
    "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Frankfurt-aM-2026.pdf",
-   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "quelle_art": "Abdruck FamRB-Blog, Stand 01.01.2026; Justizportal Hessen verlinkt nur die Fassung 2024, FamRZ führt die Fassung 2026 [UNSICHER]",
    "berufsbedingt": {
     "pauschale": "ja",
     "prozent": 5,
@@ -419,8 +419,8 @@
    "bundeslaender": [
     "Hamburg"
    ],
-   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Hamburg-2026.pdf",
-   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "quelle": "https://justiz.hamburg.de/resource/blob/1124542/e1484095c3df303711b867e47b372a22/unterhaltsleitlinien-stand-01-01-2026-data.pdf",
+   "quelle_art": "amtlich, Text mit FamRB-Abdruck abgeglichen",
    "berufsbedingt": {
     "pauschale": "ja",
     "prozent": 5,
@@ -432,12 +432,12 @@
    "fahrtkosten": {
     "modell": "km",
     "satz": 0.42,
-    "staffel_ab_entfernung_km": 30,
+    "staffel_ab_entfernung_km": null,
     "satz_mehrkilometer": 0.28,
     "arbeitstage_default": 220,
     "arbeitstage_in_leitlinie": null,
     "nr": "10.2.2",
-    "text": "0,42 € je gefahrenen km; bei langen Strecken regelmäßig 0,28 € (Schwelle nicht beziffert, Rechner nimmt 30 km einfach an). Vorrang ÖPNV."
+    "text": "0,42 € je gefahrenen km; bei langen Strecken kann nach unten abgewichen werden (regelmäßig 0,28 €), ohne festgelegte Schwelle. Rechner senkt nur, wenn 'fahrt.staffel_ab_km' gesetzt ist. Vorrang ÖPNV."
    },
    "bonus": {
     "anteil": 0.1,
@@ -467,8 +467,8 @@
    "bundeslaender": [
     "Rheinland-Pfalz (OLG-Bezirk Koblenz)"
    ],
-   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Koblenz-2026.pdf",
-   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "quelle": "https://olgko.justiz.rlp.de/fileadmin/justiz/Gerichte/Ordentliche_Gerichte/Oberlandesgerichte/Koblenz/Dokumente/Unhaltsleitlinien/Unterhalt_2026.pdf",
+   "quelle_art": "amtlich, Text mit FamRB-Abdruck abgeglichen",
    "berufsbedingt": {
     "pauschale": "ja",
     "prozent": 5,
@@ -515,8 +515,8 @@
    "bundeslaender": [
     "Sachsen-Anhalt"
    ],
-   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Naumburg-2026.pdf",
-   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "quelle": "https://olg.sachsen-anhalt.de/fileadmin/Bibliothek/Politik_und_Verwaltung/MJ/MJ/olg/pdf/2026/Unterhaltsleitlinien_Stand_01012026.pdf",
+   "quelle_art": "amtlich, Text mit FamRB-Abdruck abgeglichen",
    "berufsbedingt": {
     "pauschale": "ja",
     "prozent": 5,
@@ -563,8 +563,8 @@
    "bundeslaender": [
     "Mecklenburg-Vorpommern"
    ],
-   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Rostock-2026.pdf",
-   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "quelle": "https://www.mv-justiz.de/static/MVJ/Gerichte/Oberlandesgericht%20Rostock/Informationen/Unterhaltsrechtliche%20Leitlinien/Unterhaltsrechtliche%20Leitlinien%20der%20Familiensenate%20des%20Oberlandesgerichts%20Stand%2001.01.2026.pdf",
+   "quelle_art": "amtlich, Text mit FamRB-Abdruck abgeglichen",
    "berufsbedingt": {
     "pauschale": "nein",
     "prozent": null,
@@ -611,8 +611,8 @@
    "bundeslaender": [
     "Schleswig-Holstein"
    ],
-   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Schleswig-Holstein-2026.pdf",
-   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "quelle": "https://transparenz.schleswig-holstein.de/dataset/32fb9040-3a70-49ad-a6c8-563a3e95ca74/resource/368a6cc4-795d-47c4-99d8-d470bbf626cc/download/unterhaltsrechtliche-leitlinien-2026-final.pdf",
+   "quelle_art": "amtlich, Text mit FamRB-Abdruck abgeglichen",
    "berufsbedingt": {
     "pauschale": "nein",
     "prozent": null,
@@ -659,8 +659,8 @@
    "bundeslaender": [
     "Thüringen"
    ],
-   "quelle": "https://blog.otto-schmidt.de/famrb/wp-content/uploads/sites/8/2025/12/Thueringen-2026.pdf",
-   "quelle_art": "Abdruck FamRB-Blog (otto-schmidt.de)",
+   "quelle": "https://gerichte.thueringen.de/media/tmmjv_gerichte/Oberlandesgericht/Infothek/Unterhaltsrecht/Dokumente/Thueringer_Tabelle2026.01.01.pdf",
+   "quelle_art": "amtliche URL; Abruf beim Abgleich gesperrt, Werte aus FamRB-Abdruck (LL-ThOLG 2026) [UNSICHER]",
    "berufsbedingt": {
     "pauschale": "ja",
     "prozent": 5,

@@ -10,6 +10,8 @@ Eigene Ergänzung von digitalmann, **nicht von Klotzkette** und nicht mit Klotzk
 - `data/dt.json`: Düsseldorfer Tabelle 2024, 2025, 2026
 - `data/leitlinien.json`: 15 Leitlinien bzw. OLG-Bezirke, Stand 01.01.2026
 - `references/fallstricke.md`: 27 typische Fehler mit Quellen und Umsetzung im Rechner
+- `scripts/export_xlsx.py`: Excel-Berechnungsblatt (`--xlsx`)
+- `tests/test_referenzfaelle.py`: Referenzfälle aus öffentlichen Fallbeispielen mit dokumentierten Abweichungen
 - `tests/test_unterhalt.py`: Regressionstests, u. a. Beispiel DT 2026 Anm. C und Fahrtkostenbeispiel der Leitlinien Schleswig-Holstein
 
 ## Grenzen

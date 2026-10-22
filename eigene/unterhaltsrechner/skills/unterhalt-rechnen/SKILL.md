@@ -64,7 +64,7 @@ Vor der Ausgabe `references/fallstricke.md` durchgehen. Punkte mit "S" (nur Skil
 1. Hinweise und Annahmen des Skripts vollständig an den Nutzer weitergeben, insbesondere Abweichungen von der Leitlinie (Pauschale, wo die Leitlinie keine kennt), Mangelfall, Begrenzung durch Selbstbehalt.
 2. Plausibilität: Eingruppierung, Altersstufenwechsel, Kindergeldanteil, Selbstbehalt.
 3. Nicht automatisiert und daher gesondert zu prüfen: Wechselmodell, Altersvorsorge- und Krankenvorsorgeunterhalt, Dreiteilung bei neuem Ehegatten, § 1578b BGB, Verwirkung, konkreter Bedarf bei hohem Einkommen, Brutto-Netto-Rechnung.
-4. Ausgabe nach Bedarf: Markdown im Chat, Excel-Berechnungsblatt (xlsx-Skill) oder PDF. Der Testphasen-Hinweis und die Leitlinie mit Fundstelle bleiben in jeder Ausgabe stehen.
+4. Ausgabe nach Bedarf: Markdown im Chat oder Excel-Berechnungsblatt direkt aus dem Skript (`--xlsx berechnung.xlsx`; Blätter Übersicht, Monate mit Summenformeln, Rechenweg, Rückstand, Hinweise). PDF bei Bedarf aus der Markdown-Ausgabe. Der Testphasen-Hinweis, gegebenenfalls VORLÄUFIG, und die Leitlinie mit Fundstelle bleiben in jeder Ausgabe stehen.
 
 ## Prüfmodus: Gegenrechnung
 
@@ -78,4 +78,4 @@ Liegt eine Berechnung der Gegenseite oder des Gerichts vor:
 
 - Neue Düsseldorfer Tabelle: Jahr in `data/dt.json` ergänzen (Werte aus dem amtlichen PDF; Stufen 1 bis 3 müssen Mindestbedarf x Prozentsatz aufgerundet ergeben).
 - Neue Leitlinien: `data/leitlinien.json` aktualisieren, `references/leitlinien-uebersicht.md` anpassen.
-- Nach jeder Änderung `python3 tests/test_unterhalt.py` ausführen.
+- Nach jeder Änderung `python3 tests/test_unterhalt.py` und `python3 tests/test_referenzfaelle.py` ausführen. Der GitHub-Workflow `tests.yml` führt beide bei jedem Pull Request aus.
