@@ -1,6 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "mehmet-familienrecht",
+  "name": "digitalmann-familienrecht",
   "description": "Familienrecht aus Klotzkette/claude-fuer-deutsches-recht (gespiegelt) plus eigene Ergaenzungen von digitalmann in Testphase.",
   "owner": {
     "name": "digitalmann"

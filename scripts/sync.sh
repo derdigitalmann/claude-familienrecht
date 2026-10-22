@@ -23,7 +23,7 @@ for p in sel:
     src = p['source'].removeprefix('./').rstrip('/')
     paths.append(src)
     p['source'] = './plugins/' + src
-m['name'] = 'mehmet-familienrecht'
+m['name'] = 'digitalmann-familienrecht'
 m['description'] = 'Familienrecht aus Klotzkette/claude-fuer-deutsches-recht (gespiegelt) plus eigene Ergaenzungen von digitalmann in Testphase.'
 m['owner'] = {'name': 'digitalmann'}
 eigene = json.load(open('eigene/marketplace-eigene.json'))
