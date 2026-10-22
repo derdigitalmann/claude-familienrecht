@@ -204,6 +204,24 @@ try:
 except ImportError:
     print("--  Excel-Test übersprungen (openpyxl fehlt)")
 
+# 22. Eingabeprüfung: Fehleingaben enden mit Fehler, nicht mit Absturz oder stillem Ergebnis
+faelle = {
+    "Datum deutsch": basis(kinder=[{"name": "K", "geburtsdatum": "01.01.2020"}]),
+    "Name doppelt": basis(kinder=[{"name": "K", "geburtsdatum": "2020-01-01"}, {"name": "K", "geburtsdatum": "2015-01-01"}]),
+    "Status Tippfehler": basis(kinder=[{"name": "K", "geburtsdatum": "2005-01-01", "status_ab_18": "privilegiet"}]),
+    "von nach bis": basis(zeitraum={"von": "2026-05", "bis": "2026-01"}),
+    "Zahlung unbekannt": basis(kinder=[{"name": "K", "geburtsdatum": "2020-01-01"}], zahlungen=[{"monat": "2026-01", "an": "X", "betrag": 1}]),
+    "Betrag als Text": basis(pflichtiger={"einkommen": [{"ab": "2026-01", "netto": "3.000,00"}]}),
+    "Gruppe 16": basis(kinder=[{"name": "K", "geburtsdatum": "2020-01-01"}], gruppe={"fest": 16}),
+    "Monate 0": basis(pflichtiger={"einkommen": [{"ab": "2026-01", "selbstaendig": {"zeitraeume": [{"gewinn": 1, "monate": 0}]}}]}),
+}
+for name, e in faelle.items():
+    try:
+        u.berechne(e)
+        FEHLER.append(f"Eingabeprüfung {name}: kein Fehler ausgelöst")
+    except u.Fehler:
+        print(f"ok  Eingabeprüfung {name} -> Fehler")
+
 if FEHLER:
     print("\nFEHLER:\n" + "\n".join(FEHLER))
     sys.exit(1)

@@ -104,6 +104,53 @@ pruefe("Grafikdesigner Gruppe", m["kinder_info"]["gruppe"], 7)
 pruefe("Grafikdesigner K7", m["soll"]["K7"], "629.50")
 pruefe("Grafikdesigner K10", m["soll"]["K10"], "629.50")
 
+# 5. Ausbildungsvergütung, DT 2026
+#    https://www.smartunterhalt.de/ratgeber/grundlagen/unterhalt-ausbildung-ausbildungsverguetung
+#    a) 17 Jahre, 700 € netto, Pflichtiger 3.000 €: Quelle 751 - 129,50 - 300 = 321,50 € (Gruppe 4, ohne Höherstufung).
+e = {"leitlinie": "nrw", "zeitraum": {"von": "2026-06", "bis": "2026-06"},
+     "pflichtiger": {"einkommen": [eink(3000)]},
+     "kinder": [{"name": "A17", "geburtsdatum": "2009-01-01", "ausbildungsverguetung": 700}],
+     "gruppe": {"korrektur": 0}}
+pruefe("Azubi 17 ohne Höherstufung", monat(e)["soll"]["A17"], "321.50")
+# ABWEICHUNG (bewusst): Ohne Vorgabe stuft der Rechner bei nur einem Berechtigten eine Gruppe hoch (DT Anm. A I,
+# Leitlinien Nr. 11.2: "Zuschläge"): 784 - 129,50 - 300 = 354,50 €.
+del e["gruppe"]
+pruefe("Azubi 17 mit Höherstufung (Rechner)", monat(e)["soll"]["A17"], "354.50")
+#    b) 19 Jahre, im Haushalt, 780 € netto; Eltern 3.400 € und 1.900 €: Restbedarf 1.061 - 680 - 259 = 122 €,
+#       Quote 1.650 : 150 -> 111,83 € für Elternteil A.
+e = {"leitlinie": "nrw", "zeitraum": {"von": "2026-06", "bis": "2026-06"},
+     "pflichtiger": {"einkommen": [eink(3400)]},
+     "anderer_elternteil": {"einkommen": [eink(1900)]},
+     "kinder": [{"name": "A19", "geburtsdatum": "2007-01-01", "status_ab_18": "volljaehrig", "ausbildungsverguetung": 780}]}
+pruefe("Azubi 19 Anteil Elternteil A", monat(e)["soll"]["A19"], "111.83")
+#    c) 21 Jahre, eigener Haushalt, 850 € netto: 990 - 850 - 259 < 0 -> kein Anspruch (kein Ausbildungsaufwand abzuziehen).
+e = {"leitlinie": "nrw", "zeitraum": {"von": "2026-06", "bis": "2026-06"},
+     "pflichtiger": {"einkommen": [eink(3400)]},
+     "kinder": [{"name": "A21", "geburtsdatum": "2005-01-01", "status_ab_18": "student_eigener_haushalt", "ausbildungsverguetung": 850}]}
+pruefe("Azubi 21 eigener Haushalt", monat(e)["soll"]["A21"], "0.00")
+
+# 6. Bedarfskontrollbetrag, 3.400 €, Kinder 4, 8 und 14 Jahre, DT 2026
+#    https://www.smartunterhalt.de/ratgeber/grundlagen/bedarfskontrollbetrag-duesseldorfer-tabelle
+#    Quelle: mit Zahlbeträgen Herabstufung bis Gruppe 3 (Rest 1.920,50 € >= 1.850 €); mit Tabellenbeträgen Gruppe 1.
+e = {"leitlinie": "nrw", "zeitraum": {"von": "2026-06", "bis": "2026-06"},
+     "pflichtiger": {"einkommen": [eink(3400)]},
+     "kinder": [{"name": "K4", "geburtsdatum": "2022-01-01"}, {"name": "K8", "geburtsdatum": "2018-01-01"},
+                {"name": "K14", "geburtsdatum": "2012-01-01"}]}
+m = monat(e)
+pruefe("BKB drei Kinder Gruppe (Zahlbetragsmethode)", m["kinder_info"]["gruppe"], 3)
+pruefe("BKB K14", m["soll"]["K14"], "589.50")   # 719 - 129,50
+
+# 7. Kita-Mehrbedarf 180 €, Kind 3 Jahre, Eltern 3.400 € und 2.600 €, ohne Höherstufung
+#    https://www.smartunterhalt.de/ratgeber/grundlagen/kindesunterhalt-mehrbedarf-sonderbedarf
+#    ABWEICHUNG (bewusst): Quelle 66 % ohne Vorabzug des Kindesunterhalts (118,80 €). Rechner zieht den Zahlbetrag
+#    454,50 € vorab ab (Leitlinien NRW 12.4 i. V. m. 13.3): (3.400 - 454,50 - 1.750) : ((1.195,50) + 850) -> 105,20 €.
+e = {"leitlinie": "nrw", "zeitraum": {"von": "2026-06", "bis": "2026-06"},
+     "pflichtiger": {"einkommen": [eink(3400)]},
+     "anderer_elternteil": {"einkommen": [eink(2600)]},
+     "kinder": [{"name": "Kita", "geburtsdatum": "2023-01-01", "mehrbedarf": 180}],
+     "gruppe": {"korrektur": 0}}
+pruefe("Kita Zahlbetrag inkl. Mehrbedarfsanteil", monat(e)["soll"]["Kita"], "559.70")
+
 if FEHLER:
     print("\nFEHLER:\n" + "\n".join(FEHLER))
     sys.exit(1)

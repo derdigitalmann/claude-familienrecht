@@ -17,7 +17,7 @@ from pathlib import Path
 DATA = Path(__file__).resolve().parent.parent / "data"
 D = Decimal
 C = D("0.01")
-VERSION = "0.3.0"
+VERSION = "0.3.1"
 
 
 def dec(x):
@@ -458,7 +458,7 @@ def kind_einkommen(d, haelftig):
     betrag, txt = D(0), []
     if d.get("ausbildungsverguetung"):
         av = dec(d["ausbildungsverguetung"])
-        aufw = dec(d.get("ausbildungsaufwand", 100))
+        aufw = dec(d.get("ausbildungsaufwand", 0 if d.get("status_ab_18") == "student_eigener_haushalt" else 100))
         rest = max(av - aufw, D(0))
         anr = rest / 2 if haelftig else rest
         betrag += anr
@@ -661,8 +661,151 @@ def hinweise_buendeln(hinweise):
     return sorted(rest, key=lambda h: (not h.startswith("VORLÄUFIG"), h))
 
 
+STATUS_AB_18 = ("privilegiert", "volljaehrig", "student_eigener_haushalt")
+
+
+def validiere(ein):
+    """Prüft die Eingabe vollständig, bevor gerechnet wird. Wirft Fehler mit verständlicher Meldung."""
+    import re
+    fehler = []
+
+    def jm(wert, feld, tag=False):
+        if not isinstance(wert, str) or not re.fullmatch(r"\d{4}-(0[1-9]|1[0-2])" + (r"(-\d{2})?" if tag else ""), wert):
+            fehler.append(f"{feld}: '{wert}' ist kein gültiger Monat (JJJJ-MM{' oder JJJJ-MM-TT' if tag else ''})")
+            return False
+        if tag and len(wert) == 10:
+            try:
+                date.fromisoformat(wert)
+            except ValueError:
+                fehler.append(f"{feld}: '{wert}' ist kein gültiges Datum")
+                return False
+        return True
+
+    def zahl(wert, feld, min0=False):
+        if wert is None:
+            return
+        if isinstance(wert, bool) or not isinstance(wert, (int, float)):
+            fehler.append(f"{feld}: '{wert}' muss eine Zahl sein (z. B. 3000.50, ohne Tausenderpunkt)")
+        elif min0 and wert < 0:
+            fehler.append(f"{feld}: darf nicht negativ sein ({wert})")
+
+    def einkommen(liste, feld):
+        if isinstance(liste, dict):
+            liste = [liste]
+        if not isinstance(liste, list) or not liste:
+            fehler.append(f"{feld}: mindestens ein Einkommensabschnitt erforderlich")
+            return
+        for i, a in enumerate(liste):
+            f = f"{feld}[{i}]"
+            if not isinstance(a, dict):
+                fehler.append(f"{f}: muss ein Objekt sein")
+                continue
+            if "ab" in a:
+                jm(a["ab"], f + ".ab")
+            for k in ("netto", "sonstige_einkuenfte", "wohnvorteil", "brutto", "vorrangiger_kindesunterhalt"):
+                zahl(a.get(k), f"{f}.{k}", min0=True)
+            for j, ab in enumerate(a.get("abzuege") or []):
+                zahl(ab.get("betrag"), f"{f}.abzuege[{j}].betrag", min0=True)
+                if ab.get("art") not in (None, "altersvorsorge_sekundaer", "schulden", "umgangskosten"):
+                    fehler.append(f"{f}.abzuege[{j}].art: unbekannt '{ab.get('art')}'")
+            bb = a.get("berufsbedingt") or {}
+            if bb.get("modus") not in (None, "pauschal", "konkret", "keine"):
+                fehler.append(f"{f}.berufsbedingt.modus: unbekannt '{bb.get('modus')}' (pauschal, konkret, keine)")
+            if bb.get("fahrt") is not None:
+                zahl(bb["fahrt"].get("entfernung_km"), f + ".berufsbedingt.fahrt.entfernung_km", min0=True)
+                if bb["fahrt"].get("entfernung_km") is None:
+                    fehler.append(f"{f}.berufsbedingt.fahrt.entfernung_km fehlt")
+            sd = a.get("selbstaendig")
+            if sd is not None:
+                zr = sd.get("zeitraeume") or []
+                if not zr:
+                    fehler.append(f"{f}.selbstaendig.zeitraeume fehlt")
+                for j, z in enumerate(zr):
+                    zahl(z.get("gewinn"), f"{f}.selbstaendig.zeitraeume[{j}].gewinn")
+                    mo = z.get("monate", 12)
+                    if not isinstance(mo, int) or mo < 1:
+                        fehler.append(f"{f}.selbstaendig.zeitraeume[{j}].monate: ganze Zahl ab 1 erforderlich")
+                for k in ("steuern_jahr", "kranken_pflege_monat", "altersvorsorge_monat"):
+                    zahl(sd.get(k), f"{f}.selbstaendig.{k}", min0=True)
+            elif "netto" not in a:
+                fehler.append(f"{f}: 'netto' oder 'selbstaendig' angeben")
+
+    z = ein.get("zeitraum") or {}
+    if jm(z.get("von"), "zeitraum.von") and jm(z.get("bis"), "zeitraum.bis") and monat(z["von"]) > monat(z["bis"]):
+        fehler.append("zeitraum: 'von' liegt nach 'bis'")
+    pfl = ein.get("pflichtiger")
+    if not isinstance(pfl, dict):
+        fehler.append("pflichtiger fehlt")
+    else:
+        einkommen(pfl.get("einkommen"), "pflichtiger.einkommen")
+        zahl(pfl.get("warmmiete"), "pflichtiger.warmmiete", min0=True)
+        zahl(pfl.get("selbstbehalt_kuerzung_prozent"), "pflichtiger.selbstbehalt_kuerzung_prozent", min0=True)
+    namen = set()
+    for i, k in enumerate(ein.get("kinder") or []):
+        f = f"kinder[{i}]"
+        n = k.get("name")
+        if not n:
+            fehler.append(f"{f}.name fehlt")
+        elif n in namen or n == "Ehegatte":
+            fehler.append(f"{f}.name '{n}' doppelt oder reserviert; Namen müssen eindeutig sein")
+        namen.add(n)
+        g = k.get("geburtsdatum")
+        try:
+            date.fromisoformat(g) if isinstance(g, str) and len(g) == 10 else (_ for _ in ()).throw(ValueError())
+        except ValueError:
+            fehler.append(f"{f}.geburtsdatum: '{g}' fehlt oder ist kein Datum im Format JJJJ-MM-TT")
+        if k.get("status_ab_18", "privilegiert") not in STATUS_AB_18:
+            fehler.append(f"{f}.status_ab_18: unbekannt '{k.get('status_ab_18')}' ({', '.join(STATUS_AB_18)})")
+        for feld in ("eigenes_einkommen", "mehrbedarf", "ausbildungsverguetung", "ausbildungsaufwand", "umgang_abzug_prozent"):
+            zahl(k.get(feld), f"{f}.{feld}", min0=True)
+        if isinstance(k.get("umgang_abzug_prozent"), (int, float)) and k["umgang_abzug_prozent"] > 50:
+            fehler.append(f"{f}.umgang_abzug_prozent: {k['umgang_abzug_prozent']} % ist kein erweiterter Umgang mehr (BGH: höchstens 15 %)")
+        for feld in ("verzug_ab",):
+            if k.get(feld):
+                jm(k[feld], f"{f}.{feld}", tag=True)
+        if k.get("ende"):
+            jm(k["ende"], f + ".ende")
+        for j, u_ in enumerate(k.get("unterhaltsvorschuss") or []):
+            jm(u_.get("von"), f"{f}.unterhaltsvorschuss[{j}].von")
+            if u_.get("bis"):
+                jm(u_["bis"], f"{f}.unterhaltsvorschuss[{j}].bis")
+            zahl(u_.get("betrag"), f"{f}.unterhaltsvorschuss[{j}].betrag", min0=True)
+    eh = ein.get("ehegatte")
+    if eh is not None:
+        if not isinstance(eh, dict) or not eh:
+            fehler.append("ehegatte: leeres Objekt; weglassen oder Angaben machen (mindestens 'art')")
+        else:
+            if eh.get("art", "trennung") not in ("trennung", "nachehelich"):
+                fehler.append(f"ehegatte.art: unbekannt '{eh.get('art')}' (trennung, nachehelich)")
+            if eh.get("einkommen") is not None:
+                einkommen(eh["einkommen"], "ehegatte.einkommen")
+            for feld in ("trennung", "rechtskraft_scheidung", "rechtshaengig_ab"):
+                if eh.get(feld):
+                    jm(eh[feld], f"ehegatte.{feld}", tag=True)
+            if eh.get("verzug_ab"):
+                jm(eh["verzug_ab"], "ehegatte.verzug_ab", tag=True)
+            namen.add("Ehegatte")
+    if ein.get("anderer_elternteil") is not None:
+        einkommen((ein["anderer_elternteil"] or {}).get("einkommen"), "anderer_elternteil.einkommen")
+    gm = ein.get("gruppe") or {}
+    if gm.get("fest") is not None and (not isinstance(gm["fest"], int) or not 1 <= gm["fest"] <= 15):
+        fehler.append(f"gruppe.fest: {gm['fest']} ungültig (1 bis 15)")
+    if gm.get("korrektur") is not None and not isinstance(gm["korrektur"], int):
+        fehler.append("gruppe.korrektur: ganze Zahl erforderlich")
+    for j, zg in enumerate(ein.get("zahlungen") or []):
+        jm(zg.get("monat"), f"zahlungen[{j}].monat")
+        zahl(zg.get("betrag"), f"zahlungen[{j}].betrag", min0=True)
+        if zg.get("an") not in namen:
+            fehler.append(f"zahlungen[{j}].an: '{zg.get('an')}' ist kein Berechtigter ({', '.join(sorted(n for n in namen if n))})")
+    if ein.get("stichtag"):
+        jm(ein["stichtag"], "stichtag")
+    if fehler:
+        raise Fehler("Eingabe unvollständig oder fehlerhaft:\n- " + "\n- ".join(fehler))
+
+
 def berechne(ein):
     dt, lls = lade_daten()
+    validiere(ein)
     ll = leitlinie_aufloesen(lls, ein.get("leitlinie"))
     hinweise = set()
     z = ein.get("zeitraum") or {}
@@ -861,6 +1004,12 @@ def main():
     except Fehler as e:
         print(f"FEHLER: {e}", file=sys.stderr)
         sys.exit(2)
+    except json.JSONDecodeError as e:
+        print(f"FEHLER: Eingabedatei ist kein gültiges JSON ({e})", file=sys.stderr)
+        sys.exit(2)
+    except Exception as e:  # interner Fehler: keine Zahl ausgeben
+        print(f"FEHLER (intern, bitte melden): {type(e).__name__}: {e}", file=sys.stderr)
+        sys.exit(4)
     if a.xlsx:
         try:
             sys.path.insert(0, str(Path(__file__).resolve().parent))
