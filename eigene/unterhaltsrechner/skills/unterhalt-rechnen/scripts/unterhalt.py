@@ -10,14 +10,14 @@ Eigene Ergänzung von digitalmann, nicht von Klotzkette. Ergebnisse immer nachpr
 import argparse
 import json
 import sys
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal, ROUND_CEILING, ROUND_FLOOR, ROUND_HALF_UP
 from pathlib import Path
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 D = Decimal
 C = D("0.01")
-VERSION = "0.3.1"
+VERSION = "0.3.2"
 
 
 def dec(x):
@@ -91,18 +91,23 @@ def gueltig(liste, jm, name):
 
 
 def altersstufe(geburt, jm):
-    """§ 1612a Abs. 3 BGB: höhere Stufe ab Beginn des Monats, in dem das Lebensjahr vollendet wird."""
+    """§ 1612a Abs. 3 BGB: höhere Stufe ab Beginn des Monats, in dem das Lebensjahr vollendet wird.
+    Ein Lebensjahr ist mit Ablauf des Tages vor dem Geburtstag vollendet (§§ 187 Abs. 2 S. 2, 188 Abs. 2 BGB);
+    wer am Monatsersten geboren ist, wechselt deshalb schon im Vormonat. Volljährigkeit und 4. Altersstufe
+    ab dem Monat des 18. Geburtstags (Beginn des Geburtstags, § 2 BGB)."""
     g = date.fromisoformat(geburt)
+    v = g - timedelta(days=1)
+    alter_stufe = jm[0] - v.year - (1 if jm[1] < v.month else 0)
     alter = jm[0] - g.year - (1 if jm[1] < g.month else 0)
-    if alter < 0:
+    if alter < 0 and alter_stufe < 0:
         return None, alter
-    if alter < 6:
-        return 0, alter
-    if alter < 12:
-        return 1, alter
-    if alter < 18:
-        return 2, alter
-    return 3, alter
+    if alter >= 18:
+        return 3, alter
+    if alter_stufe >= 12:
+        return 2, max(alter, 0)
+    if alter_stufe >= 6:
+        return 1, max(alter, 0)
+    return 0, max(alter, 0)
 
 
 # --------------------------------------------------------------- Einkommen
@@ -111,7 +116,8 @@ def fahrtkosten(fk_eing, ll, hinweise):
     p = ll["fahrtkosten"]
     entf = dec(fk_eing.get("entfernung_km"))
     if p["modell"] == "monat_je_entfernungskm":
-        grenze = dec(p["staffel_ab_entfernung_km"] or 10 ** 6)
+        ab = fk_eing.get("staffel_ab_km", p["staffel_ab_entfernung_km"])
+        grenze = dec(ab) if (fk_eing.get("staffel", True) and ab is not None) else entf
         bis = min(entf, grenze)
         rest = max(entf - grenze, D(0))
         betrag = bis * dec(p["satz"]) + rest * dec(p["satz_mehrkilometer"] or p["satz"])
@@ -344,6 +350,8 @@ def kinder_monat(e, jm, dtj, ll, ein, pfl_bereinigt, hinweise):
         else:
             anteil = cent(offen)
             hinweise.add(f"{k['name']}: volljährig, Einkommen des anderen Elternteils fehlt. Rechner setzt den vollen offenen Bedarf an; Haftungsquote nach § 1606 Abs. 3 S. 1 BGB ergänzen.")
+        if anderer:
+            hinweise.add("Quotenbeträge Volljähriger centgenau ausgewiesen; ob sie nach Leitlinien Nr. 25 auf volle Euro zu runden sind, wird nicht einheitlich gehandhabt.")
         return {"name": k["name"], "rang": rang, "bedarf": cent(bedarf), "zahlbetrag": anteil, "schritte": schritt, "status": k["status"]}
 
     def bedarf_rang1(gr):
@@ -436,10 +444,17 @@ def kinder_monat(e, jm, dtj, ll, ein, pfl_bereinigt, hinweise):
         masse = max(E - sb_notw, D(0))
         einsatz = sum((r["zahlbetrag"] for r in res), D(0))
         info["mangelfall"] = f"Verteilungsmasse {cent(E)} - {sb_notw} = {cent(masse)} €; Einsatzbeträge (Zahlbeträge Gruppe 1) {cent(einsatz)} €; Quote {(masse / einsatz * 100).quantize(D('0.01')) if einsatz else 0} %"
-        for r in res:
-            anteil = (masse * r["zahlbetrag"] / einsatz) if einsatz else D(0)
-            neu = min(cent(anteil), r["zahlbetrag"])
-            r["schritte"].append(f"Mangelfall (DT Anm. C): {r['zahlbetrag']} x {cent(masse)} : {cent(einsatz)} = {neu} € (centgenau wie Beispiel DT Anm. C, ohne Aufrundung)")
+        # Verteilung nach Einsatzbeträgen; Cent nach der Methode der größten Reste, damit die Summe genau der
+        # Masse entspricht (deckt sich mit dem Beispiel DT Anm. C und überschreitet die Masse nie)
+        roh = [((masse * r["zahlbetrag"] / einsatz) if einsatz else D(0)) for r in res]
+        unten = [min(x.quantize(C, ROUND_FLOOR), r["zahlbetrag"]) for x, r in zip(roh, res)]
+        rest_cent = int(((min(masse, einsatz) - sum(unten, D(0))) / C).to_integral_value(ROUND_FLOOR))
+        reihenfolge = sorted(range(len(res)), key=lambda i: roh[i] - unten[i], reverse=True)
+        for i in reihenfolge[:max(rest_cent, 0)]:
+            if unten[i] + C <= res[i]["zahlbetrag"]:
+                unten[i] += C
+        for r, x, neu in zip(res, roh, unten):
+            r["schritte"].append(f"Mangelfall (DT Anm. C): {r['zahlbetrag']} x {cent(masse)} : {cent(einsatz)} = {x.quantize(D('0.001'))} €, verteilt {neu} € (Cent nach größten Resten)")
             r["zahlbetrag"] = neu
         hinweise.add(f"{mstr(jm)}: Mangelfall. Gesteigerte Erwerbsobliegenheit (§ 1603 Abs. 2 BGB): fiktives Einkommen, Überstunden oder Nebentätigkeit im Rahmen des ArbZG prüfen (Leitlinien NRW 1.3); ggf. Obliegenheit zur Verbraucherinsolvenz (Nr. 10.4 Abs. 3).")
         if int(ein.get("weitere_berechtigte", 0)):
@@ -543,7 +558,12 @@ def ehegatte_monat(jm, dtj, ll, ein, pfl, ku_zahl_rang1, ku_zahl_r4, hinweise):
         schritte.append(f"Zahlbetrag auf volle Euro abgerundet, damit der Selbstbehalt gewahrt bleibt: {betrag} €")
     else:
         betrag = runde(anspruch, ll)
-        schritte.append(f"Zahlbetrag gerundet ({ll['rundung']['text'].rstrip('.')}, Nr. {ll['rundung']['nr']}): {betrag} €")
+        grenze = max(verfuegbar, D(0)).quantize(D(1), ROUND_FLOOR)
+        if betrag > grenze:
+            betrag = grenze
+            schritte.append(f"Zahlbetrag gerundet, aber nicht über die Leistungsfähigkeit ({cent(verfuegbar)} €): {betrag} €")
+        else:
+            schritte.append(f"Zahlbetrag gerundet ({ll['rundung']['text'].rstrip('.')}, Nr. {ll['rundung']['nr']}): {betrag} €")
     return {"anspruch": cent(anspruch), "zahlbetrag": betrag, "schritte": schritte, "art": eh.get("art", "trennung")}
 
 

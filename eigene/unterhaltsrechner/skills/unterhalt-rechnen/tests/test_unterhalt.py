@@ -222,6 +222,29 @@ for name, e in faelle.items():
     except u.Fehler:
         print(f"ok  Eingabeprüfung {name} -> Fehler")
 
+# 23. Altersstufe bei Geburt am Monatsersten (§§ 187 Abs. 2 S. 2, 188 Abs. 2 BGB): geboren 01.03.2020 -> 2. Stufe ab Februar 2026
+e = basis(zeitraum={"von": "2026-02", "bis": "2026-02"}, gruppe={"korrektur": 0},
+          kinder=[{"name": "K", "geburtsdatum": "2020-03-01"}])
+pruefe("Stufenwechsel Monatserster", m0(e)["soll"]["K"], "428.50")
+#     Volljährigkeit erst ab dem Geburtstagsmonat: geboren 01.03.2008 -> Februar 2026 noch 3. Stufe (Gruppe 1: 653 - 129,50)
+e = basis(zeitraum={"von": "2026-02", "bis": "2026-02"}, gruppe={"korrektur": 0},
+          kinder=[{"name": "K", "geburtsdatum": "2008-03-01", "status_ab_18": "privilegiert"}])
+pruefe("Volljährigkeit Monatserster", m0(e)["soll"]["K"], "523.50")
+# 24. Aufrundung nie über Leistungsfähigkeit: Rente 2.950,60, SB 1.475 -> verfügbar 1.475,60, Bedarf 1.475,30 -> 1.475
+e = basis(pflichtiger={"erwerbstaetig": False, "einkommen": [{"ab": "2026-01", "netto": 0, "sonstige_einkuenfte": 2950.6}]},
+          ehegatte={"einkommen": [{"ab": "2026-01", "netto": 0}]})
+pruefe("Rundung begrenzt durch Selbstbehalt", m0(e)["soll"]["Ehegatte"], 1475)
+# 25. Koblenz-Staffel abschaltbar: 45 km x 14 = 630
+x = u.bereinige({"netto": 3000, "berufsbedingt": {"modus": "konkret", "fahrt": {"entfernung_km": 45, "staffel": False}}},
+                u.leitlinie_aufloesen(u.lade_daten()[1], "koblenz"), "P", set())
+pruefe("Koblenz ohne Staffel", x["berufsbedingt"], "630.00")
+# 26. Mangelfall überschreitet die Masse nicht: 2.200, Kinder 3/9/13, Masse 750
+e = basis(leitlinie="nrw", pflichtiger={"einkommen": [{"ab": "2026-01", "netto": 2200}]},
+          kinder=[{"name": "A", "geburtsdatum": "2023-01-01"}, {"name": "B", "geburtsdatum": "2017-01-01"},
+                  {"name": "C", "geburtsdatum": "2013-01-01"}])
+r = m0(e)
+pruefe("Mangelfall Summe <= Masse", int(sum(D(str(v)) for v in r["soll"].values()) <= D("750")), 1)
+
 if FEHLER:
     print("\nFEHLER:\n" + "\n".join(FEHLER))
     sys.exit(1)
