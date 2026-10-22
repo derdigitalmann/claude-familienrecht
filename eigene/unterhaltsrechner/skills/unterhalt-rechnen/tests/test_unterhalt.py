@@ -245,6 +245,96 @@ e = basis(leitlinie="nrw", pflichtiger={"einkommen": [{"ab": "2026-01", "netto":
 r = m0(e)
 pruefe("Mangelfall Summe <= Masse", int(sum(D(str(v)) for v in r["soll"].values()) <= D("750")), 1)
 
+# 27. Leitlinienfassungen 2024/2025 für Rückstände
+lls = u.lade_daten()[1]
+try:
+    u.berechne(basis(leitlinie="niedersachsen", zeitraum={"von": "2025-01", "bis": "2025-01"},
+                     pflichtiger={"einkommen": [{"ab": "2025-01", "netto": 2000}]}))
+    FEHLER.append("Niedersachsen 2025 ohne olg: kein Fehler ausgelöst")
+except u.Fehler:
+    print("ok  Niedersachsen 2025 ohne olg -> Fehler")
+try:
+    u.berechne(basis(leitlinie="niedersachsen", olg="Hamm"))
+    FEHLER.append("olg passt nicht zur Leitlinie: kein Fehler ausgelöst")
+except u.Fehler:
+    print("ok  olg passt nicht zur Leitlinie -> Fehler")
+pb = {"netto": 4000, "berufsbedingt": {"modus": "pauschal"}}
+pruefe("Celle 2025 Pauschale ohne Deckel", u.bereinige(pb, u.leitlinie_fuer(lls, "niedersachsen", 2025, "Celle"), "P", set())["berufsbedingt"], "200.00")
+pruefe("Niedersachsen 2026 Pauschale gedeckelt", u.bereinige(pb, u.leitlinie_fuer(lls, "niedersachsen", 2026, "Celle"), "P", set())["berufsbedingt"], "150.00")
+pruefe("Braunschweig 2024 Mindestpauschale unter 500 €", u.bereinige({"netto": 400, "berufsbedingt": {"modus": "pauschal"}},
+       u.leitlinie_fuer(lls, "niedersachsen", 2024, "braunschweig"), "P", set())["berufsbedingt"], "25.00")
+# Oldenburg 2025: Ehegattenunterhalt auf 5 € gerundet; Rente 4.006 -> 2.003 -> 2.005; 2026 einheitlich aufgerundet -> 2.003
+e = basis(leitlinie="niedersachsen", olg="Oldenburg", zeitraum={"von": "2025-12", "bis": "2026-01"},
+          pflichtiger={"erwerbstaetig": False, "einkommen": [{"ab": "2025-01", "netto": 0, "sonstige_einkuenfte": 4006}]},
+          ehegatte={"einkommen": [{"ab": "2025-01", "netto": 0}]})
+ms = u.berechne(e)["monate"]
+pruefe("Oldenburg 2025 Rundung 5 €", ms[0]["soll"]["Ehegatte"], 2005)
+pruefe("Niedersachsen 2026 Rundung 1 €", ms[1]["soll"]["Ehegatte"], 2003)
+# NRW 2024: Hamm kaufmännisch, Köln aufrunden; Rente 3.000,60 -> 1.500,30
+e = basis(leitlinie="nrw", olg="Hamm", zeitraum={"von": "2024-06", "bis": "2024-06"},
+          pflichtiger={"erwerbstaetig": False, "einkommen": [{"ab": "2024-01", "netto": 0, "sonstige_einkuenfte": 3000.6}]},
+          ehegatte={"einkommen": [{"ab": "2024-01", "netto": 0}]})
+pruefe("Hamm 2024 kaufmännisch", m0(e)["soll"]["Ehegatte"], 1500)
+e["olg"] = "Köln"
+pruefe("Köln 2024 aufrunden", m0(e)["soll"]["Ehegatte"], 1501)
+pruefe("NRW 2025 einheitlich", int(u.leitlinie_fuer(lls, "nrw", 2025)["berufsbedingt"]["pauschale"] == "nur_fiktiv"), 1)
+# Saarbrücken: 2024 eigene Pressemitteilung (keine Übernahme NRW), 2026 Verweis auf NRW
+s24 = u.leitlinie_fuer(lls, "saarbruecken", 2024)
+pruefe("Saarbrücken 2024 Pauschale DT A.3", u.bereinige(pb, s24, "P", set())["berufsbedingt"], "150.00")
+pruefe("Saarbrücken 2024 ohne Verweis", int(not s24.get("verweis")), 1)
+r = u.berechne(basis(leitlinie="saarbruecken", zeitraum={"von": "2024-12", "bis": "2025-01"},
+                     pflichtiger={"einkommen": [{"ab": "2024-01", "netto": 2000}]}))
+pruefe("Saarbrücken Hinweis UNSICHER", int(any("[UNSICHER]" in h for h in r["hinweise"])), 1)
+pruefe("Fassungen ausgewiesen", len(r["fassungen"]), 2)
+
+# 28. Altersvorsorgeunterhalt zweistufig (Bremer Tabelle), SüdL 2026, nachehelich, P 4.000 erwerbstätig, B ohne Einkommen
+#     Stufe 1: 4.000 x 0,9 / 2 = 1.800; + 25 % = 2.250 x 18,6 % = 418,50
+#     Stufe 2: (4.000 - 418,50) = 3.581,50 - Bonus 358,15 = 3.223,35 / 2 = 1.611,68 -> 1.612; AVU aufgerundet 419
+def avu_fall(netto, av, art="nachehelich", **kw):
+    eh = {"art": art, "rechtskraft_scheidung": "2025-06-01", "altersvorsorge": av, "verzug_ab": "2025-12-01"}
+    return basis(pflichtiger={"einkommen": [{"ab": "2026-01", "netto": netto}]}, ehegatte=eh, **kw)
+
+
+r = m0(avu_fall(4000, {"bremer_zuschlag_prozent": 25}))
+pruefe("AVU Elementar Stufe 2", r["soll"]["Ehegatte"], 1612)
+pruefe("AVU Betrag", r["soll"]["Ehegatte Altersvorsorge"], 419)
+#     Tabellenzeilen: 1.800 -> 21 %: 2.178 x 18,6 % = 405,11; Stufe 2: 3.594,89 - 359,49 = 3.235,40 / 2 = 1.617,70 -> 1.618; AVU 406
+r = m0(avu_fall(4000, {"bremer_tabelle": [{"bis": 1500, "prozent": 15}, {"bis": 2000, "prozent": 21}]}))
+pruefe("AVU Tabelle Elementar", r["soll"]["Ehegatte"], 1618)
+pruefe("AVU Tabelle Betrag", r["soll"]["Ehegatte Altersvorsorge"], 406)
+#     Mindestbedarf: P 2.500 -> 1.125 < 1.200 -> kein AVU
+r = m0(avu_fall(2500, {"bremer_zuschlag_prozent": 25}))
+pruefe("AVU entfällt bei Mindestbedarf", r["soll"]["Ehegatte Altersvorsorge"], 0)
+#     Leistungsfähigkeit: P 3.000: Stufe 1 1.350 -> 313,88; Stufe 2 (2.686,12 - 268,61) / 2 = 1.208,76 -> 1.209; frei 1.400 - 1.209 = 191
+r = m0(avu_fall(3000, {"bremer_zuschlag_prozent": 25}))
+pruefe("AVU Elementar vorrangig", r["soll"]["Ehegatte"], 1209)
+pruefe("AVU begrenzt durch Leistungsfähigkeit", r["soll"]["Ehegatte Altersvorsorge"], 191)
+try:
+    u.berechne(avu_fall(4000, {"bremer_zuschlag_prozent": 25}, art="trennung"))
+    FEHLER.append("AVU Trennung ohne ab: kein Fehler ausgelöst")
+except u.Fehler:
+    print("ok  AVU Trennung ohne Rechtshängigkeit -> Fehler")
+e = avu_fall(4000, {"bremer_zuschlag_prozent": 25}, zahlungen=[{"monat": "2026-01", "an": "Ehegatte Altersvorsorge", "betrag": 100}])
+pruefe("AVU Rückstand", u.berechne(e)["rueckstand"]["Ehegatte Altersvorsorge"]["differenz"], 319)
+
+# 29. Dreiteilung mit neuem Ehegatten: P 4.000 (anrechenbar 3.600), Geschiedene 0, Neue 1.000 erwerbstätig (900)
+#     Halbteilung 1.800; Dreiteilung (3.600 + 0 + 900) / 3 = 1.500 -> 1.500
+def dt_fall(rang):
+    e = basis(pflichtiger={"einkommen": [{"ab": "2026-01", "netto": 4000}],
+                           "neuer_ehegatte": {"rang": rang, "erwerbstaetig": True, "einkommen": [{"ab": "2026-01", "netto": 1000}]}},
+              ehegatte={"art": "nachehelich", "rechtskraft_scheidung": "2025-06-01"})
+    return m0(e)["soll"]["Ehegatte"]
+
+
+pruefe("Dreiteilung Gleichrang", dt_fall("gleich"), 1500)
+pruefe("Dreiteilung neuer Ehegatte nachrangig", dt_fall("neuer_nachrangig"), 1800)
+try:
+    u.berechne(basis(pflichtiger={"einkommen": [{"ab": "2026-01", "netto": 4000}], "neuer_ehegatte": {"rang": "gleich"}},
+                     ehegatte={"art": "trennung"}))
+    FEHLER.append("Dreiteilung beim Trennungsunterhalt: kein Fehler ausgelöst")
+except u.Fehler:
+    print("ok  Dreiteilung beim Trennungsunterhalt -> Fehler")
+
 if FEHLER:
     print("\nFEHLER:\n" + "\n".join(FEHLER))
     sys.exit(1)

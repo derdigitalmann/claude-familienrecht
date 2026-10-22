@@ -24,7 +24,7 @@ Die Auswahl steht in `plugins.txt`. Urheber der Inhalte ist Klotzkette (siehe `N
 
 | Plugin | Inhalt | Status |
 |---|---|---|
-| `unterhaltsrechner` | Berechnung von Kindes- und Ehegattenunterhalt mit festem Rechenkern: Düsseldorfer Tabelle 2024 bis 2026, Leitlinien aller OLG-Bezirke Stand 2026 (die maßgebliche wird vor der Berechnung abgefragt), Mangelfall, Haftungsquote Volljähriger, Rückstand je Monat, Prüfmodus für Gegenrechnungen | Testphase, Version 0.3.2 |
+| `unterhaltsrechner` | Berechnung von Kindes- und Ehegattenunterhalt mit festem Rechenkern: Düsseldorfer Tabelle 2026 als Haupttabelle, die Tabellen 2024 und 2025 nur für Rückstände; Leitlinien aller OLG-Bezirke Stand 2026, für Rückstände in der Fassung 2024 bzw. 2025 (die maßgebliche wird vor der Berechnung abgefragt); Mangelfall, Haftungsquote Volljähriger, Altersvorsorgeunterhalt nach Bremer Tabelle (zweistufig), Dreiteilung bei neuem Ehegatten, Rückstand je Monat, Prüfmodus für Gegenrechnungen | Testphase, Version 0.4.0 |
 
 Für die eigenen Ergänzungen gilt:
 

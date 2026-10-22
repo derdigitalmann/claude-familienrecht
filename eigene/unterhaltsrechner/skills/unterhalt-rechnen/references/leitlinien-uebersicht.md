@@ -1,6 +1,6 @@
 # Leitlinien 2026: Parameter des Rechners
 
-Leitlinien Stand 01.01.2026, ausgewertet am 08.10.2026, amtliche Quellen abgeglichen am 22.10.2026. Parameter, die der Rechner automatisch anwendet. Alles andere steht im Feld text und wird als Hinweis ausgegeben. Für Monate vor 2026 gelten die Parameter von 2026 weiter; die damalige Fassung ist gesondert zu prüfen.
+Leitlinien Stand 01.01.2026, ausgewertet am 08.10.2026, amtliche Quellen abgeglichen am 22.10.2026. Parameter, die der Rechner automatisch anwendet. Alles andere steht im Feld text und wird als Hinweis ausgegeben. Hauptstand ist 2026. Für Rückstände aus 2024 und 2025 wendet der Rechner die Fassung des jeweiligen Jahres an (Abschnitt unten).
 
 | id | Leitlinie | OLG | berufsbedingte Pauschale (10.2.1) | Fahrtkosten (10.2.2) | Bonus (15.2) | Ehegatten-SB (21.4) | Rundung (25) |
 |---|---|---|---|---|---|---|---|
@@ -21,6 +21,19 @@ Leitlinien Stand 01.01.2026, ausgewertet am 08.10.2026, amtliche Quellen abgegli
 | thueringen | Thüringer OLG (Jena) | Jena | 5 %, min 50 €, max 150 € | 0,42 €/km, ab 30 km einfach 0,28 € | 1/10 | 1.600 € einheitlich | aufrunden |
 
 Selbstbehalte gegenüber Kindern (1.450/1.200 €, angemessen 1.750 €) übernehmen alle Leitlinien aus der Düsseldorfer Tabelle.
+
+## Fassungen 2024 und 2025 (nur für Rückstände)
+
+Abgeglichen am 22.10.2026 anhand der amtlichen Fassungen bzw. der FamRZ-Abdrucke (Nr. 10.2.1, 10.2.2, 15.2, 21.4, 25). Nicht genannte Leitlinien: Parameter 2024 und 2025 wie 2026.
+
+| id | Jahr | Abweichung von 2026 | Eingabe |
+|---|---|---|---|
+| niedersachsen | 2024, 2025 | getrennte Leitlinien je OLG. Celle: 5 % ohne Mindest- und Höchstbetrag, kaufmännisch runden. Braunschweig: 5 %, min 50 € (25 € bei Netto unter 500 €), max 150 €. Oldenburg: 5 %, min 50 €, max 150 €; Ehegattenselbstbehalt einheitlich 1.600 €; Ehegattenunterhalt auf 5 € gerundet | `olg` (Braunschweig, Celle, Oldenburg) |
+| nrw | 2024 | getrennte Leitlinien je OLG. Düsseldorf: Pauschale nach DT Anm. A.3 (5 %, min 50 €, max 150 €), kaufmännisch. Hamm: Pauschale nur bei fiktivem Einkommen, kaufmännisch. Köln: keine Pauschale, aufrunden | `olg` (Düsseldorf, Hamm, Köln) |
+| nrw | 2025 | keine (einheitliche Leitlinien NRW seit 2025) | |
+| saarbruecken | 2024, 2025 | keine eigenen Leitlinien, nur Düsseldorfer Tabelle und Selbstbehalte (Pressemitteilung SOLG Nr. 3/2023). Rechner nimmt an: Pauschale nach DT Anm. A.3, 0,42 €/km ohne Staffel, Bonus 1/10, aufrunden [UNSICHER]. Fassung 2025 nicht abgerufen, wie 2024 angenommen [UNSICHER]. Leitlinien NRW erst ab 01.01.2026 | |
+
+Quellen 2024: FamRZ-Abdrucke, https://www.famrz.de/redaktionsmeldungen/unterhaltsleitlinien-der-oberlandesgerichte-2024.html; Quellen 2025: amtliche Fassungen bzw. https://www.famrz.de/redaktionsmeldungen/unterhaltsleitlinien-der-oberlandesgerichte-2025.html. Fundstellen je OLG in `data/leitlinien.json` unter `historie`.
 
 ## Quellen
 

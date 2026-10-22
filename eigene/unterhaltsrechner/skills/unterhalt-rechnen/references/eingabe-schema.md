@@ -53,6 +53,7 @@ Alle Beträge in Euro je Monat. Monate als `JJJJ-MM`. Felder ohne Angabe gelten 
 | Feld | Bedeutung |
 |---|---|
 | `leitlinie` | Pflicht. `id` aus `--leitlinien`. Vorher abfragen. |
+| `olg` | zuständiges OLG, z. B. `"Celle"`. Pflicht für Monate, in denen getrennte Leitlinien galten (Niedersachsen 2024/2025, NRW 2024); sonst optional. |
 | `einkommen[]` | Abschnitte; je Monat gilt der letzte Abschnitt mit `ab` kleiner oder gleich dem Monat. |
 | `netto` | Nettoerwerbseinkommen (Jahresschnitt). Der Erwerbstätigenbonus gilt nur hierfür. |
 | `sonstige_einkuenfte`, `wohnvorteil` | Einkünfte ohne Bonus (Rente, ALG, Miete, Wohnwert nach Abzug von Zins und Tilgung). |
@@ -79,6 +80,8 @@ Alle Beträge in Euro je Monat. Monate als `JJJJ-MM`. Felder ohne Angabe gelten 
 | `pflichtiger.neue_ehe` | `true` bei Wiederheirat (Hinweis zum Splittingvorteil). |
 | `stichtag` | JJJJ-MM für Verwirkungs- und Verjährungshinweise (Standard: heute). |
 | `ehegatte.mindestbedarf` | Bedarf mindestens Existenzminimum 1.200 € (Standard `true`). |
+| `ehegatte.altersvorsorge` | Altersvorsorgeunterhalt, zweistufig. `bremer_zuschlag_prozent` (fester Zuschlag) oder `bremer_tabelle` (Zeilen `{"bis": 1360, "prozent": 13}` aus der Bremer Tabelle des Jahres); `ab` (JJJJ-MM, beim Trennungsunterhalt Pflicht: Monat der Rechtshängigkeit des Scheidungsantrags); `verzug_ab`; `rv_beitragssatz` (Standard 18,6 %); `einstufig` (`true` bei konkretem Bedarf). Ergebnis als eigener Berechtigter `Ehegatte Altersvorsorge` (auch für `zahlungen`). |
+| `pflichtiger.neuer_ehegatte` | nur nachehelich. `rang`: `gleich` (Standard), `neuer_vorrangig`, `neuer_nachrangig` (§ 1609 BGB, vom Nutzer zu bestimmen); `einkommen[]`, `erwerbstaetig`, `ab`; `anrechenbar_pflichtiger` überschreibt das Einkommen des Pflichtigen für die Dreiteilung (z. B. mit Splittingvorteil). |
 | `anderer_elternteil` | nur für volljährige Kinder (Haftungsquote). `vorrangiger_kindesunterhalt`: dessen vorrangige Unterhaltslasten. |
 | `gruppe.fest` | erzwingt eine Einkommensgruppe. Herabstufung wegen Selbstbehalt bleibt aktiv. |
 | `gruppe.korrektur` | ersetzt die automatische Höher-/Herabstufung nach Zahl der Berechtigten (Standard: +1 bei einem, -1 je Berechtigten über zwei). |
@@ -117,7 +120,9 @@ Netto = Durchschnittsgewinn je Monat - Steuern/12 - Kranken- und Pflegeversicher
 ## Rechenregeln des Skripts
 
 - Altersstufe wechselt ab dem Monat, in dem das Kind 6, 12 oder 18 wird (§ 1612a Abs. 3 BGB). Für die 4. Altersstufe gilt dieselbe Regel.
-- Tabellenwerte des jeweiligen Kalenderjahres (DT 2024, 2025, 2026). Leitlinienparameter Stand 2026.
+- Düsseldorfer Tabelle 2026 ist die Haupttabelle; für Rückstände Tabelle und Leitlinienfassung des jeweiligen Kalenderjahres (DT 2024, 2025; Leitlinien nach `historie`).
+- Altersvorsorgeunterhalt: Stufe 1 vorläufiger Elementarunterhalt x (100 + Zuschlag) % x RV-Beitragssatz; Stufe 2 Abzug vom Einkommen des Pflichtigen vor Bonus, neuer Elementarunterhalt. Kein AVU, wenn nur der Mindestbedarf erreicht wird; Elementarunterhalt geht bei der Leistungsfähigkeit vor.
+- Dreiteilung: (anrechenbares Einkommen Pflichtiger vor AVU + Geschiedener + neuer Ehegatte) / 3 abzüglich Einkommen des Geschiedenen ist Obergrenze; bei AVU werden Elementar- und Vorsorgeunterhalt anteilig gekürzt (Annahme des Rechners).
 - Herabstufung Gruppe für Gruppe, bis Bedarfskontrollbetrag und notwendiger Selbstbehalt gewahrt sind; reicht auch Gruppe 1 nicht, Mangelverteilung nach DT Anm. C, centgenau.
 - Ehegattenunterhalt: Vorwegabzug Kindesunterhalt (Zahlbeträge), Erwerbstätigenbonus nach Leitlinie, Halbteilung, Mindestbedarf, Leistungsfähigkeit ohne Bonus gegen den Ehegattenselbstbehalt der Leitlinie. Bei Begrenzung durch den Selbstbehalt wird abgerundet.
 - Volljährige: Bedarf nach zusammengerechnetem Einkommen beider Eltern, volles Kindergeld, Haftungsquote nach Abzug Vorrang und Sockel 1.750 €.
