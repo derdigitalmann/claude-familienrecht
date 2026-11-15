@@ -1,9 +1,9 @@
 ---
 name: kaltstart-interview
-description: "Für /betreuungsrecht:kaltstart-interview: routet Rolle, Frist, Unterlagen und Fachschritt; Ergebnis: Prüfprodukt mit Risiko und nächstem Schritt."
+description: "Für /betreuungsrecht:person-und-verfahren-bearbeiten Thema: kaltstart-interview: routet Rolle, Frist, Unterlagen und Fachschritt; Ergebnis: Prüfprodukt mit Risiko und nächstem Schritt."
 ---
 
-# /betreuungsrecht:kaltstart-interview
+# /betreuungsrecht:person-und-verfahren-bearbeiten Thema: kaltstart-interview
 
 ## Direktstart: lesen, entscheiden, liefern
 
@@ -90,10 +90,10 @@ Das Praxisprofil wird in `~/.claude/plugins/config/claude-fuer-deutsches-recht/b
 - Welche Skills jetzt sinnvoll als nächstes laufen können:
  - `/betreuungsrecht:vermögensverzeichnis-prüfung` — bei Eröffnung einer Betreuung
  - `/betreuungsrecht:genehmigungspflicht-prüfung` — vor wesentlichen Geschäften
- - `/betreuungsrecht:jahresbericht-betreuungsgericht` — bei jährlicher Berichtspflicht
- - `/betreuungsrecht:ehrenamtlicher-betreuer-erster-monat` — bei familiärer oder ehrenamtlicher Erstbetreuung
- - `/betreuungsrecht:dokumentenscan-aktenablage-und-belegmappe` — bei unsortierten Scans, Fotos und Bescheiden
- - `/betreuungsrecht:kalender-reminder-und-fristenmanagement` — für Berichtspflichten, Bescheidfristen und Routinekontakte
+ - `/betreuungsrecht:rechnungs-und-berichtswesen-bearbeiten Thema: jahresbericht-betreuungsgericht` — bei jährlicher Berichtspflicht
+ - `/betreuungsrecht:person-und-verfahren-bearbeiten Thema: ehrenamtlicher-betreuer-erster-monat` — bei familiärer oder ehrenamtlicher Erstbetreuung
+ - `/betreuungsrecht:rechnungs-und-berichtswesen-bearbeiten Thema: dokumentenscan-aktenablage-und-belegmappe` — bei unsortierten Scans, Fotos und Bescheiden
+ - `/betreuungsrecht:person-und-verfahren-bearbeiten Thema: kalender-reminder-und-fristenmanagement` — für Berichtspflichten, Bescheidfristen und Routinekontakte
 - Hinweis auf Datenschutz, Vertraulichkeit und sparsame Verarbeitung sensibler Gesundheits- und Vermögensdaten
 
 ## Rechtlicher Rahmen

@@ -23,7 +23,7 @@ Anrecht, Ehezeitende, Ausgleichswert und Bezugsgröße, Teilungsordnung, Kosten,
 
 ## 4. Quellenpflicht
 
-Die [geprüften Rechtsanker](../../references/rechtsanker-2026-09-05.md) enthalten die hier relevanten Paragrafen 10, 11, 13, 14, 15 und 17 VersAusglG sowie Paragraf 222 FamFG. BGH XII ZB 230/16 ist dort mit begrenztem Verifikationsstatus verzeichnet. Volltext und einschlägige Passage vor gerichtlichem Zitat prüfen; [references/zitierweise.md](../../../references/zitierweise.md) beachten.
+Die [geprüften Rechtsanker](../../references/rechtsanker-2026-09-05.md) enthalten die hier relevanten Paragrafen 10, 11, 13, 14, 15 und 17 VersAusglG sowie Paragraf 222 FamFG. BGH XII ZB 230/16 ist dort mit begrenztem Verifikationsstatus verzeichnet. Volltext und einschlägige Passage vor gerichtlichem Zitat prüfen; [references/zitierweise.md](../../references/repository/references/zitierweise.md) beachten.
 
 ## 5. Ausgabeformat
 

@@ -15,7 +15,7 @@ Verdachtsmomente, offene Beweise und rechtliche Erstmaßnahmen. Er entscheidet
 nicht selbst über Geschäftsfähigkeit, Einwilligungsvorbehalt, Anfechtung,
 Genehmigung oder Strafbarkeit, sondern bereitet diese Prüfungen sauber vor.
 
-Für die vollständige Belegaufbereitung mit Excel-Saldierung und ausformulierten Anschreiben verwenden Sie den [Unterlagen-Auswerter](../unterlagen-auswerten-abrechnung-anschreiben/SKILL.md). Übergeben Sie Konto- und Buchungskennungen, Belegfundstellen, offene Erklärungen und bereits geprüfte Fristen. Dieser Skill vertieft anschließend konkrete Verdachts- und Schutzfragen, ohne die Buchungen erneut zu importieren.
+Für die vollständige Belegaufbereitung mit Excel-Saldierung und ausformulierten Anschreiben verwenden Sie den [Unterlagen-Auswerter](../unterlagen-auswerten-abrechnung-anschreiben/FACHINHALT.md). Übergeben Sie Konto- und Buchungskennungen, Belegfundstellen, offene Erklärungen und bereits geprüfte Fristen. Dieser Skill vertieft anschließend konkrete Verdachts- und Schutzfragen, ohne die Buchungen erneut zu importieren.
 
 ## Triage — kläre vor Kontodaten-Prüfung
 1. Ist Vermögenssorge als Aufgabenkreis im Betreuungsbeschluss enthalten? Ohne diese kein Handlungsrecht.
