@@ -24,7 +24,7 @@ Auftrag, Dateien, erkennbare Fristen und bereits vorhandene Berechnungen. Halte 
 
 ## 4. Quellenpflicht
 
-Belege Tatsachen mit Datei und Seite, Beschaffungsrechte mit der einschlägigen Norm. Es gelten [references/zitierweise.md](../../../references/zitierweise.md) und der [Quellenstand](../../references/rechtsanker-2026-09-05.md). Sensible Daten nur im zulässigen Mandatskontext verarbeiten; keine Angehörigen automatisch in Verteiler aufnehmen.
+Belege Tatsachen mit Datei und Seite, Beschaffungsrechte mit der einschlägigen Norm. Es gelten [references/zitierweise.md](../../references/repository/references/zitierweise.md) und der [Quellenstand](../../references/rechtsanker-2026-09-05.md). Sensible Daten nur im zulässigen Mandatskontext verarbeiten; keine Angehörigen automatisch in Verteiler aufnehmen.
 
 ## 5. Ausgabeformat
 

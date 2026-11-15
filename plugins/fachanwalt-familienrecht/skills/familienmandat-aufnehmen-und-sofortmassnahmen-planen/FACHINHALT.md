@@ -41,7 +41,7 @@ Dokumentiere Annahme, begrenzten Prüfauftrag, Weiterverweisung oder Ablehnung m
 
 ## 4. Quellenpflicht
 
-Nutze [references/zitierweise.md](../../../references/zitierweise.md) und die fallbezogenen [geprüften Rechtsanker](../../references/rechtsanker-2026-09-05.md). Quellen nur für die tatsächlich bearbeitete Weiche laden. Fachanwaltsnachweise betreffen keine Mandatsvoraussetzung; nur auf ausdrücklichen Qualifikationsauftrag [FAO-Nachweise](references/fachanwaltsnachweise.md) laden.
+Nutze [references/zitierweise.md](../../references/repository/references/zitierweise.md) und die fallbezogenen [geprüften Rechtsanker](../../references/rechtsanker-2026-09-05.md). Quellen nur für die tatsächlich bearbeitete Weiche laden. Fachanwaltsnachweise betreffen keine Mandatsvoraussetzung; nur auf ausdrücklichen Qualifikationsauftrag [FAO-Nachweise](references/fachanwaltsnachweise.md) laden.
 
 ## 5. Ausgabeformat
 

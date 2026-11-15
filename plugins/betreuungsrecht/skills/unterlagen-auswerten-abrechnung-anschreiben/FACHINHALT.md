@@ -13,7 +13,7 @@ Typischer Anlass ist die erstmalige Übernahme der Betreuung nach einer längere
 
 Arbeiten Sie von den Belegen zur Erklärung und erst dann zur Maßnahme. Ein hoher Abfluss ist zunächst eine Zahlung. Ein fehlender Beleg ist zunächst eine Beleglücke. Eine Überweisung an ein Kind kann ein gewolltes Geschenk, eine Auslagenerstattung, ein Darlehen oder eine unberechtigte Entnahme sein. Ein unbekannter Helfer kann redlich gearbeitet haben. Die Nationalität, der ungewöhnliche Name oder das persönliche Näheverhältnis tragen keinen Missbrauchsbefund.
 
-Für reine Ablagefragen nutzen Sie ergänzend [Dokumentenscan und Belegmappe](../dokumentenscan-aktenablage-und-belegmappe/SKILL.md), für eine vertiefte rechtliche Verdachtsprüfung [Kontodaten und Vertragsverdacht](../kontodaten-vertragsverdacht-pruefung/SKILL.md). Übergeben Sie bereits ermittelte Beträge und Belege; starten Sie keine zweite Aufnahme desselben Falls. Das [Vermögensverzeichnis](../vermoegensverzeichnis-pruefung/SKILL.md) erhält anschließend stichtagsbezogene Bestände, nachgewiesene Forderungen und ausdrücklich bezeichnete Unsicherheiten.
+Für reine Ablagefragen nutzen Sie ergänzend [Dokumentenscan und Belegmappe](../dokumentenscan-aktenablage-und-belegmappe/FACHINHALT.md), für eine vertiefte rechtliche Verdachtsprüfung [Kontodaten und Vertragsverdacht](../kontodaten-vertragsverdacht-pruefung/FACHINHALT.md). Übergeben Sie bereits ermittelte Beträge und Belege; starten Sie keine zweite Aufnahme desselben Falls. Das [Vermögensverzeichnis](../vermoegensverzeichnis-pruefung/FACHINHALT.md) erhält anschließend stichtagsbezogene Bestände, nachgewiesene Forderungen und ausdrücklich bezeichnete Unsicherheiten.
 
 ## 2. Eingaben
 

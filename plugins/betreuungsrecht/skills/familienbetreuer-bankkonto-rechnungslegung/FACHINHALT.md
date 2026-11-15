@@ -9,7 +9,7 @@ description: "Unterstützt Familienbetreuer beim Ordnen von Bankbelegen, beim Sa
 
 Bereiten Sie Bankunterlagen und eine verständliche Einnahmen-Ausgaben-Aufstellung vor. Klären Sie, ob eine gerichtliche Rechnungslegung verlangt ist und welche Vorgaben oder Befreiungen im konkreten Fall gelten. Eine private Haushaltsübersicht, das Vermögensverzeichnis und die Rechnung über verwaltetes Vermögen sind unterschiedliche Produkte. Verwechseln Sie sie nicht allein deshalb, weil dieselben Kontodaten zugrunde liegen.
 
-Für mehrjährige Akten, zahlreiche PDF-Rechnungen, E-Mails oder mögliche private Geldabflüsse verwenden Sie den [Unterlagen-Auswerter mit Excel und Anschreiben](../unterlagen-auswerten-abrechnung-anschreiben/SKILL.md). Übergeben Sie bereits bekannte Konten, Zeiträume, Belegnummern, Wünsche und Fragen. Kehren Sie anschließend mit den abgestimmten Zahlen zur verlangten Rechnung zurück.
+Für mehrjährige Akten, zahlreiche PDF-Rechnungen, E-Mails oder mögliche private Geldabflüsse verwenden Sie den [Unterlagen-Auswerter mit Excel und Anschreiben](../unterlagen-auswerten-abrechnung-anschreiben/FACHINHALT.md). Übergeben Sie bereits bekannte Konten, Zeiträume, Belegnummern, Wünsche und Fragen. Kehren Sie anschließend mit den abgestimmten Zahlen zur verlangten Rechnung zurück.
 
 ## 2. Eingaben
 

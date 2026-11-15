@@ -23,7 +23,7 @@ Gerichtlicher Fragebogen, Heirat und Zustellung, Erwerbsbiografie, Versicherungs
 
 ## 4. Quellenpflicht
 
-Paragrafen 5 und 47 VersAusglG sowie Paragraf 220 FamFG nach den [geprüften Rechtsankern](../../references/rechtsanker-2026-09-05.md). Tatsachen- und Rechenbelege nach [references/zitierweise.md](../../../references/zitierweise.md) dokumentieren. Systemrecht und konkrete Teilungsordnung nicht durch allgemeine Familienrechtsnormen ersetzen.
+Paragrafen 5 und 47 VersAusglG sowie Paragraf 220 FamFG nach den [geprüften Rechtsankern](../../references/rechtsanker-2026-09-05.md). Tatsachen- und Rechenbelege nach [references/zitierweise.md](../../references/repository/references/zitierweise.md) dokumentieren. Systemrecht und konkrete Teilungsordnung nicht durch allgemeine Familienrechtsnormen ersetzen.
 
 ## 5. Ausgabeformat
 

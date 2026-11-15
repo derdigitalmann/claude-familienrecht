@@ -41,7 +41,7 @@ Beim Elternunterhalt [BGH, Beschluss vom 22.01.2025, XII ZB 148/24](https://www.
 
 ## 4. Quellenpflicht
 
-Für jeden Zeitraum Originaltabelle und zuständige OLG-Leitlinien verwenden. [Geprüfte Rechtsanker](../../references/rechtsanker-2026-09-05.md) trennen verifizierte Normtexte von noch zu öffnenden Entscheidungsankern. Zitierweise nach [references/zitierweise.md](../../../references/zitierweise.md). Keine pauschale Fünf-Prozent-Kürzung, feste Vorsorgequote oder starre Abänderungsschwelle ohne passende Grundlage.
+Für jeden Zeitraum Originaltabelle und zuständige OLG-Leitlinien verwenden. [Geprüfte Rechtsanker](../../references/rechtsanker-2026-09-05.md) trennen verifizierte Normtexte von noch zu öffnenden Entscheidungsankern. Zitierweise nach [references/zitierweise.md](../../references/repository/references/zitierweise.md). Keine pauschale Fünf-Prozent-Kürzung, feste Vorsorgequote oder starre Abänderungsschwelle ohne passende Grundlage.
 
 ## 5. Ausgabeformat
 

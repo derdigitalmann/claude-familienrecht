@@ -45,7 +45,7 @@ Entscheidungsdatum, Rechtskraft und anwendbares altes oder neues Recht bestimmen
 
 ## 4. Quellenpflicht
 
-Nutze [references/zitierweise.md](../../../references/zitierweise.md) und die [geprüften Rechtsanker](../../references/rechtsanker-2026-09-05.md). Verifiziere Teilungsordnung und Versorgungsträgerauskunft zusätzlich am konkreten Fall. Für noch nicht vollständig verifizierte Rechtsprechung keine Randnummern ergänzen.
+Nutze [references/zitierweise.md](../../references/repository/references/zitierweise.md) und die [geprüften Rechtsanker](../../references/rechtsanker-2026-09-05.md). Verifiziere Teilungsordnung und Versorgungsträgerauskunft zusätzlich am konkreten Fall. Für noch nicht vollständig verifizierte Rechtsprechung keine Randnummern ergänzen.
 
 ## 5. Ausgabeformat
 
