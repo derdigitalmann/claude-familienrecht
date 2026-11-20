@@ -5,7 +5,7 @@
 
 Familiengericht: Ehesachen Scheidung Versorgungsausgleich Kindschaftssachen elterliche Sorge Umgang Kindesunterhalt Trennungs- und Ehegattenunterhalt Gewaltschutz Adoption Vormundschaft Betreuungsteile mit Verfahrenskostenhilfe und Tenorvorschlag
 
-Dieses Plugin gehört zum Marketplace mit 312 Plugins. Für die Installation nimm das Einzel-ZIP. Ohne Installation genügt zum Einstieg einer der beiden eigenständigen Markdown-Prompts: Schnellstart für den Kernvorgang, Werkstatt für die ausführliche Bearbeitung. Die Prompts ersetzen nicht sämtliche Spezialskills und Hilfsdateien des Plugins.
+Dieses Plugin gehört zum Marketplace mit 313 Plugins. Für die Installation nimm das Einzel-ZIP. Ohne Installation genügt zum Einstieg einer der beiden eigenständigen Markdown-Prompts: Schnellstart für den Kernvorgang, Werkstatt für die ausführliche Bearbeitung. Die Prompts ersetzen nicht sämtliche Spezialskills und Hilfsdateien des Plugins.
 
 ## Welche Datei wofür? / Which file should I use?
 
@@ -50,7 +50,7 @@ Bei einem Folgewunsch den bisherigen Aktenstand fortführen. Bereits festgestell
 | Großer Prompt (Werkstatt) | Markdown | [`richter-familiengericht-werkstatt.md`](https://klotzkette.github.io/claude-fuer-deutsches-recht/download.html?path=gerichtsplugins/richter-familiengericht/richter-familiengericht-werkstatt.md) |
 | Zugeordnete Testakten | PDF / ZIP | [2 zugeordnete Akten](#zugeordnete-testakten) mit Gesamt-PDF, Originaldateien und Einzel-PDFs |
 
-> Marketplace-Hinweis: Dieses Plugin gehört zum Marketplace mit 312 Plugins. Das Sammelpaket [`alle-plugins-megazip.zip`](https://github.com/Klotzkette/claude-fuer-deutsches-recht/releases/latest/download/alle-plugins-megazip.zip) enthält seinen veröffentlichten Stand, nicht zwingend spätere Einzelpakete. Alle Einzeldateien stehen im [Download-Index](../../ASSET_INDEX.md); Werkstatt und Schnellstart bleiben direkte Markdown-Downloads.
+> Marketplace-Hinweis: Dieses Plugin gehört zum Marketplace mit 313 Plugins. Das Sammelpaket [`alle-plugins-megazip.zip`](https://github.com/Klotzkette/claude-fuer-deutsches-recht/releases/latest/download/alle-plugins-megazip.zip) enthält seinen veröffentlichten Stand, nicht zwingend spätere Einzelpakete. Alle Einzeldateien stehen im [Download-Index](../../ASSET_INDEX.md); Werkstatt und Schnellstart bleiben direkte Markdown-Downloads.
 
 ## Zugeordnete Testakten
 
@@ -67,6 +67,18 @@ Jede Akte ist getrennt als lesbares Gesamt-PDF, ZIP mit Originaldateien und ZIP 
 
 [Alle Testakten und Fachzuordnungen](../../testakten/README.md)
 <!-- END direkt-loslegen (autogen) -->
+
+## Die lokale Übungsakte
+
+Für den ersten Durchgang öffnen Sie im Arbeits-ZIP `Grundakte/00_Posteingang`. Die vollständige Akte enthält auch die späteren Verfahrensstücke. [Fallordner im Druckpaket nachschlagen](https://github.com/Klotzkette/claude-fuer-deutsches-recht/blob/main/docs/grundakten-lebenswelt/README.md#weitere-arbeitsakten-und-eigenständige-pluginfassungen).
+
+> Diese Testakte wurde mit KI generiert und ist ein Experiment. Benutzung auf eigene Verantwortung und eigene Gefahr.
+>
+> This test case file was generated with AI and is an experiment. Use at your own responsibility and risk.
+
+| Fall | Originalunterlagen und Eingangspost | Lesefassungen |
+| --- | --- | --- |
+| Testakte AG Musterstadt Familiengericht 12 F 318/26 — Kindesunterhalt nach der Düsseldorfer Tabelle bei streitiger Leistungsfähigkeit | [Arbeits-ZIP mit Eingangspost](https://github.com/Klotzkette/claude-fuer-deutsches-recht/releases/download/grundakten-lebenswelt-v1.0.0/lebensakte-gericht-richter-familiengericht.zip) | [Druckpaket 18](https://github.com/Klotzkette/claude-fuer-deutsches-recht/releases/download/grundakten-lebenswelt-v1.0.0/lesepaket-18.zip) |
 
 Wenn du das hier öffnest, willst du eine Familiensache richterlich vorbereiten: Zuständigkeit, Anhörung, Kindeswohl, Unterhalt, Versorgungsausgleich, Zugewinn, Gewaltschutz, Tenor und Beschlussgründe.
 > **Experimentelles Plugin im Ordner `gerichtsplugins/`** — siehe Vorspruch unten.
@@ -88,7 +100,7 @@ Gezielter Normabgleich am 16.10.2026: [Paragraf 151 FamFG](https://www.gesetze-i
 - Skills mit ihren Referenzen: siehe vollständige Liste unten. Werkstatt und Schnellstart sind separate Markdown-Dateien, keine zusätzlichen Skills.
 - **Werkstatt-Prompt** (`richter-familiengericht-werkstatt.md`)
 - **Schnellstart-Prompt** (`richter-familiengericht-schnellstart.md`)
-- **Testakte** (`testakte/README.md`) — aus Richtersicht
+- **Testakte** ([Aktenverzeichnis](testakte/README.md)) — aus Richtersicht
 
 ## Skill-Liste
 
